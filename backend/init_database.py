@@ -24,7 +24,7 @@ def get_valid_item_classes(itemclasses) -> List:
     return [cls.get("class") for cls in itemclasses]
 
 
-def create_rehased_item_object(wow_api_item, itemclasses):
+def create_rehashed_item_object(wow_api_item, itemclasses):
     item = {}
     item["id"] = wow_api_item.get("id")
     item["name"] = wow_api_item.get("name")
@@ -60,7 +60,7 @@ class DbAdapter:
 
     def insert_items(self):
         self.__insert_many_to_mongo_db(self._wow_db, self._wow_items_collection,
-                                       [create_rehased_item_object(item, self._item_classes_cache) for item in
+                                       [create_rehashed_item_object(item, self._item_classes_cache) for item in
                                         get_raw_items()])
 
 
