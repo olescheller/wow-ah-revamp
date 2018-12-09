@@ -5,6 +5,7 @@ The downloaded data shall be committed to the git repository in folder `wowdata`
 The data must be saved locally so we don't have to fetch the (slow) WoW API all the time.
 
 Data downloaded:
+    - auction house snapshot
     - items
 
 Environment variables must be set with values from a WoW API account:
@@ -30,13 +31,15 @@ def download_item(item_id: int, new_item_list: list):
 api = WowApi(os.environ['WOW_CLIENT_ID'], os.environ['WOW_CLIENT_SECRET'])
 wowdata_items_path = os.path.abspath("wowdata/items.json")
 wowdata_auction_house_path = os.path.abspath("wowdata/ah.json")
+realm = 'arthas'
+region = 'eu'
 
 """
 # 1. Get auctions
 """
 
 print("Downloading auction data ...")
-auctions_api_data = api.get_auctions('eu', 'arthas', locale='en_US')
+auctions_api_data = api.get_auctions(region, realm, locale='en_US')
 auctions = requests.get(auctions_api_data.get("files").pop(0).get("url")).json().get("auctions")
 
 
