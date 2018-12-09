@@ -22,6 +22,8 @@ from time import sleep
 import requests
 from wowapi import WowApi
 
+from backend.wowapi_preprocessor import wowdata_dir, wowdata_items_path, wowdata_auction_house_path
+
 
 def download_item(item_id: int, new_item_list: list):
     new_item_list.append(api.get_item('eu', item_id))
@@ -29,9 +31,6 @@ def download_item(item_id: int, new_item_list: list):
 
 # Setup
 api = WowApi(os.environ['WOW_CLIENT_ID'], os.environ['WOW_CLIENT_SECRET'])
-wowdata_dir = os.path.abspath("wowdata")
-wowdata_items_path = os.path.join(wowdata_dir, "items.json")
-wowdata_auction_house_path = os.path.join(wowdata_dir, "ah.json")
 realm = 'arthas'
 region = 'eu'
 
