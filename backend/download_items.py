@@ -7,6 +7,10 @@ The data must be saved locally so we don't have to fetch the (slow) WoW API all 
 Data downloaded:
     - items
 
+Environment variables must be set with values from a WoW API account:
+    - WOW_CLIENT_ID
+    - WOW_CLIENT_SECRET
+
 """
 
 import json
@@ -25,18 +29,23 @@ def download_item(item_id: int, new_item_list: list):
 # Setup
 api = WowApi(os.environ['WOW_CLIENT_ID'], os.environ['WOW_CLIENT_SECRET'])
 wowdata_items_path = os.path.abspath("wowdata/items.json")
+wowdata_auction_house_path = os.path.abspath("wowdata/ah.json")
 
 """
 # 1. Get auctions
 """
 
 print("Downloading auction data ...")
-auctions_api_data = api.get_auctions('eu', 'draenor', locale='en_US')
+auctions_api_data = api.get_auctions('eu', 'arthas', locale='en_US')
 auctions = requests.get(auctions_api_data.get("files").pop(0).get("url")).json().get("auctions")
 
+
 """
- 2. Buffer auctions to own db
+ 2. Buffer auctions to file
 """
+with open(wowdata_auction_house_path , "w+") as f:
+    json.dump({"auctions": auctions}, f)
+
 
 """
 3. Check which items  from new auctions data are not in our local items file yet
