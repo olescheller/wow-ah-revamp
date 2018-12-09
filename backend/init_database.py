@@ -19,8 +19,10 @@ def get_item_classes() -> List:
     with open(os.path.abspath("wowdata/itemClasses.json"), 'r') as f:
         return json.load(f).get("classes")
 
+
 def get_valid_item_classes(itemclasses) -> List:
     return [cls.get("class") for cls in itemclasses]
+
 
 def create_rehased_item_object(wow_api_item, itemclasses):
     item = {}
@@ -57,7 +59,9 @@ class DbAdapter:
                                        get_item_classes())
 
     def insert_items(self):
-        self.__insert_many_to_mongo_db(self._wow_db, self._wow_items_collection, [create_rehased_item_object(item, self._item_classes_cache) for item in get_raw_items()])
+        self.__insert_many_to_mongo_db(self._wow_db, self._wow_items_collection,
+                                       [create_rehased_item_object(item, self._item_classes_cache) for item in
+                                        get_raw_items()])
 
 
 mongodb = DbAdapter()
