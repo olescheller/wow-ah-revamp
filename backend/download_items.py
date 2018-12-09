@@ -41,11 +41,11 @@ if not os.path.isdir(wowdata_dir):
 
 if not os.path.isfile(wowdata_items_path):
     with open(wowdata_items_path, "x+") as f:
-        f.write({"items": []})
+        f.write(json.dumps({"items": []}))
 
 if not os.path.isfile(wowdata_auction_house_path):
     with open(wowdata_auction_house_path, "x+") as f:
-        f.write({"auctions": [], "last_modified": 0})
+        f.write(json.dumps({"auctions": [], "last_modified": 0}))
 
 """
 # Get auctions
