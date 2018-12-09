@@ -19,9 +19,6 @@ from wowapi import WowApi
 
 
 def download_item(item_id: int, new_item_list: list):
-    # with open(os.path.abspath(os.path.join(save_dir, "{}.json".format(item_id))), "w+") as f:
-    #     f.write(json.dumps(api.get_item('eu', item_id), indent=2))
-
     new_item_list.append(api.get_item('eu', item_id))
 
 
