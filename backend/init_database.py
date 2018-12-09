@@ -63,7 +63,12 @@ class MongoDbAdapter:
                                        [create_rehashed_item_object(item, self._item_classes_cache) for item in
                                         get_raw_items()])
 
+    def delete_all(self):
+        self._client[self._wow_db][self._wow_item_classes_collection].delete_many({})
+        self._client[self._wow_db][self._wow_items_collection].delete_many({})
+
 
 mongodb = MongoDbAdapter()
-# mongodb.insert_item_classes()
+mongodb.delete_all()
+mongodb.insert_item_classes()
 mongodb.insert_items()
