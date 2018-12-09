@@ -37,7 +37,7 @@ def create_rehashed_item_object(wow_api_item, itemclasses):
     return item
 
 
-class DbAdapter:
+class MongoDbAdapter:
     def __init__(self, addr: str = 'localhost', port: int = 27017):
         self._client = MongoClient(addr, port)
         self._wow_db = "wow_data"
@@ -64,6 +64,6 @@ class DbAdapter:
                                         get_raw_items()])
 
 
-mongodb = DbAdapter()
+mongodb = MongoDbAdapter()
 # mongodb.insert_item_classes()
 mongodb.insert_items()
