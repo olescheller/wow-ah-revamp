@@ -2,6 +2,11 @@
 
 This script takes the raw WoW API data, structures it to our needs and then puts into a database.
 
+The following entities are put into the database:
+    - Items
+    - Auction house data
+    - Item classes
+
 """
 from pymongo import MongoClient, ASCENDING
 
