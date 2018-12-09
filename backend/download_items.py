@@ -29,29 +29,52 @@ def download_item(item_id: int, new_item_list: list):
 
 # Setup
 api = WowApi(os.environ['WOW_CLIENT_ID'], os.environ['WOW_CLIENT_SECRET'])
-wowdata_items_path = os.path.abspath("wowdata/items.json")
-wowdata_auction_house_path = os.path.abspath("wowdata/ah.json")
+wowdata_dir = os.path.abspath("wowdata")
+wowdata_items_path = os.path.join(wowdata_dir, "items.json")
+wowdata_auction_house_path = os.path.join(wowdata_dir, "ah.json")
 realm = 'arthas'
 region = 'eu'
 
+# Create files if they don't exist
+if not os.path.isdir(wowdata_dir):
+    os.makedirs(wowdata_dir)
+
+if not os.path.isfile(wowdata_items_path):
+    with open(wowdata_items_path, "x+") as f:
+        f.write({"items": []})
+
+if not os.path.isfile(wowdata_auction_house_path):
+    with open(wowdata_auction_house_path, "x+") as f:
+        f.write({"auctions": [], "last_modified": 0})
+
 """
-# 1. Get auctions
+# Get auctions
 """
 
-print("Downloading auction data ...")
+# Check if local auction house data needs update
+with open(wowdata_auction_house_path, "r") as f:
+    raw_data = f.read()
+    if raw_data != "":
+        data = json.loads(raw_data)
+        local_last_modified = data.get('last_modified', 0)
+        auctions = data.get("auctions", {})
+    else:
+        local_last_modified = 0
+        auctions = {}
+
 auctions_api_data = api.get_auctions(region, realm, locale='en_US')
-auctions = requests.get(auctions_api_data.get("files").pop(0).get("url")).json().get("auctions")
+last_modified = auctions_api_data.get("files")[0].get("lastModified")
 
+if local_last_modified + 900 < last_modified:  # data is at least 15 minutes old
+    print("Downloading auction data ...")
+    auctions = requests.get(auctions_api_data.get("files")[0].get("url")).json().get("auctions")
+
+    # Buffer auctions to file
+    with open(wowdata_auction_house_path, "w+") as f:
+        json.dump({"auctions": auctions, "last_modified": last_modified}, f)
 
 """
- 2. Buffer auctions to file
-"""
-with open(wowdata_auction_house_path , "w+") as f:
-    json.dump({"auctions": auctions}, f)
-
-
-"""
-3. Check which items  from new auctions data are not in our local items file yet
+Check which items  from new auctions data are not in our local items file yet
 """
 print("Check which items need download ...")
 
@@ -63,8 +86,8 @@ with open(wowdata_items_path, "r") as f:
 item_ids = list(set([auction.get('item') for auction in auctions if (auction.get('item') not in existing_item_ids)]))
 
 """
-# 4. Get unknown items and save to raw items file
-#    Downloading must be done in batches of 100 (WoW API limit)
+# Get unknown items and save to raw items file
+# Downloading must be done in batches of 100 (WoW API limit)
 """
 
 print(f"Processing {len(item_ids)} items ...")
@@ -95,6 +118,7 @@ if len(item_ids) > 0:
         print("Waiting two seconds after each batch of 100 items.")
         sleep(2)
 
+    print("Saving results to disk ...")
     with open(wowdata_items_path, "w+") as f:
         item_data.get('items').extend(new_items)
         json.dump(item_data, f, indent=2)
