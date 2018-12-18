@@ -8,12 +8,10 @@ The following entities are put into the database:
     - Item classes
 
 """
-import json
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import List
 
-from dataclasses_json import DataClassJsonMixin
 from pymongo import MongoClient, ASCENDING
 import pandas as pd
 
@@ -28,14 +26,11 @@ QUANTITY = "quantity"
 
 @dataclass
 # For dataclass see: https://docs.python.org/3/library/dataclasses.html
-class IntermediateSellOrder(DataClassJsonMixin):
+class IntermediateSellOrder(object):
     """Loads a raw api auction dict and structures it into an object.
 
     Used to intermediate processing. Multiple of `IntermediateSellOrder`s can then be aggregated to a single instance of
     `SellOrder`.
-
-    By inheriting `DataClassJsonMixin`, objects can be serialized simply by running .to_json().
-
     """
 
     item_id: int
@@ -60,7 +55,7 @@ class IntermediateSellOrder(DataClassJsonMixin):
 
 
 @dataclass
-class SellOrder(DataClassJsonMixin):
+class SellOrder(object):
     """Used to create and store a final (aggregated) sell order."""
     item_id: int
     seller: str
@@ -69,7 +64,7 @@ class SellOrder(DataClassJsonMixin):
     quantity: int
 
 
-def convert_raw_api_auctions_to_sell_orders(raw_api_auctions: list) -> List[SellOrder]:
+def raw_api_auctions_to_sell_orders(raw_api_auctions: list) -> List[SellOrder]:
     """Converts a list of raw api auctions to a list of final Sell Orders.
 
     Multiple occasions of the same item_id, seller and seller_name are grouped and quantity is accumulated.
@@ -98,7 +93,7 @@ def convert_raw_api_auctions_to_sell_orders(raw_api_auctions: list) -> List[Sell
                             })
 
     intermediate_auctions = list(map(IntermediateSellOrder, raw_api_auctions))
-    df = pd.DataFrame(list(map(lambda i_auction: json.loads(i_auction.to_json()), intermediate_auctions)))
+    df = pd.DataFrame(list(map(lambda i_auction: asdict(i_auction), intermediate_auctions)))
     grouped = df.groupby([ITEM_ID, SELLER, SELLER_REALM])
     aggregated = grouped.apply(aggregate_quantity_and_price)
 
@@ -138,6 +133,8 @@ class MongoDbAdapter:
         self._wow_db = "wow_data"
         self._wow_items_collection = "items"
         self._wow_item_classes_collection = "itemclasses"
+        self._wow_auction_collection = "auctions"
+        self._wow_sell_orders_collection = "sellorders"
 
         # create indexes
         self._client[self._wow_db][self._wow_item_classes_collection].create_index([('class', ASCENDING)], unique=True)
@@ -145,8 +142,8 @@ class MongoDbAdapter:
         self._client[self._wow_db][self._wow_items_collection].create_index([('item_class', ASCENDING)])
         self._client[self._wow_db][self._wow_items_collection].create_index([('item_sub_class', ASCENDING)])
 
-    def __insert_many_to_mongo_db(self, database: str, collection: str, object):
-        self._client[database][collection].insert_many(object)
+    def __insert_many_to_mongo_db(self, database: str, collection: str, obj):
+        self._client[database][collection].insert_many(obj)
 
     def insert_item_classes(self):
         self.__insert_many_to_mongo_db(self._wow_db, self._wow_item_classes_collection,
@@ -157,18 +154,21 @@ class MongoDbAdapter:
                                        [create_rehashed_item_object(item) for item in
                                         get_raw_items()])
 
-    def delete_all(self):
+    def delete_everything(self):
         self._client[self._wow_db][self._wow_item_classes_collection].delete_many({})
         self._client[self._wow_db][self._wow_items_collection].delete_many({})
+        self._client[self._wow_db][self._wow_sell_orders_collection].delete_many({})
+
+    def insert_sell_orders(self, sell_orders: List[SellOrder]):
+        self.__insert_many_to_mongo_db(self._wow_db, self._wow_sell_orders_collection,
+                                       list(map(lambda so: asdict(so), sell_orders)))
 
 
 if __name__ == '__main__':
-    # db = MongoDbAdapter()
-    # db.delete_all()
-    # db.insert_item_classes()
-    # db.insert_items()
+    db = MongoDbAdapter()
+    db.delete_everything()
+    db.insert_item_classes()
+    db.insert_items()
 
     auctions = get_auctions()
-    sell_orders = convert_raw_api_auctions_to_sell_orders(auctions)
-
-    print(sell_orders)
+    db.insert_sell_orders(raw_api_auctions_to_sell_orders(auctions))
