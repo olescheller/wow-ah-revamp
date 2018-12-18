@@ -31,7 +31,7 @@ def download_item(item_id: int, new_item_list: list):
 
 # Setup
 api = WowApi(os.environ['WOW_CLIENT_ID'], os.environ['WOW_CLIENT_SECRET'])
-realm = 'arthas'
+realm = 'antonidas'
 region = 'eu'
 
 # Create files if they don't exist
