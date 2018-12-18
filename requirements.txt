@@ -1,3 +1,5 @@
 python-wowapi
 requests
 pymongo
+dataclasses-json
+pandas
