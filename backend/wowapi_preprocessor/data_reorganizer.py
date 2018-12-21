@@ -63,7 +63,6 @@ class SellOrder(object):
     price: int
     quantity: int
 
-
 def raw_api_auctions_to_sell_orders(raw_api_auctions: list) -> List[SellOrder]:
     """Converts a list of raw api auctions to a list of final Sell Orders.
 
