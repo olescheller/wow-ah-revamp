@@ -9,15 +9,19 @@ const idCreator = () => {
     return createId;
 };
 const newId = idCreator();
-let users = [{id: 1, name:"Jule"}, {id:2 , name:"Ole"}];
+let users = [
+    {id: 1, name:"Jule"},
+    {id:2 , name:"Ole"},
+    {id:3 , name:"Ole"}
+    ];
 
 // 1
 const typeDefs = `
 type Query {
   info: String!
-  users: [User!]!
+  users(name: String): [User!]!
   user(id: Int): User
-  feed: [Link!]!
+  feed: [Link!]! 
 }
 
 type Mutation {
@@ -39,8 +43,13 @@ type Link {
 // 2
 const resolvers = {
     Query: {
-        info: () => `This is the API of a Hackernews Clone`,
-        users: () => users,
+        info: () => `This is the API.`,
+        users: (_, {name}) => {
+            if (name !== undefined)
+                return users.filter(i => (i.name === name));
+            else
+                return users;
+        },
         user: (_, {id}) => {
             return users.filter(i => (i.id === id))[0];
         },
