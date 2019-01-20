@@ -1,28 +1,31 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import {connect} from "react-redux";
+import {incrementAction} from "./actions";
+import {incrementThunk} from "./thunks";
+
 
 class App extends Component {
+
+  handleClick = () => {
+    this.props.dispatch(incrementAction());
+  };
+
+  handleClickAsync = () => {
+    this.props.dispatch(incrementThunk("my", [1,2,3]))
+  };
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+          <div className="App">
+            <header className="App-header">
+            <p>Count: {this.props.count}</p>
+              <button onClick={this.handleClick}>+</button>
+              <button onClick={this.handleClickAsync}>+ (async)</button>
+            </header>
+          </div>
     );
   }
 }
 
-export default App;
+export default connect(({count})=>({count}))(App);
