@@ -73,12 +73,40 @@ viewInput t p v toMsg =
 
 viewValidation : Model -> Html msg
 viewValidation model =
-  if model.password == model.passwordAgain then
+  if String.length model.password < 3 then
+      div [ style "color" "red" ] [ text "Password too short" ]
+  else if not (anyUpperInString model.password) then
+      div [ style "color" "red" ] [ text "Password has no UpperCase !!" ]
+   else if not (anyLowerCaseInString model.password) then
+      div [ style "color" "red" ] [ text "Password has no lowercase !!" ]
+  else if not (anyNumberInString model.password) then
+      div [ style "color" "red" ] [ text "Password has no numbers!!" ]
+  else if model.password == model.passwordAgain then
     div [ style "color" "green" ] [ text "OK" ]
   else
     div [ style "color" "red" ] [ text "Passwords do not match!" ]
 
 
+anyUpperInString : String -> Bool
+anyUpperInString str =
+    String.any Char.isUpper str
+
+anyLowerCaseInString : String -> Bool
+anyLowerCaseInString str =
+    String.any Char.isLower str
+
+
+conversionOfCharToIntSuccessful :  Char -> Bool
+conversionOfCharToIntSuccessful char =
+    case String.toInt (String.fromChar char) of
+        Just number ->
+            True
+        Nothing ->
+            False
+
+anyNumberInString : String -> Bool
+anyNumberInString string =
+    String.any conversionOfCharToIntSuccessful string
 
 nameValidation : Model -> Html msg
 nameValidation model =
