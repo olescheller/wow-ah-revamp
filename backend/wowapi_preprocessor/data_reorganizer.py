@@ -42,7 +42,7 @@ def get_item_classes() -> List:
 
 def get_valid_item_classes(item_classes) -> List:
     """Returns a list of valid item class ids."""
-    return [cls.get("class") for cls in item_classes]
+    return [cls.get("id") for cls in item_classes]
 
 
 ITEM_ID = "item_id"
@@ -81,7 +81,7 @@ def get_item_classes() -> List:
 
 def get_valid_item_classes(item_classes) -> List:
     """Returns a list of valid item class ids."""
-    return [cls.get("class") for cls in item_classes]
+    return [cls.get("id") for cls in item_classes]
 
 
 @dataclass
@@ -196,8 +196,12 @@ class MongoDbAdapter:
         self._wow_auction_collection = "auctions"
         self._wow_sell_orders_collection = "sellorders"
 
+        # drop all indexes
+        self._client[self._wow_db][self._wow_item_classes_collection].drop_indexes()
+        self._client[self._wow_db][self._wow_items_collection].drop_indexes()
+
         # create indexes
-        self._client[self._wow_db][self._wow_item_classes_collection].create_index([('class', ASCENDING)], unique=True)
+        self._client[self._wow_db][self._wow_item_classes_collection].create_index([('id', ASCENDING)], unique=True)
         self._client[self._wow_db][self._wow_items_collection].create_index([('id', ASCENDING)], unique=True)
         self._client[self._wow_db][self._wow_items_collection].create_index([('item_class', ASCENDING)])
         self._client[self._wow_db][self._wow_items_collection].create_index([('item_sub_class', ASCENDING)])
@@ -226,6 +230,7 @@ class MongoDbAdapter:
 
 if __name__ == '__main__':
     db = MongoDbAdapter()
+
     db.delete_everything()
     db.insert_item_classes()
     db.insert_items()
