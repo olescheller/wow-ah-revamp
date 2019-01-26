@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import './App.css';
 import {connect} from "react-redux";
 import {incrementAction} from "./actions";
 import {incrementThunk} from "./thunks";
+import SellOrderEntry from "./SellOrderEntry";
 
 
 class App extends Component {
@@ -22,6 +22,7 @@ class App extends Component {
             <p>Count: {this.props.count}</p>
               <button onClick={this.handleClick}>+</button>
               <button onClick={this.handleClickAsync}>+ (async)</button>
+                <SellOrderEntry></SellOrderEntry>
             </header>
           </div>
     );
