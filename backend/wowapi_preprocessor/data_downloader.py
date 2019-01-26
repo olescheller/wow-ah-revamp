@@ -22,7 +22,7 @@ from time import sleep
 import requests
 from wowapi import WowApi
 
-from backend.wowapi_preprocessor import wowdata_dir, wowdata_items_path, wowdata_auction_house_path
+from .data_reorganizer import wowdata_dir, wowdata_items_path, wowdata_auction_house_path
 
 
 def download_item(item_id: int, new_item_list: list):
