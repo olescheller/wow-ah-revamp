@@ -14,36 +14,15 @@ from pymongo import MongoClient, ASCENDING
 import pandas as pd
 
 import os
+import json
 from typing import List
+import random
+
 
 wowdata_dir = os.path.abspath("../wowdata")
 wowdata_items_path = os.path.join(wowdata_dir, "items.json")
 wowdata_auction_house_path = os.path.join(wowdata_dir, "ah.json")
 wowdata_item_classes_path = os.path.join(wowdata_dir, "itemClasses.json")
-
-
-def get_auctions() -> List:
-    """Returns a list of auctions read from the local json file."""
-    with open(wowdata_auction_house_path, 'r') as f:
-        return json.load(f).get("auctions")
-
-
-def get_raw_items() -> List:
-    """Returns a list of items read from the local json file."""
-    with open(wowdata_items_path, 'r') as f:
-        return json.load(f).get("items")
-
-
-def get_item_classes() -> List:
-    """Returns a list of item classes read from the local json file."""
-    with open(wowdata_item_classes_path, 'r') as f:
-        return json.load(f).get("classes")
-
-
-def get_valid_item_classes(item_classes) -> List:
-    """Returns a list of valid item class ids."""
-    return [cls.get("id") for cls in item_classes]
-
 
 ITEM_ID = "item_id"
 SELLER = "seller"
@@ -51,16 +30,6 @@ SELLER_REALM = "seller_realm"
 PRICE = "price"
 QUANTITY = "quantity"
 
-import json
-import os
-from typing import List
-
-wowdata_dir = os.path.abspath("../wowdata")
-wowdata_items_path = os.path.join(wowdata_dir, "items.json")
-wowdata_auction_house_path = os.path.join(wowdata_dir, "ah.json")
-wowdata_item_classes_path = os.path.join(wowdata_dir, "itemClasses.json")
-
-
 def get_auctions() -> List:
     """Returns a list of auctions read from the local json file."""
     with open(wowdata_auction_house_path, 'r') as f:
@@ -82,6 +51,13 @@ def get_item_classes() -> List:
 def get_valid_item_classes(item_classes) -> List:
     """Returns a list of valid item class ids."""
     return [cls.get("id") for cls in item_classes]
+
+def get_users(raw_auctions) -> List:
+    users = []
+    user_names =  set([f"{order.get('owner')}-{order.get('ownerRealm')}" for order in raw_auctions])
+    for name in user_names:
+        users.append({"name": name, "money": random.randint(100000000, 1000000000)})
+    return users
 
 
 @dataclass
@@ -191,6 +167,7 @@ class MongoDbAdapter:
     def __init__(self, addr: str = 'localhost', port: int = 27017):
         self._client = MongoClient(addr, port)
         self._wow_db = "wow_data"
+        self._wow_users_collection = "users"
         self._wow_items_collection = "items"
         self._wow_item_classes_collection = "itemclasses"
         self._wow_auction_collection = "auctions"
@@ -227,6 +204,10 @@ class MongoDbAdapter:
         self.__insert_many_to_mongo_db(self._wow_db, self._wow_sell_orders_collection,
                                        list(map(lambda so: asdict(so), sell_orders)))
 
+    def insert_users(self, users):
+        self.__insert_many_to_mongo_db(self._wow_db, self._wow_users_collection,  users)
+
+
 
 if __name__ == '__main__':
     db = MongoDbAdapter()
@@ -236,4 +217,6 @@ if __name__ == '__main__':
     db.insert_items()
 
     auctions = get_auctions()
+    db.insert_users(get_users(auctions))
+
     db.insert_sell_orders(raw_api_auctions_to_sell_orders(auctions))

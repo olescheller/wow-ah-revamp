@@ -1,14 +1,8 @@
 const {GraphQLServer} = require('graphql-yoga')
-const {getItemClassById, getItemById} = require('./db');
+const {getItemClassById, getItemById, getUserByNameAndRealm, getItemSupplyByName} = require('./db');
 const {MongoClient} = require('mongodb');
 const MONGO_URL = 'mongodb://localhost:27017/';
 const DB_NAME = 'wow_data';
-
-let users = [
-    {id: 1, name: "Jule"},
-    {id: 2, name: "Ole"},
-    {id: 3, name: "Ole"}
-];
 
 
 const initGraphQL = async (db) => {
@@ -17,13 +11,19 @@ const initGraphQL = async (db) => {
 type Query {
   item(id: Int): Item
   item_class(id: Int): ItemClass!
-  
-  users(name: String): [User!]!
-  user(id: Int): User
+  item_supply(itemName: String): ItemSupply
+  user(name: String, realm: String): User
 }
 
 type Mutation {
   createUser(name: String!): User!
+}
+
+type ItemSupply{
+  id: Int!
+  item: Item!
+  quantity: Int!
+  min_price: Int!
 }
 
 type Item {
@@ -47,8 +47,8 @@ type SubClass {
 }
 
 type User {
-  id: Int!
   name: String!
+  money: Int!
 }
 
 `;
@@ -62,14 +62,11 @@ type User {
             item_class: async (_, {id}) => {
                 return await getItemClassById(db, id)
             },
-            users: (_, {name}) => {
-                if (name !== undefined)
-                    return users.filter(i => (i.name === name));
-                else
-                    return users;
+            item_supply: async(_, {itemName}) => {
+                return await getItemSupplyByName(db, itemName);
             },
-            user: (_, {id}) => {
-                return users.filter(i => (i.id === id))[0];
+            user: async (_, {name, realm}) => {
+                return await getUserByNameAndRealm(db, name, realm)
             },
         },
         Mutation: {
