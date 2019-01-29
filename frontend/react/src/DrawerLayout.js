@@ -219,7 +219,7 @@ class DrawerLayout extends React.Component {
                         <div className={classes.grow} />
                         <div className={classes.sectionDesktop}>
                             <IconButton color="inherit">
-                                <Badge badgeContent={13} color="secondary">
+                                <Badge badgeContent={1} color="secondary">
                                     <NotificationsIcon />
                                 </Badge>
                             </IconButton>
@@ -284,4 +284,7 @@ DrawerLayout.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 
-export default withRouter(connect(({searchTerm})=>({searchTerm}))((withStyles(styles, {withTheme: true})(DrawerLayout))));
+export default withRouter(
+    connect(({searchTerm})=>({searchTerm}))
+        (withStyles(styles, {withTheme: true})(DrawerLayout))
+    );
