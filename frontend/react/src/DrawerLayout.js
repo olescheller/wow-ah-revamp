@@ -26,6 +26,7 @@ import {Route, Switch, withRouter} from "react-router-dom";
 import SellOrderList from "./SellOrderList";
 import {Link} from "react-router-dom";
 import SellingPage from "./SellingPage";
+import BuyingPage from "./BuyingPage";
 
 
 const drawerWidth = 240;
@@ -183,7 +184,7 @@ class DrawerLayout extends React.Component {
 
                     <Switch>
                         <Route exact path='/' render={(props) => (<div>Home</div>)}/>
-                        <Route path='/buy' component={SellOrderList}/>
+                        <Route path='/buy' component={BuyingPage}/>
                         <Route path='/sell' component={SellingPage}/>
                     </Switch>
                 </main>
