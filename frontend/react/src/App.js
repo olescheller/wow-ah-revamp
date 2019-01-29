@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
 import DrawerLayout from "./DrawerLayout";
+import {withRouter} from "react-router-dom";
 
 
 class App extends Component {
@@ -15,4 +16,4 @@ class App extends Component {
     }
 }
 
-export default connect(({count}) => ({count}))(App);
+export default withRouter(connect(({count}) => ({count}))(App));

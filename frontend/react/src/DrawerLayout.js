@@ -22,9 +22,10 @@ import MailIcon from '@material-ui/icons/Mail';
 import ShoppingIcon from '@material-ui/icons/ShoppingCart';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import SettingsIcon from '@material-ui/icons/Settings';
-import {Route, Switch} from "react-router";
+import {Route, Switch, withRouter} from "react-router-dom";
 import SellOrderList from "./SellOrderList";
 import {Link} from "react-router-dom";
+import SellingPage from "./SellingPage";
 
 
 const drawerWidth = 240;
@@ -178,10 +179,12 @@ class DrawerLayout extends React.Component {
                 </Drawer>
 
                 <main className={classes.content}>
+                    <div className={classes.toolbar} />
+
                     <Switch>
                         <Route exact path='/' render={(props) => (<div>Home</div>)}/>
                         <Route path='/buy' component={SellOrderList}/>
-                        <Route path='/sell' render={(props) => (<div>Sell</div>)}/>
+                        <Route path='/sell' component={SellingPage}/>
                     </Switch>
                 </main>
             </div>
@@ -194,4 +197,4 @@ DrawerLayout.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, {withTheme: true})(DrawerLayout);
+export default withRouter(withStyles(styles, {withTheme: true})(DrawerLayout));
