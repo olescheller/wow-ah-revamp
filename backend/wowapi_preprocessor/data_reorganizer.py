@@ -26,6 +26,7 @@ wowdata_item_classes_path = os.path.join(wowdata_dir, "itemClasses.json")
 ITEM_ID = "item_id"
 SELLER = "seller"
 SELLER_REALM = "seller_realm"
+SELLER_FULL = "seller_full"
 PRICE = "price"
 QUANTITY = "quantity"
 
@@ -73,6 +74,7 @@ class IntermediateSellOrder(object):
     item_id: int
     seller: str
     seller_realm: str
+    seller_full: str
     price: int
     quantity: int
 
@@ -87,6 +89,7 @@ class IntermediateSellOrder(object):
         self.item_id = raw_auction_api_entry.get("item")
         self.seller = raw_auction_api_entry.get("owner")
         self.seller_realm = raw_auction_api_entry.get("ownerRealm")
+        self.seller_full = raw_auction_api_entry.get("owner") + "=" + raw_auction_api_entry.get("ownerRealm")
         self.price = raw_auction_api_entry.get("buyout")
         self.quantity = raw_auction_api_entry.get("quantity")
 
@@ -97,6 +100,7 @@ class SellOrder(object):
     item_id: int
     seller: str
     seller_realm: str
+    seller_full: str
     price: int
     quantity: int
 
@@ -125,6 +129,7 @@ def raw_api_auctions_to_sell_orders(raw_api_auctions: list) -> List[SellOrder]:
         return SellOrder(**{ITEM_ID: int(index[0]),
                             SELLER: index[1],
                             SELLER_REALM: index[2],
+                            SELLER_FULL: index[1] + "-" + index[2],
                             QUANTITY: int(row[QUANTITY]),
                             PRICE: int(row[PRICE]),
                             })
@@ -175,6 +180,7 @@ class MongoDbAdapter:
         self._wow_sell_orders_collection = "sellorders"
 
         # drop all indexes
+        self._client[self._wow_db][self._wow_sell_orders_collection].drop_indexes()
         self._client[self._wow_db][self._wow_item_classes_collection].drop_indexes()
         self._client[self._wow_db][self._wow_items_collection].drop_indexes()
 
@@ -183,6 +189,8 @@ class MongoDbAdapter:
         self._client[self._wow_db][self._wow_items_collection].create_index([('id', ASCENDING)], unique=True)
         self._client[self._wow_db][self._wow_items_collection].create_index([('item_class', ASCENDING)])
         self._client[self._wow_db][self._wow_items_collection].create_index([('item_sub_class', ASCENDING)])
+
+        self._client[self._wow_db][self._wow_sell_orders_collection].create_index([(SELLER_FULL, ASCENDING)])
 
     def __insert_many_to_mongo_db(self, database: str, collection: str, obj):
         self._client[database][collection].insert_many(obj)
@@ -200,6 +208,7 @@ class MongoDbAdapter:
         self._client[self._wow_db][self._wow_item_classes_collection].delete_many({})
         self._client[self._wow_db][self._wow_items_collection].delete_many({})
         self._client[self._wow_db][self._wow_sell_orders_collection].delete_many({})
+        self._client[self._wow_db][self._wow_users_collection].delete_many({})
 
     def insert_sell_orders(self, sell_orders: List[SellOrder]):
         self.__insert_many_to_mongo_db(self._wow_db, self._wow_sell_orders_collection,
