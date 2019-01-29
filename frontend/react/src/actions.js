@@ -14,3 +14,9 @@ export const selectSubCategoryAction = (subcategory) => ({
     type: SELECT_SUBCATEGORY,
     payload: subcategory
 });
+
+export const SEARCH = "SEARCH";
+export const SearchAction = (term, category) => ({
+    type: SEARCH,
+    payload: {term, category}
+});

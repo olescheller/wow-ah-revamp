@@ -33,6 +33,8 @@ import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from '@material-ui/icons/Search';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import Button from "@material-ui/core/Button";
+import {connect} from "react-redux";
+import {SearchAction} from "./actions";
 
 
 const drawerWidth = 240;
@@ -168,6 +170,11 @@ class DrawerLayout extends React.Component {
     handleClickSell = () => {
     };
 
+    handleClickSearch = (e) => {
+        const searchValue = e.target.value;
+        this.props.dispatch(SearchAction(searchValue))
+    };
+
     render() {
         const {classes, theme} = this.props;
 
@@ -198,7 +205,7 @@ class DrawerLayout extends React.Component {
                             <div className={classes.searchIcon}>
                                 <SearchIcon />
                             </div>
-                            <InputBase
+                            <InputBase value={this.props.searchTerm} onChange={this.handleClickSearch}
                                 placeholder="Search item ..."
                                 classes={{
                                     root: classes.inputRoot,
@@ -260,7 +267,7 @@ class DrawerLayout extends React.Component {
 
                 <main className={classes.content}>
                     <div className={classes.toolbar} />
-
+                    <p>Searchterm: {this.props.searchTerm}</p>
                     <Switch>
                         <Route exact path='/' render={(props) => (<div>Home</div>)}/>
                         <Route path='/buy' component={BuyingPage}/>
@@ -277,4 +284,4 @@ DrawerLayout.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 
-export default withRouter(withStyles(styles, {withTheme: true})(DrawerLayout));
+export default withRouter(connect(({searchTerm})=>({searchTerm}))((withStyles(styles, {withTheme: true})(DrawerLayout))));
