@@ -8,18 +8,17 @@ The following entities are put into the database:
     - Item classes
 
 """
-import math
-from dataclasses import dataclass, asdict
-from pymongo import MongoClient, ASCENDING
-import pandas as pd
-
-import os
 import json
-from typing import List
+import math
+import os
 import random
+from dataclasses import dataclass, asdict
+from typing import List
 
+import pandas as pd
+from pymongo import MongoClient, ASCENDING
 
-wowdata_dir = os.path.abspath("../wowdata")
+wowdata_dir = os.path.abspath("../data")
 wowdata_items_path = os.path.join(wowdata_dir, "items.json")
 wowdata_auction_house_path = os.path.join(wowdata_dir, "ah.json")
 wowdata_item_classes_path = os.path.join(wowdata_dir, "itemClasses.json")
@@ -29,6 +28,7 @@ SELLER = "seller"
 SELLER_REALM = "seller_realm"
 PRICE = "price"
 QUANTITY = "quantity"
+
 
 def get_auctions() -> List:
     """Returns a list of auctions read from the local json file."""
@@ -52,9 +52,10 @@ def get_valid_item_classes(item_classes) -> List:
     """Returns a list of valid item class ids."""
     return [cls.get("id") for cls in item_classes]
 
+
 def get_users(raw_auctions) -> List:
     users = []
-    user_names =  set([f"{order.get('owner')}-{order.get('ownerRealm')}" for order in raw_auctions])
+    user_names = set([f"{order.get('owner')}-{order.get('ownerRealm')}" for order in raw_auctions])
     for name in user_names:
         users.append({"name": name, "money": random.randint(100000000, 1000000000)})
     return users
@@ -205,8 +206,7 @@ class MongoDbAdapter:
                                        list(map(lambda so: asdict(so), sell_orders)))
 
     def insert_users(self, users):
-        self.__insert_many_to_mongo_db(self._wow_db, self._wow_users_collection,  users)
-
+        self.__insert_many_to_mongo_db(self._wow_db, self._wow_users_collection, users)
 
 
 if __name__ == '__main__':

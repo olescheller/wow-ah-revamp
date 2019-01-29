@@ -1,7 +1,7 @@
 """
 This script downloads raw WoW API data and saves it into json files.
 
-The downloaded data shall be committed to the git repository in folder `wowdata`.
+The downloaded data shall be committed to the git repository in folder `data`.
 The data must be saved locally so we don't have to fetch the (slow) WoW API all the time.
 
 Data downloaded:
