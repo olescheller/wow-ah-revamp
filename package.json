@@ -14,17 +14,14 @@
     "installgraphql": "npm i --prefix=backend/api/",
     "installreact": "npm i --prefix=frontend/react/",
     "installAll": "npm run installgraphql && npm run installreact",
-
     "graphql": "nodemon backend/api/src/index.js",
     "mongo": "mongod --dbpath=db",
     "react": "npm start --prefix frontend/react",
     "wingraphql": "nodemon backend\\api\\src\\index.js",
     "winmongo": "mongod --dbpath=db",
     "winreact": "npm start --prefix frontend\\react",
-
     "dev": "concurrently --kill-others \"npm run graphql\" \"npm run mongo\" \"npm run react\"",
     "windev": "concurrently --kill-others \"npm run wingraphql\" \"npm run winmongo\" \"npm run winreact\"",
-
     "idev": "npm run installAll && npm run dev"
   },
   "repository": {
