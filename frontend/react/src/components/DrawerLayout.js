@@ -34,7 +34,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import Button from "@material-ui/core/Button";
 import {connect} from "react-redux";
-import {SearchAction} from "./actions";
+import {itemSupplyRequestAction} from "../redux/actions/itemActions";
 
 
 const drawerWidth = 240;
@@ -172,7 +172,7 @@ class DrawerLayout extends React.Component {
 
     handleClickSearch = (e) => {
         const searchValue = e.target.value;
-        this.props.dispatch(SearchAction(searchValue))
+        this.props.dispatch(itemSupplyRequestAction(searchValue))
     };
 
     render() {

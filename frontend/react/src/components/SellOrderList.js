@@ -6,12 +6,15 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import {connect} from "react-redux";
+import {QueryAverageItemPriceAction} from "../redux/actions/itemActions";
 
 
 let id = 0;
+
 function createData(name, calories, fat, carbs, protein) {
     id += 1;
-    return { id, name, calories, fat, carbs, protein };
+    return {id, name, calories, fat, carbs, protein};
 }
 
 const rows = [
@@ -25,20 +28,19 @@ const rows = [
 
 class SellOrderList extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
 
-        this.chosenQty = {0:0,1:1,2:0,3:3,4:4,5:5};
+        this.chosenQty = {0: 0, 1: 1, 2: 0, 3: 3, 4: 4, 5: 5};
         this.pricePerUnit = {}
 
         let {sellOrders} = props;
 
     }
 
-    onInputQty = (e, id) => {
-        let qty = e.target.value;
-        this.chosenQty[id] = qty;
-
+    onInputQty = (e, itemId) => {
+        const buyQty = e.target.value;
+        this.props.dispatch(QueryAverageItemPriceAction(buyQty, itemId))
     }
 
     render() {
@@ -56,19 +58,22 @@ class SellOrderList extends React.Component {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map(row => (
-                        <TableRow key={row.id}>
+                    {this.props.itemSupplies.map(itemSupply => (
+                        <TableRow key={itemSupply.item.id}>
                             <TableCell component="th" scope="row">
-                                {row.name}
+                                {itemSupply.item.name}
                             </TableCell>
-                            <TableCell align="right">{row.calories}</TableCell>
-                            <TableCell align="right">{row.fat}</TableCell>
+                            <TableCell align="right">{itemSupply.min_price}</TableCell>
+                            <TableCell align="right">{itemSupply.quantity}</TableCell>
                             <TableCell align="right">
-                                <input onChange={(e)=> this.onInputQty(e, id)} value={this.chosenQty[row.id] || ""}/>
+                                <input value={this.props.buyQuantity[itemSupply.item.id]}
+                                       onChange={(e) => this.onInputQty(e, itemSupply.item.id)}
+                                />
                             </TableCell>
                             <TableCell align="right"></TableCell>
-                            <TableCell align="right">{row.calories * this.chosenQty[row.id]}</TableCell>
-                            <TableCell align="right"><Button  variant="contained" color="primary" > Buy</Button></TableCell>
+                            <TableCell align="right"></TableCell>
+                            <TableCell align="right"><Button variant="contained"
+                                                             color="primary"> Buy</Button></TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -77,4 +82,4 @@ class SellOrderList extends React.Component {
     }
 }
 
-export default SellOrderList;
+export default connect(({itemSupplies, buyQuantity}) => ({itemSupplies, buyQuantity}))(SellOrderList);
