@@ -96,7 +96,12 @@ type User {
         resolvers,
     });
 
-    return server.start();
+    return server.start({cors: {
+            "origin": "*",
+            "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+            "preflightContinue": false,
+            "optionsSuccessStatus": 204
+        }});
 };
 
 
