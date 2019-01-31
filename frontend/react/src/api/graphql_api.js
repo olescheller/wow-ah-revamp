@@ -11,14 +11,16 @@ export const dummyApiCall = (id) => {
                 "min_price": 1969
             },
             {
+
                 "item": {
-                    "icon": "inv_fabric_linen_01",
-                    "id": "2589",
-                    "name": "Linen Cloth"
+                    "icon": "inv_misc_flower_02",
+                    "id": "2447",
+                    "name": "Peacebloom"
                 },
-                "quantity": 7331,
-                "min_price": 0
+                "quantity": 5334,
+                "min_price": 30000
             }
+
         ]), 2500);
     });
 };
