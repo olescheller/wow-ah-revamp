@@ -9,6 +9,15 @@ export const dummyApiCall = (id) => {
                 },
                 "quantity": 6794,
                 "min_price": 1969
+            },
+            {
+                "item": {
+                    "icon": "inv_fabric_linen_01",
+                    "id": "2589",
+                    "name": "Linen Cloth"
+                },
+                "quantity": 7331,
+                "min_price": 0
             }
         ]), 2500);
     });
