@@ -9,7 +9,7 @@ from typing import List
 import requests
 
 DATA_DIR = os.path.join("..", "data")
-ICON_DATA_DIR = os.path.join("..", "..", "frontend", "react", "public", "icons")
+ICON_DATA_DIR = os.path.join(DATA_DIR, "icons")
 
 
 def create_icon_path(icon_name: str) -> str:
