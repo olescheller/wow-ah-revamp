@@ -1,5 +1,6 @@
 import React from "react";
 
+import MoneyView from './MoneyView';
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -9,7 +10,11 @@ import TableRow from '@material-ui/core/TableRow';
 import {connect} from "react-redux";
 import {QueryAverageItemPriceAction} from "../redux/actions/itemActions";
 import './itemsupply.css'
+import { withStyles } from '@material-ui/core/styles';
 
+const CustomTableCell = withStyles(theme => ({
+    align: 'left',
+}))(TableCell);
 
 let id = 0;
 
@@ -35,14 +40,14 @@ class SellOrderList extends React.Component {
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell align="left">Icon</TableCell>
-                        <TableCell align="left">Item name</TableCell>
-                        <TableCell align="right">Curr. min. buyout</TableCell>
-                        <TableCell align="right">Qty available</TableCell>
-                        <TableCell align="right">Buy quantity</TableCell>
-                        <TableCell align="right">Price per unit</TableCell>
-                        <TableCell align="right">Total</TableCell>
-                        <TableCell align="right"></TableCell>
+                        <CustomTableCell>Icon</CustomTableCell>
+                        <CustomTableCell width="400em">Item name</CustomTableCell>
+                        <CustomTableCell>Curr. min. buyout</CustomTableCell>
+                        <CustomTableCell>Qty available</CustomTableCell>
+                        <CustomTableCell>Buy quantity</CustomTableCell>
+                        <CustomTableCell>Price per unit</CustomTableCell>
+                        <CustomTableCell>Total</CustomTableCell>
+                        <CustomTableCell></CustomTableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -53,19 +58,19 @@ class SellOrderList extends React.Component {
                                     src={`https://s3.eu-central-1.amazonaws.com/wow-icons/icons/${itemSupply.item.icon}.jpg`}/>
 
                             </TableCell>
-                            <TableCell align="right" scope="row">
+                            <CustomTableCell width="400em" scope="row">
                                 <span>{itemSupply.item.name}</span>
 
-                            </TableCell>
-                            <TableCell align="right">{itemSupply.min_price}</TableCell>
-                            <TableCell align="right">{itemSupply.quantity}</TableCell>
-                            <TableCell align="right">
-                                <input value={this.props.buyQuantity[itemSupply.item.id]}
+                            </CustomTableCell>
+                            <CustomTableCell><MoneyView money={itemSupply.min_price}></MoneyView></CustomTableCell>
+                            <CustomTableCell>{itemSupply.quantity}</CustomTableCell>
+                            <CustomTableCell>
+                            <input className="buyQuantity" value={this.props.buyQuantity[itemSupply.item.id]}
                                        onChange={(e) => this.onInputQty(e, itemSupply.item.id)}
                                 />
-                            </TableCell>
-                            <TableCell align="right"></TableCell>
-                            <TableCell align="right"></TableCell>
+                            </CustomTableCell>
+                            <CustomTableCell></CustomTableCell>
+                            <CustomTableCell></CustomTableCell>
                             <TableCell  padding="dense" align="right">
                                 <Button variant="contained" color="primary"> Buy</Button></TableCell>
                         </TableRow>
