@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "graphql-tag": "^2.10.1",
     "npm-run-all": "^4.1.5",
     "react-router-dom": "^4.3.1"
   },
   "devDependencies": {
-    "concurrently": "^4.1.0"
+    "concurrently": "^4.1.0",
+    "nodemon": "^1.18.9"
   },
   "scripts": {
     "installgraphql": "npm i --prefix=backend/api/",

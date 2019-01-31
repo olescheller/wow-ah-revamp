@@ -4,11 +4,11 @@ const {MongoClient} = require('mongodb');
 const MONGO_URL = 'mongodb://localhost:27017/';
 const DB_NAME = 'wow_data';
 
-
 const initGraphQL = async (db) => {
     // 1
     const typeDefs = `
 type Query {
+  test: String
   item(id: Int): Item
   item_class(id: Int): ItemClass!
   item_supply(itemName: String): ItemSupply
@@ -56,6 +56,7 @@ type User {
 // 2
     const resolvers = {
         Query: {
+            test:() => {return 'hello'},
             item: async (_, {id}) => {
                 return await getItemById(db, id);
             },
@@ -87,7 +88,7 @@ type User {
         resolvers,
     });
 
-    return server.start();
+    return server.start({port: 4000, bodyParserOptions: {type: "application/json"}}, () => console.log(`Server is running on http://localhost:4000`));
 };
 
 
@@ -97,7 +98,6 @@ const init = async () => {
         console.log('Successfully connected to db');
         const wowData = mongoDB.db(DB_NAME);
         await initGraphQL(wowData);
-        console.log(`Server is running on http://localhost:4000`);
     }
 };
 

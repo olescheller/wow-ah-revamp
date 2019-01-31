@@ -11,11 +11,34 @@ import createSagaMiddleware from 'redux-saga';
 import rootSaga from './redux/sagas'
 import theme from './theme/materialTheme'
 import reducer from './redux/reducer'
-
+import ApolloClient, {HttpLink} from "apollo-boost";
+import gql from "graphql-tag";
 
 const sagaMiddleware = createSagaMiddleware();
 const store = createStore(reducer, applyMiddleware(thunk, sagaMiddleware));
 sagaMiddleware.run(rootSaga);
+
+const httpLink = new HttpLink({ uri: 'http://localhost:4000' })
+
+
+const client = new ApolloClient({
+    uri: 'http://localhost:4000/',
+    fetchOptions: {
+        mode: 'no-cors',
+
+    },
+});
+
+client
+    .query({
+        query: gql`
+      {
+        test
+      }
+    `
+    })
+    .then(result => console.log(result))
+    .catch((err => console.log(err)))
 
 ReactDOM.render(
     <Provider store={store}>
