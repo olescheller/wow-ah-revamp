@@ -267,7 +267,6 @@ class DrawerLayout extends React.Component {
 
                 <main className={classes.content}>
                     <div className={classes.toolbar} />
-                    <p>Searchterm: {this.props.searchTerm}</p>
                     <Switch>
                         <Route exact path='/' render={(props) => (<div>Home</div>)}/>
                         <Route path='/buy' component={BuyingPage}/>
