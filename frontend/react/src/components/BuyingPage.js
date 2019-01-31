@@ -7,7 +7,6 @@ class BuyingPage extends React.Component{
     render(){
         return (
             <div>
-                <p>This is the Buying page.</p>
                 <SellOrderList/>
             </div>
         )
