@@ -1,5 +1,6 @@
 const {GraphQLServer} = require('graphql-yoga')
-const {getItemClassById, getItemById, getUserByNameAndRealm, getItemSupplyByName} = require('./db');
+const {getItemsByPartialName,
+    getItemsSupplyByPartialName, getItemClassById, getItemById, getUserByNameAndRealm, getItemSupplyByName} = require('./db');
 const {MongoClient} = require('mongodb');
 const MONGO_URL = 'mongodb://localhost:27017/';
 const DB_NAME = 'wow_data';
@@ -10,8 +11,10 @@ const initGraphQL = async (db) => {
     const typeDefs = `
 type Query {
   item(id: Int): Item
+  items(partialItemName: String): [Item]!
   item_class(id: Int): ItemClass!
   item_supply(itemName: String): ItemSupply
+  items_supply(partialItemName: String): [ItemSupply]
   user(name: String, realm: String): User
 }
 
@@ -64,6 +67,12 @@ type User {
             },
             item_supply: async(_, {itemName}) => {
                 return await getItemSupplyByName(db, itemName);
+            },
+            items_supply: async(_, {partialItemName}) => {
+                return await getItemsSupplyByPartialName(db, partialItemName);
+            },
+            items: async(_, {partialItemName}) => {
+                 return await getItemsByPartialName(db, partialItemName);
             },
             user: async (_, {name, realm}) => {
                 return await getUserByNameAndRealm(db, name, realm)
