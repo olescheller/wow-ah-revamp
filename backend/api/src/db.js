@@ -49,6 +49,7 @@ function getItemByName(db, itemName) {
             async (err, item) => {
                 if (err) reject(err);
                 if (item === null) resolve(null);
+                console.log({item})
                 const itemClasses = await getItemClassById(db, item.item_class, item.item_sub_class);
                 resolve({...item, ...itemClasses})
             }
@@ -92,6 +93,7 @@ function getItemsSupplyByPartialName(db, partialItemName) {
         let gqlItemsSupply = [];
         for (let itemName of items) {
             const gqlItemSupply = await getItemSupplyByName(db, itemName);
+            console.log(gqlItemsSupply)
             gqlItemsSupply.push(gqlItemSupply)
         }
         resolve(gqlItemsSupply);
@@ -110,7 +112,8 @@ function getItemClassById(db, classId, subClassId) {
         const ItemClasses = db.collection('itemclasses');
         ItemClasses.findOne({id: classId}, async (err, itemClass) => {
             if (err) reject(err);
-
+            console.log({itemClass})
+            if(!itemClass) {resolve(null)}
             const itemSubClass = itemClass.subclasses.filter(i => i.id === subClassId)[0];
             let item_sub_class;
             const item_class = {name: itemClass.name, id: itemClass.id};
