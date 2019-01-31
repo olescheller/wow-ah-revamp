@@ -14,7 +14,7 @@
     "installgraphql": "npm i --prefix=backend/api/",
     "installreact": "npm i --prefix=frontend/react/",
     "installAll": "npm run installgraphql && npm run installreact",
-    "graphql": "nodemon backend/api/src/index.js",
+    "graphql": "nodemon --watch backend/api/src/index.js backend/api/src/index.js",
     "mongo": "mongod --dbpath=db",
     "react": "npm start --prefix frontend/react",
     "wingraphql": "nodemon backend\\api\\src\\index.js",
