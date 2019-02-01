@@ -13,6 +13,7 @@ import {QueryAverageItemPriceAction} from "../redux/actions/itemActions";
 import './itemsupply.css'
 import { withStyles } from '@material-ui/core/styles';
 import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
 
 const CustomTableCell = withStyles(theme => ({
     align: 'left',
@@ -31,6 +32,7 @@ const styles = theme => ({
         width: '100%',
         marginTop: theme.spacing.unit * 3,
         overflowX: 'auto',
+        padding: theme.spacing.unit * 2,
     },
     table: {
         minWidth: 1120,
@@ -53,16 +55,19 @@ class SellOrderList extends React.Component {
         const { classes } = this.props;
 
         return (
-            <Paper className={classes.root}>
+            <Paper elevation={1} className={classes.root}>
+                <Typography variant="h5" component="h3">
+                    Buy
+                </Typography>
 
                 <Table className={classes.table}>
                 <TableHead>
                     <TableRow>
                         <CustomTableCell>Icon</CustomTableCell>
                         <CustomTableCell width="300">Item name</CustomTableCell>
-                        <CustomTableCell width="300">Curr. min. buyout</CustomTableCell>
+                        <CustomTableCell width="320">Curr. min. buyout</CustomTableCell>
                         <CustomTableCell width="100">Qty available</CustomTableCell>
-                        <CustomTableCell width="100">Buy quantity</CustomTableCell>
+                        <CustomTableCell width="75">Buy quantity</CustomTableCell>
                         <CustomTableCell width="300">Price per unit & Total</CustomTableCell>
                         <CustomTableCell></CustomTableCell>
                     </TableRow>
@@ -79,14 +84,15 @@ class SellOrderList extends React.Component {
                                 <span>{itemSupply.item.name}</span>
 
                             </CustomTableCell>
-                            <CustomTableCell><MoneyView money={itemSupply.min_price}></MoneyView></CustomTableCell>
+                            <CustomTableCell  padding="dense"><MoneyView money={itemSupply.min_price}></MoneyView></CustomTableCell>
                             <CustomTableCell>{itemSupply.quantity}</CustomTableCell>
-                            <CustomTableCell>
+                            <CustomTableCell padding="dense">
                             <input className="buyQuantity" value={this.props.buyQuantity[itemSupply.item.id]}
                                        onChange={(e) => this.onInputQty(e, itemSupply.item.id)}
                                 />
                             </CustomTableCell>
-                            <CustomTableCell></CustomTableCell>
+                            <CustomTableCell padding="dense"><MoneyView money={762362}></MoneyView>
+                                <MoneyView money={929839283}></MoneyView></CustomTableCell>
                             <TableCell  padding="dense" align="right">
                                 <Button variant="contained" color="primary"> Buy</Button></TableCell>
                         </TableRow>

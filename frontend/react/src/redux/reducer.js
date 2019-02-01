@@ -4,7 +4,7 @@ import {
 import {
     AVERAGE_ITEM_PRICE_REQUESTED,
     FETCH_ITEM_SUPPLY_REQUESTED,
-    FETCH_ITEM_SUPPLY_SUCCEEDED
+    FETCH_ITEM_SUPPLY_SUCCEEDED, SEARCH_VALUE_CHANGED
 } from "./actions/itemActions";
 
 const initState = {
@@ -12,7 +12,7 @@ const initState = {
     money: 1000000000,
     selectedCategory: NaN,
     selectedSubCategory: NaN,
-    searchTerm: "",
+    searchTerm: "topaz",
     itemSupplies: [],
     buyQuantity: {
         "2592": 5
@@ -26,7 +26,9 @@ export default (state = initState, action) => {
             return {...state, count: state.count + 1};
         case SELECT_CATEGORY:
             return {...state, selectedCategory: action.payload};
-        case FETCH_ITEM_SUPPLY_REQUESTED:
+        // case FETCH_ITEM_SUPPLY_REQUESTED:
+        //     return {...state, searchTerm: action.payload.term};
+        case SEARCH_VALUE_CHANGED:
             return {...state, searchTerm: action.payload.term}; // missing: category (combine main & subcategory)
         case AVERAGE_ITEM_PRICE_REQUESTED:
             const tempBuyQuantity = {...state.buyQuantity};

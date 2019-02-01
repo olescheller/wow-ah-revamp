@@ -1,5 +1,7 @@
+const MongoToGqlConverter = require( "./conversion");
+
 const {GraphQLServer} = require('graphql-yoga')
-const {getItemsByPartialName,
+const {getItemsByPartialName,getItemSuppliesByPartialNameOPTIMIZED,
     getItemsSupplyByPartialName, getItemClassById, getItemById, getUserByNameAndRealm, getItemSupplyByName} = require('./db');
 const {MongoClient} = require('mongodb');
 const MONGO_URL = 'mongodb://localhost:27017/';
@@ -7,6 +9,10 @@ const DB_NAME = 'wow_data';
 
 
 const initGraphQL = async (db) => {
+
+    const converter = new MongoToGqlConverter(db);
+    await converter.init();
+
     // 1
     const typeDefs = `
 type Query {
@@ -60,7 +66,7 @@ type User {
     const resolvers = {
         Query: {
             item: async (_, {id}) => {
-                return await getItemById(db, id);
+                return await getItemById(converter, db, id);
             },
             item_class: async (_, {id}) => {
                 return await getItemClassById(db, id)
@@ -69,10 +75,12 @@ type User {
                 return await getItemSupplyByName(db, itemName);
             },
             items_supply: async(_, {partialItemName}) => {
-                return await getItemsSupplyByPartialName(db, partialItemName);
+                return await getItemSuppliesByPartialNameOPTIMIZED(converter, db, partialItemName);
+                // return await getItemsSupplyByPartialName(db, partialItemName);
             },
             items: async(_, {partialItemName}) => {
                  return await getItemsByPartialName(db, partialItemName);
+                 // return await getItemsByPartialName(db, partialItemName);
             },
             user: async (_, {name, realm}) => {
                 return await getUserByNameAndRealm(db, name, realm)
