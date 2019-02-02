@@ -1,6 +1,6 @@
 import {
     INCREMENT,
-    SELECT_CATEGORY} from "./actions/actions";
+    SELECT_CATEGORY, SET_LOADING} from "./actions/actions";
 import {
     AVERAGE_ITEM_PRICE_REQUESTED,
     FETCH_ITEM_SUPPLY_REQUESTED,
@@ -17,7 +17,8 @@ const initState = {
     buyQuantity: {
         "2592": 5
     },
-    count: 1
+    count: 1,
+    isLoading: false,
 };
 
 export default (state = initState, action) => {
@@ -34,6 +35,8 @@ export default (state = initState, action) => {
             return {...state, buyQuantity: tempBuyQuantity };
         case FETCH_ITEM_SUPPLY_SUCCEEDED:
             return {...state, itemSupplies: action.payload};
+        case SET_LOADING:
+            return {...state, isLoading: action.payload};
         default:
             return state
     }
