@@ -98,6 +98,7 @@ class IntermediateSellOrder(object):
 class SellOrder(object):
     """Used to create and store a final (aggregated) sell order."""
     item_id: int
+    item_name: str
     seller: str
     seller_realm: str
     seller_full: str
@@ -127,6 +128,7 @@ def raw_api_auctions_to_sell_orders(raw_api_auctions: list) -> List[SellOrder]:
 
     def create_sell_order_from_grouped_dataframe(index: tuple, row: pd.Series) -> SellOrder:
         return SellOrder(**{ITEM_ID: int(index[0]),
+                            "item_name": item_id_to_name_mapping.get(int(index[0]), ""),
                             SELLER: index[1],
                             SELLER_REALM: index[2],
                             SELLER_FULL: index[1] + "-" + index[2],
@@ -191,6 +193,7 @@ class MongoDbAdapter:
         self._client[self._wow_db][self._wow_items_collection].create_index([('item_sub_class', ASCENDING)])
 
         self._client[self._wow_db][self._wow_sell_orders_collection].create_index([(SELLER_FULL, ASCENDING)])
+        self._client[self._wow_db][self._wow_sell_orders_collection].create_index([('item_name', ASCENDING)])
 
     def __insert_many_to_mongo_db(self, database: str, collection: str, obj):
         self._client[database][collection].insert_many(obj)
@@ -220,6 +223,8 @@ class MongoDbAdapter:
 
 if __name__ == '__main__':
     db = MongoDbAdapter()
+
+    item_id_to_name_mapping = {item.get("id"): item.get("name") for item in get_raw_items()}
 
     db.delete_everything()
     db.insert_item_classes()
