@@ -18,8 +18,10 @@ export function* fetchItemSupply(action) {
     }
 }
 export function* fetchItemsSupplyByPartialName(action) {
-    if (action.payload.term.length < 4)
+    if (action.payload.term.length < 4) {
+        yield put(setLoading(false));
         return {};
+    }
     yield put(setLoading(true))
     try {
         const data = yield call(downloadItemsSupplyByPartialName, action.payload.term);
@@ -28,7 +30,6 @@ export function* fetchItemsSupplyByPartialName(action) {
         yield put(setLoading(false));
     } catch (error) {
         yield put({type: "FETCH_ITEM_SUPPLY_FAILED", error})
-        yield put(setLoading(false));
     }
 }
 
