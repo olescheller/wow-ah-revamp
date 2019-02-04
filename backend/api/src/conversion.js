@@ -5,8 +5,12 @@ module.exports = class MongoToGqlConverter {
         this.cachedItemClasses = {};
     }
 
-    async init(){
-        this.cachedItemClasses = await this.ItemClassesCollection.find({}).toArray()
+    init(){
+        this.ItemClassesCollection.find({}).toArray((err, itemClasses) => {
+            if(err) return;
+            this.cachedItemClasses = itemClasses;
+            console.log(this.cachedItemClasses)
+        });
     }
 
     ItemMongoToGql(mongo_item) {
@@ -21,17 +25,29 @@ module.exports = class MongoToGqlConverter {
     };
 
     ItemClassMongoToGql(mongo_item_class_id){
+        let className = "NOT FOUND"
+        for(let itemclass of this.cachedItemClasses) {
+            if(itemclass.id === mongo_item_class_id) {
+                className = itemclass.name;
+                break;
+            }
+        }
         return {
             id: mongo_item_class_id,
-            name: this.cachedItemClasses[mongo_item_class_id].name
+            name: className,
         }
     };
 
     ItemSubClassMongoToGql (mongo_item_class_id, mongo_item_sub_class) {
         let subclassName = "NOT FOUND"
-        for(let subclass of this.cachedItemClasses[mongo_item_class_id].subclasses) {
-            if (subclass.id === mongo_item_sub_class) {
-                subclassName = subclass.name;
+        for(let itemClass of this.cachedItemClasses) {
+            if(itemClass.id === mongo_item_class_id) {
+                for(let subclass of itemClass.subclasses) {
+                    if (subclass.id === mongo_item_sub_class) {
+                        subclassName = subclass.name;
+                        break;
+                    }
+                }
                 break;
             }
         }
