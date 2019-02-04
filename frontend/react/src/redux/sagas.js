@@ -25,7 +25,6 @@ export function* fetchItemsSupplyByPartialName(action) {
     yield put(setLoading(true))
     try {
         const data = yield call(downloadItemsSupplyByPartialName, action.payload.term);
-        console.log(data)
         yield put(itemSupplySucceededAction(data))
         yield put(setLoading(false));
     } catch (error) {

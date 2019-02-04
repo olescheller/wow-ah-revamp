@@ -1,7 +1,7 @@
 const MongoToGqlConverter = require( "./conversion");
 
 const {GraphQLServer} = require('graphql-yoga')
-const {getItemsByPartialName,getItemSuppliesByPartialNameOPTIMIZED,
+const {getItemsByPartialNameCount, getItemsByPartialName,getItemSuppliesByPartialNameOPTIMIZED,
     getItemsSupplyByPartialName, getItemClassById, getItemById, getUserByNameAndRealm, getItemSupplyByName} = require('./db');
 const {MongoClient} = require('mongodb');
 const MONGO_URL = 'mongodb://localhost:27017/';
@@ -16,11 +16,12 @@ const initGraphQL = async (db) => {
     // 1
     const typeDefs = `
 type Query {
-  item(id: Int): Item
+  item(id: Float): Item
   items(partialItemName: String): [Item]!
-  item_class(id: Int): ItemClass!
+  item_class(id: Float): ItemClass!
   item_supply(itemName: String): ItemSupply
   items_supply(partialItemName: String): [ItemSupply]
+  items_count(partialItemName: String): Int
   user(name: String, realm: String): User
 }
 
@@ -29,35 +30,35 @@ type Mutation {
 }
 
 type ItemSupply{
-  id: Int!
+  id: Float!
   item: Item!
-  quantity: Int!
-  min_price: Int!
+  quantity: Float!
+  min_price: Float!
 }
 
 type Item {
   name: String!
   id: String!
-  icon: String!
+  icon: String
   is_stackable: Boolean!
   item_class: ItemClass!
   item_sub_class: SubClass!
 }
 
 type ItemClass {
-  id: Int!
+  id: Float!
   name: String
   subclasses: [SubClass]
 }
 
 type SubClass {
-  id: Int!
+  id: Float!
   name: String
 }
 
 type User {
   name: String!
-  money: Int!
+  money: Float!
 }
 
 `;
@@ -76,11 +77,12 @@ type User {
             },
             items_supply: async(_, {partialItemName}) => {
                 return await getItemSuppliesByPartialNameOPTIMIZED(converter, db, partialItemName);
-                // return await getItemsSupplyByPartialName(db, partialItemName);
+            },
+            items_count: async(_, {partialItemName}) => {
+                return await getItemsByPartialNameCount(converter, db, partialItemName);
             },
             items: async(_, {partialItemName}) => {
                  return await getItemsByPartialName(db, partialItemName);
-                 // return await getItemsByPartialName(db, partialItemName);
             },
             user: async (_, {name, realm}) => {
                 return await getUserByNameAndRealm(db, name, realm)

@@ -28,9 +28,16 @@ module.exports = class MongoToGqlConverter {
     };
 
     ItemSubClassMongoToGql (mongo_item_class_id, mongo_item_sub_class) {
+        let subclassName = "NOT FOUND"
+        for(let subclass of this.cachedItemClasses[mongo_item_class_id].subclasses) {
+            if (subclass.id === mongo_item_sub_class) {
+                subclassName = subclass.name;
+                break;
+            }
+        }
         return {
             id: mongo_item_sub_class,
-            name: this.cachedItemClasses[mongo_item_class_id].subclasses[mongo_item_sub_class].name
+            name: subclassName
         }
     }
 };

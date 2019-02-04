@@ -29,7 +29,7 @@ function getItemById(converter, db, itemId) {
 
         // DB CALL
         Items.findOne({id: itemId},
-            async (err, item) => {
+             (err, item) => {
                 if (err) reject(err);
                 if (item === null) resolve(null);
                 const gqlItem = converter.ItemMongoToGql(item);
@@ -66,13 +66,13 @@ function getItemNamesByPartialName(db, partialItemName, only_stackable = false) 
 
         // DB CALL
         Items.find({'name': {'$regex': ".*" + partialItemName + ".*", '$options': 'i'}, ...stackable}).toArray(
-            async (err, items) => {
+             (err, items) => {
                 if (err) reject(err);
                 if (items.length === 0) resolve(null);
                 let itemNames = [];
-                items.forEach(async item => {
-                    itemNames.push(item.name);
-                });
+                for (let item of items){
+                    itemNames.push(item.name)
+                }
                 resolve(itemNames);
             })
     });
@@ -80,7 +80,6 @@ function getItemNamesByPartialName(db, partialItemName, only_stackable = false) 
 
 function getItemsByPartialName(db, partialItemName) {
     return new Promise(async (resolve, reject) => {
-        // console.log(1);
         const items = await getItemNamesByPartialName(db, partialItemName);
         let gqlItems = [];
         for (let itemName of items) {
@@ -113,13 +112,17 @@ function getItemsSupplyByPartialName(db, partialItemName) {
 function getItemClassById(db, classId, subClassId) {
     return new Promise((resolve, reject) => {
         const ItemClasses = db.collection('itemclasses');
-        ItemClasses.findOne({id: classId}, async (err, itemClass) => {
+        ItemClasses.findOne({id: classId},  (err, itemClass) => {
             if (err) reject(err);
             if (!itemClass) {
                 resolve(null)
             }
             const itemSubClass = itemClass.subclasses.filter(i => i.id === subClassId)[0];
+            if (!itemSubClass) {
+                resolve(null)
+            }
             let item_sub_class;
+
             const item_class = {name: itemClass.name, id: itemClass.id};
             if (itemSubClass) {
                 item_sub_class = {name: itemSubClass.name, id: itemSubClass.id};
@@ -163,22 +166,31 @@ function getItemSupplyByName(db, itemName) {
 /// optimizations
 
 
-function getItemsByPartialNameOPTIMIZED(converter, db, partialItemName, only_stackable = false) {
+function getItemsByPartialNameOPTIMIZED(converter, db, partialItemName, only_stackable = false, limit = 25) {
     return new Promise((resolve, reject) => {
         const Items = db.collection('items');
         const stackable = only_stackable ? {"is_stackable": true} : {};
 
         // DB CALL
-        Items.find({'name': {'$regex': ".*" + partialItemName + ".*", '$options': 'i'}, ...stackable}).toArray(
-            async (err, items) => {
+        Items.find({'name': {'$regex': ".*" + partialItemName + ".*", '$options': 'i'}, ...stackable}).limit(limit).toArray(
+             (err, items) => {
                 if (err) reject(err);
                 if (items.length === 0) resolve(null);
                 let gqlItems = [];
-                items.forEach(async item => {
+                items.forEach( item => {
                     gqlItems.push(converter.ItemMongoToGql(item));
                 });
                 resolve(gqlItems);
             })
+    });
+}
+
+function getItemsByPartialNameCount(converter, db, partialItemName, only_stackable = false) {
+    return new Promise((resolve, reject) => {
+        const Items = db.collection('items');
+        const stackable = only_stackable ? {"is_stackable": true} : {};
+
+        resolve(Items.countDocuments({'name': {'$regex': ".*" + partialItemName + ".*", '$options': 'i'}, ...stackable}))
     });
 }
 
@@ -278,5 +290,6 @@ module.exports = {
     getUserByNameAndRealm,
     getItemSupplyByName,
     getItemsSupplyByPartialName,
-    getItemSuppliesByPartialNameOPTIMIZED
+    getItemSuppliesByPartialNameOPTIMIZED,
+    getItemsByPartialNameCount
 };

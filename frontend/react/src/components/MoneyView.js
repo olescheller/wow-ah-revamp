@@ -17,9 +17,9 @@ constructor(props) {
         const silver = Math.floor((money % 10000) / 100);
         const copper = (money % 10000) % 100;
         const coins = [];
-        const goldItem = (<span>{gold} <img  src={goldIcon} alt="gold"/></span>);
-        const silverItem = (<span>{silver} <img  src={silverIcon} alt="silver"/></span>);
-        const copperItem = (<span>{copper} <img  src={copperIcon} alt="copper"/></span>);
+        const goldItem = (<span key="gold">{gold} <img  src={goldIcon} alt="gold"/></span>);
+        const silverItem = (<span key="silver">{silver} <img  src={silverIcon} alt="silver"/></span>);
+        const copperItem = (<span key="copper">{copper} <img  src={copperIcon} alt="copper"/></span>);
 
         if(gold > 0 ) {coins.push(goldItem, silverItem, copperItem)}
         else if(silver > 0) {coins.push(silverItem, copperItem);}

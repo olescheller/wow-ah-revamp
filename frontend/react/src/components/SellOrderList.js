@@ -16,8 +16,8 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 
 const CustomTableCell = withStyles(theme => ({
-    align: 'left',
-    padding:"none"
+    alignLeft: true,
+    paddingDense: true
 }))(TableCell);
 
 let id = 0;
