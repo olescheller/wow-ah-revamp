@@ -187,10 +187,18 @@ function getItemsByPartialNameOPTIMIZED(converter, db, partialItemName, only_sta
 
 function getItemsByPartialNameCount(converter, db, partialItemName, only_stackable = false) {
     return new Promise((resolve, reject) => {
-        const Items = db.collection('items');
+        const SellOrders = db.collection('sellorders');
         const stackable = only_stackable ? {"is_stackable": true} : {};
 
-        resolve(Items.countDocuments({'name': {'$regex': ".*" + partialItemName + ".*", '$options': 'i'}, ...stackable}))
+            SellOrders.aggregate([
+                { $match: {'item_name': {'$regex': ".*" + partialItemName + ".*", '$options': 'i'},  ...stackable}} ,
+                { $group: { _id: "$item_name"}, },
+                { $sort: {item_name: 1}}
+
+                ]).toArray((err, items) => {
+            resolve(items.length)
+
+            })
     });
 }
 
