@@ -14,7 +14,7 @@ export const itemSupplyRequestAction = (itemNameTerm, itemCategory) => ({
     payload: {term: itemNameTerm, category: itemCategory}
 });
 export const FETCH_ITEM_SUPPLY_SUCCEEDED = "FETCH_ITEM_SUPPLY_SUCCEEDED";
-export const itemSupplySucceededAction = (itemSupplies) => ({
+export const itemSupplySucceededAction = (itemSupplies, amount) => ({
     type: FETCH_ITEM_SUPPLY_SUCCEEDED,
-    payload: itemSupplies
+    payload: {itemSupplies, amount}
 });

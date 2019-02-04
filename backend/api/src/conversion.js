@@ -9,7 +9,6 @@ module.exports = class MongoToGqlConverter {
         this.ItemClassesCollection.find({}).toArray((err, itemClasses) => {
             if(err) return;
             this.cachedItemClasses = itemClasses;
-            console.log(this.cachedItemClasses)
         });
     }
 

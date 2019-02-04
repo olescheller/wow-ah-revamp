@@ -1,6 +1,6 @@
 import {all, call, put, takeEvery, takeLatest} from 'redux-saga/effects'
 
-import {dummyApiCall, downloadItemsSupplyByPartialName} from "../api/graphql_api";
+import {dummyApiCall, downloadItemsSupplyByPartialName, fetchAmountOfItemSupplies} from "../api/graphql_api";
 
 import {itemSupplySucceededAction} from "./actions/itemActions";
 import {setLoading} from "./actions/actions";
@@ -25,7 +25,8 @@ export function* fetchItemsSupplyByPartialName(action) {
     yield put(setLoading(true))
     try {
         const data = yield call(downloadItemsSupplyByPartialName, action.payload.term);
-        yield put(itemSupplySucceededAction(data))
+        const amount = yield call(fetchAmountOfItemSupplies, action.payload.term);
+        yield put(itemSupplySucceededAction(data, amount))
         yield put(setLoading(false));
     } catch (error) {
         yield put({type: "FETCH_ITEM_SUPPLY_FAILED", error})

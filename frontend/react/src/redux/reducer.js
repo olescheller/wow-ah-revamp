@@ -1,6 +1,6 @@
 import {
     INCREMENT,
-    SELECT_CATEGORY, SET_LOADING} from "./actions/actions";
+    SELECT_CATEGORY, SET_LOADING, SET_INFO_BOX} from "./actions/actions";
 import {
     AVERAGE_ITEM_PRICE_REQUESTED,
     FETCH_ITEM_SUPPLY_REQUESTED,
@@ -19,6 +19,8 @@ const initState = {
     },
     count: 1,
     isLoading: false,
+    showInfoBox: false,
+    amountOfItemSupplies: 0,
 };
 
 export default (state = initState, action) => {
@@ -36,9 +38,17 @@ export default (state = initState, action) => {
             tempBuyQuantity[action.payload.itemId] = action.payload.amount;
             return {...state, buyQuantity: tempBuyQuantity };
         case FETCH_ITEM_SUPPLY_SUCCEEDED:
-            return {...state, itemSupplies: action.payload};
+            let amount = 0;
+            let showInfoBox = false;
+            if(action.payload.amount > 25) {
+                amount = action.payload.amount;
+                showInfoBox = true;
+            }
+            return {...state, itemSupplies: action.payload.itemSupplies, amountOfItemSupplies: amount, showInfoBox: showInfoBox};
         case SET_LOADING:
             return {...state, isLoading: action.payload};
+        case SET_INFO_BOX:
+            return {...state, showInfoBox: action.payload};
         default:
             return state
     }

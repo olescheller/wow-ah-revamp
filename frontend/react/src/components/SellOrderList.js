@@ -14,6 +14,9 @@ import './itemsupply.css'
 import { withStyles } from '@material-ui/core/styles';
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
+import InfoBox from './InfoBox';
+import ReactDOM from 'react-dom'
+
 
 const CustomTableCell = withStyles(theme => ({
     alignLeft: true,
@@ -55,6 +58,7 @@ class SellOrderList extends React.Component {
         const { classes } = this.props;
 
         return (
+            <div>
             <Paper elevation={1} className={classes.root}>
                 <Typography variant="h5" component="h3">
                     Buy
@@ -91,8 +95,8 @@ class SellOrderList extends React.Component {
                                        onChange={(e) => this.onInputQty(e, itemSupply.item.id)}
                                 />
                             </CustomTableCell>
-                            <CustomTableCell padding="dense"><MoneyView money={762362}></MoneyView>
-                                <MoneyView money={929839283}></MoneyView></CustomTableCell>
+                            <CustomTableCell padding="dense"><MoneyView money={762362}/>
+                                <MoneyView money={929839283}/></CustomTableCell>
                             <TableCell  padding="dense" align="right">
                                 <Button variant="contained" color="primary"> Buy</Button></TableCell>
                         </TableRow>
@@ -100,6 +104,8 @@ class SellOrderList extends React.Component {
                 </TableBody>
             </Table>
             </Paper>
+                <InfoBox type="moreItems"></InfoBox>
+            </div>
         )
     }
 }

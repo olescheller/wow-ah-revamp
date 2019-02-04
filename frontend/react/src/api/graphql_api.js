@@ -28,6 +28,16 @@ export const dummyApiCall = (id) => {
 };
 
 
+export async function fetchAmountOfItemSupplies(partialName) {
+    return new Promise((resolve, reject) => {
+        const qry = `{items_count(partialItemName: \"${partialName}\")}`;
+        axios.post("http://localhost:4000/", {"query": qry}).then(response => {
+
+            resolve(response.data.data.items_count);
+        })
+    })
+}
+
 export async function downloadItemsSupplyByPartialName(partialName) {
 
     return new Promise((resolve, reject) => {

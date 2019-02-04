@@ -1,0 +1,35 @@
+.info {
+    background-color: rgba(255, 215, 0, 0.6);
+    color: white;
+    padding: 0.5em 0.5em;
+    border-radius: 3px;
+    -webkit-box-shadow: 0 1px 3px 0px rgba(50,50,50,0.5);
+    -moz-box-shadow: 1px 1px 1px 0px rgba(50,50,50,0.5);
+    box-shadow: 1px 1px 1px 0px rgba(50,50,50,0.5);
+    align-content: center;
+    display: flex;
+    align-items: center;
+    margin: 0.5em 0;
+    position: relative;
+
+}
+
+#space {
+    margin: 0 1.2em;
+}
+
+.info .icon {
+    color: rgb(80,80,80);
+    display: inline;
+    margin: 0 0.5em;
+    position: absolute;;
+    left: 0
+}
+
+.info .icon2 {
+    color: rgb(80,80,80);
+    display: inline;
+    margin: 0 0.2em;
+    position: absolute;
+    right: 0
+}

@@ -18,7 +18,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
-
 import ShoppingIcon from '@material-ui/icons/ShoppingCart';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -177,6 +176,7 @@ class DrawerLayout extends React.Component {
     };
     handleOnSearchKeyPress = (e) => {
         if (e.key === 'Enter') {
+            window.scrollTo(0, 0);
             const searchValue = e.target.value;
             this.props.dispatch(itemSupplyRequestAction(searchValue))
         }
