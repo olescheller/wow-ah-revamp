@@ -11,8 +11,9 @@ constructor(props) {
 }
 
     renderMoney = () => {
+        const label = this.props.label ? this.props.label : '';
         //100 money = 1 silver,  10.000 money = 1 gold
-        const money = this.props.money;
+        const money = Math.floor(this.props.money);
         const gold = Math.floor(money/10000);
         const silver = Math.floor((money % 10000) / 100);
         const copper = (money % 10000) % 100;
@@ -25,7 +26,7 @@ constructor(props) {
         else if(silver > 0) {coins.push(silverItem, copperItem);}
         else {coins.push(copperItem);}
         return(
-            <div id='coins'>{coins}</div>
+            <div id='coins'>{coins} {label}</div>
         )
     };
 

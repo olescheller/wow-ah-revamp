@@ -9,13 +9,15 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import {connect} from "react-redux";
-import {QueryAverageItemPriceAction} from "../redux/actions/itemActions";
+import {buyQuantityChangedAction, queryAverageItemPriceAction} from "../redux/actions/itemActions";
 import './itemsupply.css'
 import { withStyles } from '@material-ui/core/styles';
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import InfoBox from './InfoBox';
-import ReactDOM from 'react-dom'
+import {quantityExceededAction, setLoading} from "../redux/actions/actions";
+import Input from "@material-ui/core/es/Input/Input";
+import TextField from "@material-ui/core/es/TextField/TextField";
 
 
 const CustomTableCell = withStyles(theme => ({
@@ -46,13 +48,38 @@ class SellOrderList extends React.Component {
 
     constructor(props) {
         super(props);
-
+        console.log(this.props.price)
     }
 
-    onInputQty = (e, itemId) => {
-        const buyQty = e.target.value;
-        this.props.dispatch(QueryAverageItemPriceAction(buyQty, itemId))
+    getInputField = (itemSupply) => {
+        if(this.props.quantityExceeded.indexOf(itemSupply.item.id) !== -1 ) {
+            return (
+                <TextField error variant="outlined" margin="normal" className="buyQuantity" value={this.props.buyQuantity[itemSupply.item.id]}
+                           onChange={(e) => this.onInputQty(e, itemSupply)}
+                />
+            )
+        }
+        return (
+            <TextField variant="outlined" margin="normal" className="buyQuantity" value={this.props.buyQuantity[itemSupply.item.id]}
+                       onChange={(e) => this.onInputQty(e, itemSupply)}
+            />
+        );
     };
+
+    onInputQty = (e, itemSupply) => {
+        const buyQty = e.target.value;
+        console.log(buyQty, itemSupply.quantity)
+        if(buyQty > itemSupply.quantity) {
+            //set error
+            this.props.dispatch(quantityExceededAction(itemSupply.item.id));
+            this.props.dispatch(setLoading(false));
+        }
+        else {
+            this.props.dispatch(buyQuantityChangedAction(itemSupply.item.id, buyQty));
+            this.props.dispatch(queryAverageItemPriceAction(buyQty, itemSupply.item.id));
+            }
+        }
+
 
     render() {
         const { classes } = this.props;
@@ -69,10 +96,10 @@ class SellOrderList extends React.Component {
                     <TableRow>
                         <CustomTableCell>Icon</CustomTableCell>
                         <CustomTableCell width="300">Item name</CustomTableCell>
-                        <CustomTableCell width="320">Curr. min. buyout</CustomTableCell>
-                        <CustomTableCell width="100">Qty available</CustomTableCell>
-                        <CustomTableCell width="75">Buy quantity</CustomTableCell>
-                        <CustomTableCell width="300">Price per unit & Total</CustomTableCell>
+                        <CustomTableCell width="220">Curr. min. buyout</CustomTableCell>
+                        <CustomTableCell width="150">Qty available</CustomTableCell>
+                        <CustomTableCell width="150">Buy quantity</CustomTableCell>
+                        <CustomTableCell width="250">Price per unit & Total</CustomTableCell>
                         <CustomTableCell></CustomTableCell>
                     </TableRow>
                 </TableHead>
@@ -91,12 +118,10 @@ class SellOrderList extends React.Component {
                             <CustomTableCell  padding="dense"><MoneyView money={itemSupply.min_price}></MoneyView></CustomTableCell>
                             <CustomTableCell>{itemSupply.quantity}</CustomTableCell>
                             <CustomTableCell padding="dense">
-                            <input className="buyQuantity" value={this.props.buyQuantity[itemSupply.item.id]}
-                                       onChange={(e) => this.onInputQty(e, itemSupply.item.id)}
-                                />
+                                {this.getInputField(itemSupply)}
                             </CustomTableCell>
-                            <CustomTableCell padding="dense"><MoneyView money={762362}/>
-                                <MoneyView money={929839283}/></CustomTableCell>
+                            <CustomTableCell padding="dense"><MoneyView label="per unit" money={this.props.price[itemSupply.item.id].perUnit}/>
+                                <MoneyView label="total" money={this.props.price[itemSupply.item.id].total}/></CustomTableCell>
                             <TableCell  padding="dense" align="right">
                                 <Button variant="contained" color="primary"> Buy</Button></TableCell>
                         </TableRow>
@@ -115,4 +140,4 @@ SellOrderList.propTypes = {
 };
 
 
-export default connect(({itemSupplies, buyQuantity}) => ({itemSupplies, buyQuantity}))(withStyles(styles)(SellOrderList));
+export default connect(({itemSupplies, buyQuantity, price, quantityExceeded}) => ({itemSupplies, buyQuantity, price, quantityExceeded}))(withStyles(styles)(SellOrderList));

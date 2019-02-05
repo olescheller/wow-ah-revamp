@@ -270,6 +270,51 @@ function getItemSuppliesByPartialNameOPTIMIZED(converter, db, partialItemName) {
     })
 }
 
+function getItemsPrice(db, itemId, amount) {
+    return new Promise((resolve, reject) => {
+        const SellOrders = db.collection('sellorders');
+        SellOrders.find({item_id: itemId}).sort({price: 1}).toArray((err, sellOrders) => {
+            if (err) reject(err);
+            if (sellOrders.length === 0){
+                resolve(null);
+                return;
+            }
+            const quantity = sellOrders.reduce((acc, curr) => {
+                return acc + curr.quantity;
+            }, 0);
+            console.log(amount, quantity)
+            if(amount > quantity) {
+                reject("The amount of item supplies does not match the amount requested")
+            }
+            else if(amount === 0) {
+                resolve({perUnit: 0, total: 0});
+
+            }
+            else {
+                let i = 0;
+                let total = 0;
+                let amountLeft = amount;
+                while(amountLeft > 0 && i < sellOrders.length) {
+                    if(sellOrders[i].quantity < amountLeft) {
+                        total += sellOrders[i].price * sellOrders[i].quantity;
+                        amountLeft = amount - sellOrders[i].quantity;
+                    }
+                    else {
+                        total += sellOrders[i].price * amountLeft;
+                        amountLeft = 0;
+                    }
+                    i++;
+                }
+                let perUnit =(total/amount);
+                resolve({
+                    perUnit,
+                    total,
+                });
+            }
+        });
+    });
+}
+
 //
 // getItemByName(db, itemName).then((item) => {
 //     const SellOrders = db.collection('sellorders');
@@ -297,7 +342,7 @@ module.exports = {
     getItemById,
     getUserByNameAndRealm,
     getItemSupplyByName,
-    getItemsSupplyByPartialName,
     getItemSuppliesByPartialNameOPTIMIZED,
-    getItemsByPartialNameCount
+    getItemsByPartialNameCount,
+    getItemsPrice,
 };

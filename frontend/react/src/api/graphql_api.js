@@ -27,6 +27,16 @@ export const dummyApiCall = (id) => {
     });
 };
 
+export async function downloadAverageItemPrice(itemId, amount) {
+    return new Promise((resolve, reject) => {
+        const qry = `{items_price(itemId: ${itemId}, amount: ${amount}) {perUnit, total}}`;
+        console.log(qry)
+        axios.post("http://localhost:4000/", {"query": qry}).then(response => {
+
+            resolve(response.data.data.items_price);
+        })
+    })
+}
 
 export async function fetchAmountOfItemSupplies(partialName) {
     return new Promise((resolve, reject) => {

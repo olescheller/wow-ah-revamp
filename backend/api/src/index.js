@@ -2,7 +2,7 @@ const MongoToGqlConverter = require( "./conversion");
 
 const {GraphQLServer} = require('graphql-yoga')
 const {getItemsByPartialNameCount, getItemsByPartialName,getItemSuppliesByPartialNameOPTIMIZED,
-    getItemsSupplyByPartialName, getItemClassById, getItemById, getUserByNameAndRealm, getItemSupplyByName} = require('./db');
+    getItemClassById, getItemById, getUserByNameAndRealm, getItemSupplyByName, getItemsPrice} = require('./db');
 const {MongoClient} = require('mongodb');
 const MONGO_URL = 'mongodb://localhost:27017/';
 const DB_NAME = 'wow_data';
@@ -22,6 +22,7 @@ type Query {
   item_supply(itemName: String): ItemSupply
   items_supply(partialItemName: String): [ItemSupply]
   items_count(partialItemName: String): Int
+  items_price(itemId: Float!, amount: Int!): Price
   user(name: String, realm: String): User
 }
 
@@ -56,6 +57,11 @@ type SubClass {
   name: String
 }
 
+type Price {
+  perUnit: Float!
+  total: Float!
+}
+
 type User {
   name: String!
   money: Float!
@@ -83,6 +89,10 @@ type User {
             },
             items: async(_, {partialItemName}) => {
                  return await getItemsByPartialName(db, partialItemName);
+            },
+            items_price: async(_, {itemId, amount}) => {
+                console.log({itemId, amount})
+                return await getItemsPrice(db, itemId, amount);
             },
             user: async (_, {name, realm}) => {
                 return await getUserByNameAndRealm(db, name, realm)

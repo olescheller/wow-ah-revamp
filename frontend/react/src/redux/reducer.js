@@ -1,8 +1,8 @@
 import {
     INCREMENT,
-    SELECT_CATEGORY, SET_LOADING, SET_INFO_BOX} from "./actions/actions";
+    SELECT_CATEGORY, SET_LOADING, SET_INFO_BOX, QUANTITY_EXCEEDED} from "./actions/actions";
 import {
-    AVERAGE_ITEM_PRICE_REQUESTED,
+    BUY_QUANTITY_CHANGED, AVERAGE_ITEM_PRICE_SUCCEEDED,
     FETCH_ITEM_SUPPLY_REQUESTED,
     FETCH_ITEM_SUPPLY_SUCCEEDED, SEARCH_VALUE_CHANGED
 } from "./actions/itemActions";
@@ -17,10 +17,14 @@ const initState = {
     buyQuantity: {
         "2592": 5
     },
+    price: {
+        "1": {perUnit: 1, total: 10}
+    },
     count: 1,
     isLoading: false,
     showInfoBox: false,
     amountOfItemSupplies: 0,
+    quantityExceeded: [],
 };
 
 export default (state = initState, action) => {
@@ -33,10 +37,31 @@ export default (state = initState, action) => {
         //     return {...state, searchTerm: action.payload.term};
         case SEARCH_VALUE_CHANGED:
             return {...state, searchTerm: action.payload.term}; // missing: category (combine main & subcategory)
-        case AVERAGE_ITEM_PRICE_REQUESTED:
-            const tempBuyQuantity = {...state.buyQuantity};
+        case BUY_QUANTITY_CHANGED:
+            let tempBuyQuantity = {...state.buyQuantity};
             tempBuyQuantity[action.payload.itemId] = action.payload.amount;
-            return {...state, buyQuantity: tempBuyQuantity };
+            let tmpQuantityExceeded = [...state.quantityExceeded]
+            if(tmpQuantityExceeded.indexOf(action.payload.itemId) !== -1) {
+                tmpQuantityExceeded = tmpQuantityExceeded.filter(i => i !== action.payload.itemId);
+            }
+            if(action.payload.amount === '') {
+                let tmpPrice = {...state.price}
+                tmpPrice[action.payload.itemId] = {perUnit:0, total:0};
+                return {...state, buyQuantity: tempBuyQuantity, price: tmpPrice};
+            }
+            return {...state, buyQuantity: tempBuyQuantity, quantityExceeded: tmpQuantityExceeded };
+        case QUANTITY_EXCEEDED:
+            tempBuyQuantity = {...state.buyQuantity};
+            tempBuyQuantity[action.payload.itemId] = action.payload.amount;
+            tmpPrice = {...state.price}
+            tmpPrice[action.payload.itemId] = {perUnit:0, total:0};
+            tmpQuantityExceeded = [...state.quantityExceeded];
+            tmpQuantityExceeded.push(action.payload.itemId);
+            return {...state, price: tmpPrice, buyQuantity: tempBuyQuantity, quantityExceeded: tmpQuantityExceeded};
+        case AVERAGE_ITEM_PRICE_SUCCEEDED:
+            const tempPrice = {...state.price};
+            tempPrice[action.payload.itemId] = {perUnit: action.payload.perUnit, total: action.payload.total};
+            return {...state, price: tempPrice};
         case FETCH_ITEM_SUPPLY_SUCCEEDED:
             let amount = 0;
             let showInfoBox = false;
@@ -44,7 +69,11 @@ export default (state = initState, action) => {
                 amount = action.payload.amount;
                 showInfoBox = true;
             }
-            return {...state, itemSupplies: action.payload.itemSupplies, amountOfItemSupplies: amount, showInfoBox: showInfoBox};
+            let tmpPrice = {...state.price};
+            for(let supply of action.payload.itemSupplies) {
+                tmpPrice[supply.item.id] = {perUnit:0, total:0};
+            }
+            return {...state, itemSupplies: action.payload.itemSupplies, amountOfItemSupplies: amount, showInfoBox: showInfoBox, price: tmpPrice};
         case SET_LOADING:
             return {...state, isLoading: action.payload};
         case SET_INFO_BOX:
