@@ -1,8 +1,15 @@
 const MongoToGqlConverter = require( "./conversion");
 
-const {GraphQLServer} = require('graphql-yoga')
-const {getItemsByPartialNameCount, getItemsByPartialName,getItemSuppliesByPartialNameOPTIMIZED,
-    getItemClassById, getItemById, getUserByNameAndRealm, getItemSupplyByName, getItemsPrice} = require('./db');
+const {GraphQLServer, withFilter, PubSub} = require('graphql-yoga');
+
+const {getItemsByPartialNameCount,
+    getItemsByPartialName,getItemSuppliesByPartialNameOPTIMIZED,
+    getItemClassById,
+    getItemById,
+    getUserByNameAndRealm,
+    getItemSupplyByName,
+    getItemsPrice} = require('./db');
+
 const {MongoClient} = require('mongodb');
 const MONGO_URL = 'mongodb://localhost:27017/';
 const DB_NAME = 'wow_data';
@@ -28,6 +35,11 @@ type Query {
 
 type Mutation {
   createUser(name: String!): User!
+  fakeBuyMutation(itemId: Int, total: Float, perUnit: Float): Price
+}
+
+type Subscription {
+price(itemId: Int): Price
 }
 
 type ItemSupply{
@@ -106,14 +118,33 @@ type User {
                 };
                 users = [...users, newUser];
                 return newUser;
+            },
+            fakeBuyMutation: async (_, {itemId, total, perUnit}) => {
+                console.log(perUnit)
+                pubsub.publish("PRICE_CHANGE", {itemId})
+                const price = {perUnit: perUnit + 1, total: total + 1}
+                console.log(price)
+                return price;
             }
+        },
+
+        Subscription: {
+            price: {
+                subscribe: withFilter((root, args, {pubsub}) => pubsub.asyncIterator('PRICE_CHANGE'),
+                    (payload, variables) => {
+                        return true;
+                    }
+                )
+            },
         },
     };
 
 // 3
+    const pubsub = new PubSub();
     const server = new GraphQLServer({
         typeDefs,
         resolvers,
+        context: { pubsub }
     });
 
     return server.start({cors: {

@@ -129,7 +129,7 @@ class SellOrderList extends React.Component {
                 </TableBody>
             </Table>
             </Paper>
-                <InfoBox type="moreItems"></InfoBox>
+                <InfoBox type="moreItems"/>
             </div>
         )
     }
