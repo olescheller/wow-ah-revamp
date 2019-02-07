@@ -295,11 +295,13 @@ function getItemsPrice(db, itemId, amount) {
                 let total = 0;
                 let amountLeft = amount;
                 while(amountLeft > 0 && i < sellOrders.length) {
-                    if(sellOrders[i].quantity < amountLeft) {
+                    if(sellOrders[i].quantity <= amountLeft) {
+                        // Case buy whole sell order
                         total += sellOrders[i].price * sellOrders[i].quantity;
-                        amountLeft = amount - sellOrders[i].quantity;
+                        amountLeft = amountLeft - sellOrders[i].quantity;
                     }
                     else {
+                        // Case buy parts of sell order
                         total += sellOrders[i].price * amountLeft;
                         amountLeft = 0;
                     }
