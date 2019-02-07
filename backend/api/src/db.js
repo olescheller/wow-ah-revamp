@@ -274,7 +274,6 @@ function getItemsPrice(db, itemId, amount) {
     return new Promise((resolve, reject) => {
         const SellOrders = db.collection('sellorders');
         SellOrders.find({item_id: itemId}).sort({price: 1}).toArray((err, sellOrders) => {
-            console.log(sellOrders)
             if (err) reject(err);
             if (sellOrders.length === 0){
                 resolve(null);
@@ -296,9 +295,6 @@ function getItemsPrice(db, itemId, amount) {
                 let total = 0;
                 let amountLeft = amount;
                 while(amountLeft > 0 && i < sellOrders.length) {
-                    console.log(`amount: ${amount}, amountLeft: ${amountLeft}`)
-                    console.log(sellOrders[i])
-
                     if(sellOrders[i].quantity <= amountLeft) {
                         // Case buy whole sell order
                         total += sellOrders[i].price * sellOrders[i].quantity;
@@ -310,13 +306,8 @@ function getItemsPrice(db, itemId, amount) {
                         amountLeft = 0;
                     }
                     i++;
-                    console.log(total)
                 }
                 let perUnit =(total/amount);
-                console.log({
-                    perUnit,
-                    total,
-                })
                 resolve({
                     perUnit,
                     total,
