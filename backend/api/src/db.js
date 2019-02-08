@@ -282,7 +282,6 @@ function getItemsPrice(db, itemId, amount) {
             const quantity = sellOrders.reduce((acc, curr) => {
                 return acc + curr.quantity;
             }, 0);
-            console.log(amount, quantity)
             if(amount > quantity) {
                 reject("The amount of item supplies does not match the amount requested")
             }
@@ -319,6 +318,7 @@ function getItemsPrice(db, itemId, amount) {
 
 
 function buyItems(db, userName, itemId, amount, givenTotal, givenPerUnit) {
+    console.log(userName)
     return new Promise((resolve, reject) => {
         const SellOrders = db.collection('sellorders');
         SellOrders.find({item_id: itemId}).sort({price: 1}).toArray((err, sellOrders) => {
@@ -330,7 +330,6 @@ function buyItems(db, userName, itemId, amount, givenTotal, givenPerUnit) {
             const quantity = sellOrders.reduce((acc, curr) => {
                 return acc + curr.quantity;
             }, 0);
-            console.log(amount, quantity)
             if(amount > quantity) {
                 reject("The amount of item supplies does not match the amount requested anymore")
             }

@@ -21,6 +21,21 @@ export const buyQuantityChangedAction = (itemId, amount) => ({
     payload: {amount, itemId}
 });
 
+export const BUY_ITEMS_REQUESTED = "BUY_ITEMS_REQUESTED";
+export const buyItemAction = (userName, itemId, amount, total, perItem) => ({
+    type: BUY_ITEMS_REQUESTED,
+    payload:  {userName, itemId, amount, total, perItem},
+});
+
+export const BUY_ITEMS_SUCCEEDED = "BUY_ITEMS_SUCCEEDED";
+export const buyItemsSucceeded = (buyItems) => {
+    console.log({buyItems});
+    return {
+        type: BUY_ITEMS_SUCCEEDED,
+        payload: buyItems,
+    };
+}
+
 export const AVERAGE_ITEM_PRICE_REQUESTED = "AVERAGE_ITEM_PRICE_REQUESTED";
 export const queryAverageItemPriceAction = (amount, itemId) => ({
     type: AVERAGE_ITEM_PRICE_REQUESTED,

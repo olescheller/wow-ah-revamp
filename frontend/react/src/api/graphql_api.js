@@ -27,10 +27,19 @@ export const dummyApiCall = (id) => {
     });
 };
 
+export async function makePurchase(userName, itemId, amount, total, perUnit) {
+    return new Promise((resolve, reject) => {
+        const mutation = `mutation {buyItems(userName: "Elandura-Silvermoon", itemId: ${itemId},amount: ${amount}, total: ${total}, perUnit: ${perUnit}) {money, amount, itemId ,price}}`;
+        axios.post("http://localhost:4000/", {"query": mutation, operationName: null, variables: {}}).then(response => {
+            console.log(response.data.data.buyItems)
+            resolve(response.data.data.buyItems);
+        })
+    })
+}
+
 export async function downloadAverageItemPrice(itemId, amount) {
     return new Promise((resolve, reject) => {
         const qry = `{items_price(itemId: ${itemId}, amount: ${amount}) {perUnit, total}}`;
-        console.log(qry)
         axios.post("http://localhost:4000/", {"query": qry}).then(response => {
 
             resolve(response.data.data.items_price);

@@ -9,7 +9,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import {connect} from "react-redux";
-import {buyQuantityChangedAction, queryAverageItemPriceAction} from "../redux/actions/itemActions";
+import {buyItemAction, buyQuantityChangedAction, queryAverageItemPriceAction} from "../redux/actions/itemActions";
 import './itemsupply.css'
 import { withStyles } from '@material-ui/core/styles';
 import Paper from "@material-ui/core/Paper";
@@ -50,6 +50,13 @@ class SellOrderList extends React.Component {
         super(props);
         console.log(this.props.price)
     }
+
+    handleBuyClick = (itemId) => {
+        const {perUnit, total} = this.props.price[itemId];
+        const amount = this.props.buyQuantity[itemId];
+        const userName = "Elandura-Silvermoon";
+        this.props.dispatch(buyItemAction(userName, itemId, amount, total, perUnit))
+    };
 
     getInputField = (itemSupply) => {
         if(this.props.quantityExceeded.indexOf(itemSupply.item.id) !== -1 ) {
@@ -123,7 +130,7 @@ class SellOrderList extends React.Component {
                             <CustomTableCell padding="dense"><MoneyView label="per unit" money={this.props.price[itemSupply.item.id].perUnit}/>
                                 <MoneyView label="total" money={this.props.price[itemSupply.item.id].total}/></CustomTableCell>
                             <TableCell  padding="dense" align="right">
-                                <Button variant="contained" color="primary"> Buy</Button></TableCell>
+                                <Button onClick={() => this.handleBuyClick(itemSupply.item.id)}variant="contained" color="primary"> Buy</Button></TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

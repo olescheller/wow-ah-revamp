@@ -4,7 +4,7 @@ import {
 import {
     BUY_QUANTITY_CHANGED, AVERAGE_ITEM_PRICE_SUCCEEDED,
     FETCH_ITEM_SUPPLY_REQUESTED,
-    FETCH_ITEM_SUPPLY_SUCCEEDED, SEARCH_VALUE_CHANGED
+    FETCH_ITEM_SUPPLY_SUCCEEDED, SEARCH_VALUE_CHANGED, BUY_ITEM_SUCCEEDED, BUY_ITEMS_SUCCEEDED
 } from "./actions/itemActions";
 
 const initState = {
@@ -39,7 +39,7 @@ export default (state = initState, action) => {
             return {...state, searchTerm: action.payload.term}; // missing: category (combine main & subcategory)
         case BUY_QUANTITY_CHANGED:
             let tempBuyQuantity = {...state.buyQuantity};
-            tempBuyQuantity[action.payload.itemId] = action.payload.amount;
+            tempBuyQuantity[action.payload.itemId] = parseInt(action.payload.amount);
             let tmpQuantityExceeded = [...state.quantityExceeded]
             if(tmpQuantityExceeded.indexOf(action.payload.itemId) !== -1) {
                 tmpQuantityExceeded = tmpQuantityExceeded.filter(i => i !== action.payload.itemId);
@@ -52,7 +52,7 @@ export default (state = initState, action) => {
             return {...state, buyQuantity: tempBuyQuantity, quantityExceeded: tmpQuantityExceeded };
         case QUANTITY_EXCEEDED:
             tempBuyQuantity = {...state.buyQuantity};
-            tempBuyQuantity[action.payload.itemId] = action.payload.amount;
+            tempBuyQuantity[action.payload.itemId] = parseInt(action.payload.amount);
             tmpPrice = {...state.price}
             tmpPrice[action.payload.itemId] = {perUnit:0, total:0};
             tmpQuantityExceeded = [...state.quantityExceeded];
@@ -66,7 +66,7 @@ export default (state = initState, action) => {
             let amount = 0;
             let showInfoBox = false;
             if(action.payload.amount > 25) {
-                amount = action.payload.amount;
+                amount = parseInt(action.payload.amount);
                 showInfoBox = true;
             }
             let tmpPrice = {...state.price};
@@ -74,6 +74,9 @@ export default (state = initState, action) => {
                 tmpPrice[supply.item.id] = {perUnit:0, total:0};
             }
             return {...state, itemSupplies: action.payload.itemSupplies, amountOfItemSupplies: amount, showInfoBox: showInfoBox, price: tmpPrice};
+
+        case BUY_ITEMS_SUCCEEDED:
+            return {...state, money: action.payload.money}
         case SET_LOADING:
             return {...state, isLoading: action.payload};
         case SET_INFO_BOX:
