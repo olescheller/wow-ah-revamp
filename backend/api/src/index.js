@@ -1,17 +1,18 @@
-const MongoToGqlConverter = require( "./conversion");
+const MongoToGqlConverter = require("./conversion");
 
 const {GraphQLServer, withFilter, PubSub} = require('graphql-yoga');
 
 const {
     createSellOrder,
     getItemsByPartialNameCount,
-    getItemsByPartialName,getItemSuppliesByPartialNameOPTIMIZED,
+    getItemsByPartialName, getItemSuppliesByPartialNameOPTIMIZED,
     getItemClassById,
     getItemById,
     getUserByNameAndRealm,
     getItemSupplyByName,
     getItemsPrice,
-    buyItems} = require('./db');
+    buyItems
+} = require('./db');
 
 const {MongoClient} = require('mongodb');
 const MONGO_URL = 'mongodb://localhost:27017/';
@@ -102,19 +103,19 @@ type User {
             item_class: async (_, {id}) => {
                 return await getItemClassById(db, id)
             },
-            item_supply: async(_, {itemName}) => {
+            item_supply: async (_, {itemName}) => {
                 return await getItemSupplyByName(db, itemName);
             },
-            items_supply: async(_, {partialItemName}) => {
+            items_supply: async (_, {partialItemName}) => {
                 return await getItemSuppliesByPartialNameOPTIMIZED(converter, db, partialItemName);
             },
-            items_count: async(_, {partialItemName}) => {
+            items_count: async (_, {partialItemName}) => {
                 return await getItemsByPartialNameCount(converter, db, partialItemName);
             },
-            items: async(_, {partialItemName}) => {
-                 return await getItemsByPartialName(db, partialItemName);
+            items: async (_, {partialItemName}) => {
+                return await getItemsByPartialName(db, partialItemName);
             },
-            items_price: async(_, {itemId, amount}) => {
+            items_price: async (_, {itemId, amount}) => {
                 console.log({itemId, amount})
                 return await getItemsPrice(db, itemId, amount);
             },
@@ -141,10 +142,9 @@ type User {
                 return await buyItems(db, userName, itemId, amount, total, perUnit);
                 //publish to pubsub
             },
-            },
             createSellOrder: async (_, {itemId, seller_name, seller_realm, quantity, price}) => {
                 return await createSellOrder(converter, db, itemId, seller_name, seller_realm, quantity, price)
-            }
+            },
         },
 
         Subscription: {
@@ -161,15 +161,17 @@ type User {
     const server = new GraphQLServer({
         typeDefs,
         resolvers,
-        context: { pubsub }
+        context: {pubsub}
     });
 
-    return server.start({cors: {
+    return server.start({
+        cors: {
             "origin": "*",
             "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
             "preflightContinue": false,
             "optionsSuccessStatus": 204
-        }});
+        }
+    });
 };
 
 
