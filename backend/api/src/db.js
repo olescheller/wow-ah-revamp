@@ -282,7 +282,6 @@ function getItemsPrice(db, itemId, amount) {
             const quantity = sellOrders.reduce((acc, curr) => {
                 return acc + curr.quantity;
             }, 0);
-            console.log(amount, quantity)
             if(amount > quantity) {
                 reject("The amount of item supplies does not match the amount requested")
             }
@@ -317,26 +316,36 @@ function getItemsPrice(db, itemId, amount) {
     });
 }
 
-//
-// getItemByName(db, itemName).then((item) => {
-//     const SellOrders = db.collection('sellorders');
-//     SellOrders.find({item_id: item.id}).toArray((err, sellOrders) => {
-//         if (err) reject(err);
-//         if (sellOrders.length === 0) resolve(null);
-//         const quantity = sellOrders.reduce((acc, curr) => {
-//             return acc + curr.quantity;
-//         }, 0);
-//         const prices = sellOrders.map(s => s.price);
-//         const min_price = Math.min(...prices);
-//         resolve({
-//             id: item.id,
-//             item: item,
-//             quantity,
-//             min_price
-//         })
-//     });
-// });
+function createSellOrder(converter, db , itemId, seller_name, seller_realm, quantity, price) {
+    console.log(itemId, seller_name, seller_realm, quantity, price);
 
+
+    return new Promise(async (resolve, reject) => {
+        // Get item name
+        let item =  await getItemById(converter, db, itemId);
+        console.log(item);
+
+        const SellOrders = db.collection('sellorders');
+        let result = await SellOrders.insertOne({
+            item_id: itemId,
+            item_name: item.name,
+            seller: seller_name,
+            seller_realm: seller_realm,
+            seller_full: `${seller_name}-${seller_realm}`,
+            price: price,
+            quantity: quantity
+        });
+
+        if (result.result.n === result.result.ok) {
+            resolve(0)
+            // TODO: On success: Remove items from seller inventory
+        } else
+            reject(1);
+
+
+    })
+
+}
 
 module.exports = {
     getItemsByPartialName,
@@ -347,4 +356,5 @@ module.exports = {
     getItemSuppliesByPartialNameOPTIMIZED,
     getItemsByPartialNameCount,
     getItemsPrice,
+    createSellOrder,
 };
