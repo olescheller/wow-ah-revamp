@@ -120,9 +120,8 @@ type User {
                 return newUser;
             },
             fakeBuyMutation: async (_, {itemId, total, perUnit}) => {
-                console.log(perUnit)
-                pubsub.publish("PRICE_CHANGE", {itemId})
                 const price = {perUnit: perUnit + 1, total: total + 1}
+                pubsub.publish("PRICE_CHANGE", {price})
                 console.log(price)
                 return price;
             }
@@ -130,11 +129,9 @@ type User {
 
         Subscription: {
             price: {
-                subscribe: withFilter((root, args, {pubsub}) => pubsub.asyncIterator('PRICE_CHANGE'),
-                    (payload, variables) => {
-                        return true;
-                    }
-                )
+                subscribe: (root, args, {pubsub}) => {
+                    return pubsub.asyncIterator('PRICE_CHANGE')
+                }
             },
         },
     };
