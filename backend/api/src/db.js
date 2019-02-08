@@ -318,7 +318,7 @@ function getItemsPrice(db, itemId, amount) {
 }
 
 
-function buyItems(db, userName, itemId, amount, total, perUnit) {
+function buyItems(db, userName, itemId, amount, givenTotal, givenPerUnit) {
     return new Promise((resolve, reject) => {
         const SellOrders = db.collection('sellorders');
         SellOrders.find({item_id: itemId}).sort({price: 1}).toArray((err, sellOrders) => {
@@ -358,13 +358,14 @@ function buyItems(db, userName, itemId, amount, total, perUnit) {
                 }
                 let perUnit =(total/amount);
                 //compare price
-                if(perUnit === perUnit && total === total) {
+                console.log({perUnit, givenPerUnit, total, givenTotal})
+                if(perUnit === givenPerUnit && total === givenTotal) {
                     //decrease money
                     const Users = db.collection('users');
                     Users.findOne({name: userName}, (err, user) => {
-                        if(err) reject({type: "NOT_FOUND", message: 'user not found'});
+                        if(err) reject('user not found');
                         const money = user.money - total;
-                        if(money < 0) reject({type: "INVALID", message: "user has not enough money"});
+                        if(money < 0) reject( "user has not enough money");
                         //buy fullSellorders
                         for(sellOrder of buyFullSellOrders) {
                             SellOrders.remove({_id: sellOrder.id});
@@ -384,7 +385,7 @@ function buyItems(db, userName, itemId, amount, total, perUnit) {
                     });
                 }
                 else {
-                    reject({type: "DB_CHANGED", message: "The price has changed during the operation"});
+                    reject("The price has changed during the operation");
                 }
             }
         });
