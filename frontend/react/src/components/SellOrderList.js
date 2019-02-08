@@ -97,9 +97,9 @@ class SellOrderList extends React.Component {
                         <CustomTableCell>Icon</CustomTableCell>
                         <CustomTableCell width="300">Item name</CustomTableCell>
                         <CustomTableCell width="220">Curr. min. buyout</CustomTableCell>
-                        <CustomTableCell width="150">Qty available</CustomTableCell>
+                        <CustomTableCell width="50">Qty available</CustomTableCell>
                         <CustomTableCell width="150">Buy quantity</CustomTableCell>
-                        <CustomTableCell width="250">Price per unit & Total</CustomTableCell>
+                        <CustomTableCell width="350">Price per unit & Total</CustomTableCell>
                         <CustomTableCell></CustomTableCell>
                     </TableRow>
                 </TableHead>
@@ -116,7 +116,7 @@ class SellOrderList extends React.Component {
 
                             </CustomTableCell>
                             <CustomTableCell  padding="dense"><MoneyView money={itemSupply.min_price}></MoneyView></CustomTableCell>
-                            <CustomTableCell>{itemSupply.quantity}</CustomTableCell>
+                            <CustomTableCell padding="dense">{itemSupply.quantity}</CustomTableCell>
                             <CustomTableCell padding="dense">
                                 {this.getInputField(itemSupply)}
                             </CustomTableCell>
