@@ -2,7 +2,9 @@ const MongoToGqlConverter = require( "./conversion");
 
 const {GraphQLServer, withFilter, PubSub} = require('graphql-yoga');
 
-const {getItemsByPartialNameCount,
+const {
+    createSellOrder,
+    getItemsByPartialNameCount,
     getItemsByPartialName,getItemSuppliesByPartialNameOPTIMIZED,
     getItemClassById,
     getItemById,
@@ -38,6 +40,7 @@ type Mutation {
   createUser(name: String!): User!
   fakeBuyMutation(itemId: Int, total: Float, perUnit: Float): Price
   buyItems(userName: String, itemId: Int, amount: Int, total: Float, perUnit: Float): Receipt
+  createSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!, quantity: Int!, price: Float!): Int!  
 }
 
 type Subscription {
@@ -138,6 +141,10 @@ type User {
                 return await buyItems(db, userName, itemId, amount, total, perUnit);
                 //publish to pubsub
             },
+            },
+            createSellOrder: async (_, {itemId, seller_name, seller_realm, quantity, price}) => {
+                return await createSellOrder(converter, db, itemId, seller_name, seller_realm, quantity, price)
+            }
         },
 
         Subscription: {
