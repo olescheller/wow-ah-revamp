@@ -19,6 +19,7 @@ import {quantityExceededAction, setLoading} from "../redux/actions/actions";
 import Input from "@material-ui/core/es/Input/Input";
 import TextField from "@material-ui/core/es/TextField/TextField";
 
+import defaultIcon from '../assets/inv_misc_questionmark.jpg'
 
 const CustomTableCell = withStyles(theme => ({
     alignLeft: true,
@@ -108,7 +109,10 @@ class SellOrderList extends React.Component {
                         <TableRow   key={itemSupply.item.id}>
                             <TableCell padding="dense" component="th" align="left" scope="row">
                                 <img
-                                    src={`https://s3.eu-central-1.amazonaws.com/wow-icons/icons/${itemSupply.item.icon}.jpg`}/>
+                                    src={
+                                        itemSupply.item.icon ?
+                                        `https://s3.eu-central-1.amazonaws.com/wow-icons/icons/${itemSupply.item.icon}.jpg` :
+                                    defaultIcon}/>
 
                             </TableCell>
                             <CustomTableCell scope="row">
