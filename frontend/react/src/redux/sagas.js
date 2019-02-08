@@ -36,7 +36,7 @@ export function* fetchAverageItemPrice(action) {
 }
 
 export function* fetchItemsSupplyByPartialName(action) {
-    if (action.payload.term.length < 4) {
+    if (action.payload.term.length < 2) {
         yield put(setLoading(false));
         return {};
     }
