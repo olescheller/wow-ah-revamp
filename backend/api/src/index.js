@@ -8,7 +8,8 @@ const {getItemsByPartialNameCount,
     getItemById,
     getUserByNameAndRealm,
     getItemSupplyByName,
-    getItemsPrice} = require('./db');
+    getItemsPrice,
+    buyItems} = require('./db');
 
 const {MongoClient} = require('mongodb');
 const MONGO_URL = 'mongodb://localhost:27017/';
@@ -36,10 +37,18 @@ type Query {
 type Mutation {
   createUser(name: String!): User!
   fakeBuyMutation(itemId: Int, total: Float, perUnit: Float): Price
+  buyItems(userName: String, itemId: Int, amount: Int, total: Float, perUnit: Float): Receipt
 }
 
 type Subscription {
 price(itemId: Int): Price
+}
+
+type Receipt {
+  itemId: Int
+  amount: Int
+  price: Int
+  money: Float
 }
 
 type ItemSupply{
@@ -124,7 +133,11 @@ type User {
                 pubsub.publish("PRICE_CHANGE", {price})
                 console.log(price)
                 return price;
-            }
+            },
+            buyItems: async (_, {userName, itemId, amount, total, perUnit}) => {
+                return await buyItems(db, userName, itemId, amount, total, perUnit);
+                //publish to pubsub
+            },
         },
 
         Subscription: {

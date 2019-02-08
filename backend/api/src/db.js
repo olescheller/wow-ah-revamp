@@ -317,6 +317,80 @@ function getItemsPrice(db, itemId, amount) {
     });
 }
 
+
+function buyItems(db, userName, itemId, amount, total, perUnit) {
+    return new Promise((resolve, reject) => {
+        const SellOrders = db.collection('sellorders');
+        SellOrders.find({item_id: itemId}).sort({price: 1}).toArray((err, sellOrders) => {
+            if (err) reject(err);
+            if (sellOrders.length === 0){
+                resolve(null);
+                return;
+            }
+            const quantity = sellOrders.reduce((acc, curr) => {
+                return acc + curr.quantity;
+            }, 0);
+            console.log(amount, quantity)
+            if(amount > quantity) {
+                reject("The amount of item supplies does not match the amount requested anymore")
+            }
+            else {
+                let i = 0;
+                let total = 0;
+                let amountLeft = amount;
+                let buyFullSellOrders = [];
+                let buyPartSellOrders = [];
+                //lock db
+                while(amountLeft > 0 && i < sellOrders.length) {
+                    if(sellOrders[i].quantity <= amountLeft) {
+                        // Case buy whole sell order
+                        buyFullSellOrders.push({id: sellOrders[i]._id});
+                        total += sellOrders[i].price * sellOrders[i].quantity;
+                        amountLeft = amountLeft - sellOrders[i].quantity;
+                    }
+                    else {
+                        // Case buy parts of sell order
+                        buyPartSellOrders.push({sellOrder: sellOrders[i]._id, left: sellOrders[i].quantity - amountLeft});
+                        total += sellOrders[i].price * amountLeft;
+                        amountLeft = 0;
+                    }
+                    i++;
+                }
+                let perUnit =(total/amount);
+                //compare price
+                if(perUnit === perUnit && total === total) {
+                    //decrease money
+                    const Users = db.collection('users');
+                    Users.findOne({name: userName}, (err, user) => {
+                        if(err) reject({type: "NOT_FOUND", message: 'user not found'});
+                        const money = user.money - total;
+                        if(money < 0) reject({type: "INVALID", message: "user has not enough money"});
+                        //buy fullSellorders
+                        for(sellOrder of buyFullSellOrders) {
+                            SellOrders.remove({_id: sellOrder.id});
+                        }
+                        //buy partSellorders
+                        for(sellOrder of buyPartSellOrders) {
+                            SellOrders.update({_id: sellOrder.id}, {$set: {quantity: sellOrder.left}});
+                        }
+                        Users.update({name: userName},{$set: {money: money}});
+                        //publish to subscription
+                        resolve({
+                            itemId: itemId,
+                            amount: amount,
+                            price: total,
+                            money: money,
+                        });
+                    });
+                }
+                else {
+                    reject({type: "DB_CHANGED", message: "The price has changed during the operation"});
+                }
+            }
+        });
+    });
+}
+
 //
 // getItemByName(db, itemName).then((item) => {
 //     const SellOrders = db.collection('sellorders');
@@ -347,4 +421,5 @@ module.exports = {
     getItemSuppliesByPartialNameOPTIMIZED,
     getItemsByPartialNameCount,
     getItemsPrice,
+    buyItems,
 };
