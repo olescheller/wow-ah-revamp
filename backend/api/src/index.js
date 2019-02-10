@@ -27,14 +27,14 @@ const initGraphQL = async (db) => {
     // 1
     const typeDefs = `
 type Query {
-  item(id: Float): Item
-  items(partialItemName: String): [Item]!
-  item_class(id: Float): ItemClass!
-  item_supply(itemName: String): ItemSupply
-  items_supply(partialItemName: String): [ItemSupply]
-  items_count(partialItemName: String): Int
+  item(id: Float!): Item
+  items(partialItemName: String!): [Item]!
+  item_class(id: Float!): ItemClass!
+  item_supply(itemName: String!): ItemSupply
+  items_supply(partialItemName: String!): [ItemSupply]
+  items_count(partialItemName: String!): Int
   items_price(itemId: Float!, amount: Int!): Price
-  user(name: String, realm: String): User
+  user(name: String!, realm: String!): User
 }
 
 type Mutation {
