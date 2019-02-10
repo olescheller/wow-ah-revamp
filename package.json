@@ -19,7 +19,7 @@
     "reactw": "pushd .\\frontend\\react && npm start",
     "ireactw": "pushd .\\frontend\\react && npm install",
     "igraphqlw": "pushd .\\backend\\api && npm install",
-    "gqlw": "nodemon --watch backend\\api\\src backend\\api\\src\\index.js",
+    "gqlw": "nodemon --watch backend\\api\\src backend\\api\\src\\index.js"
   },
   "repository": {
     "type": "git",
