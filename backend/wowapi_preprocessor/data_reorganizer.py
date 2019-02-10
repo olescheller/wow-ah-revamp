@@ -17,6 +17,7 @@ from typing import List
 
 import pandas as pd
 from pymongo import MongoClient, ASCENDING
+import sys
 
 wowdata_dir = os.path.abspath("../data")
 wowdata_items_path = os.path.join(wowdata_dir, "items.json")
@@ -222,7 +223,8 @@ class MongoDbAdapter:
 
 
 if __name__ == '__main__':
-    db = MongoDbAdapter()
+    port = sys.argv[1]
+    db = MongoDbAdapter(port = int(port))
 
     item_id_to_name_mapping = {item.get("id"): item.get("name") for item in get_raw_items()}
 
