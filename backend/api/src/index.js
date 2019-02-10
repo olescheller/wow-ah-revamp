@@ -39,8 +39,8 @@ type Query {
 
 type Mutation {
   createUser(name: String!): User!
-  fakeBuyMutation(itemId: Int, total: Float, perUnit: Float): Price
-  buyItems(userName: String, itemId: Int, amount: Int, total: Float, perUnit: Float): Receipt
+  fakeBuyMutation(itemId: Int!, total: Float!, perUnit: Float!): Price
+  buyItems(userName: String!, itemId: Int, amount: Int!, total: Float!, perUnit: Float!): Receipt
   createSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!, quantity: Int!, price: Float!): Int!  
 }
 

@@ -4,27 +4,22 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "npm-run-all": "^4.1.5",
     "react-router-dom": "^4.3.1"
   },
   "devDependencies": {
-    "concurrently": "^4.1.0"
   },
   "scripts": {
     "installgraphql": "npm i --prefix=backend/api/",
     "installreact": "npm i --prefix=frontend/react/",
     "installAll": "npm run installgraphql && npm run installreact",
-
     "graphql": "nodemon --watch backend/api/src backend/api/src/index.js",
+    "gql": "nodemon --watch backend/api/src backend/api/src/index.js",
     "mongo": "mongod --dbpath=db",
     "react": "npm start --prefix frontend/react",
-
     "reactw": "pushd .\\frontend\\react && npm start",
     "ireactw": "pushd .\\frontend\\react && npm install",
     "igraphqlw": "pushd .\\backend\\api && npm install",
-    "gqlw": "nodemon backend\\api\\src\\index.js",
-
-    "dev": "concurrently --kill-others \"npm run graphql\" \"npm run mongo\" \"npm run react\"",
+    "gqlw": "nodemon --watch backend\\api\\src backend\\api\\src\\index.js",
   },
   "repository": {
     "type": "git",
