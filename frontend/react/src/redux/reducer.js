@@ -15,10 +15,8 @@ const initState = {
     searchTerm: "topaz",
     itemSupplies: [],
     buyQuantity: {
-        "2592": 5
     },
     price: {
-        "1": {perUnit: 1, total: 10}
     },
     count: 1,
     isLoading: false,
@@ -73,10 +71,12 @@ export default (state = initState, action) => {
             for(let supply of action.payload.itemSupplies) {
                 tmpPrice[supply.item.id] = {perUnit:0, total:0};
             }
-            return {...state, itemSupplies: action.payload.itemSupplies, amountOfItemSupplies: amount, showInfoBox: showInfoBox, price: tmpPrice};
+            return {...state, itemSupplies: action.payload.itemSupplies, amountOfItemSupplies: amount, showInfoBox: showInfoBox, price: tmpPrice, buyQuantity: {}};
 
         case BUY_ITEMS_SUCCEEDED:
-            return {...state, money: action.payload.money}
+            let oldBuyQuantity = {...state.buyQuantity};
+            delete oldBuyQuantity[action.payload.itemId];
+            return {...state, money: action.payload.money, buyQuantity: {...oldBuyQuantity}};
         case SET_LOADING:
             return {...state, isLoading: action.payload};
         case SET_INFO_BOX:

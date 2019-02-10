@@ -61,13 +61,13 @@ class SellOrderList extends React.Component {
     getInputField = (itemSupply) => {
         if(this.props.quantityExceeded.indexOf(itemSupply.item.id) !== -1 ) {
             return (
-                <TextField error variant="outlined" margin="normal" className="buyQuantity" value={this.props.buyQuantity[itemSupply.item.id]}
+                <TextField error variant="outlined" margin="normal" className="buyQuantity" value={this.props.buyQuantity[itemSupply.item.id] || ""}
                            onChange={(e) => this.onInputQty(e, itemSupply)}
                 />
             )
         }
         return (
-            <TextField variant="outlined" margin="normal" className="buyQuantity" value={this.props.buyQuantity[itemSupply.item.id]}
+            <TextField variant="outlined" margin="normal" className="buyQuantity" value={this.props.buyQuantity[itemSupply.item.id] || ""}
                        onChange={(e) => this.onInputQty(e, itemSupply)}
             />
         );
