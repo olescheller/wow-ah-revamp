@@ -40,7 +40,7 @@ const styles = theme => ({
         padding: theme.spacing.unit * 2,
     },
     table: {
-        minWidth: 1120,
+        minWidth: 1300,
     },
 });
 
@@ -101,13 +101,13 @@ class SellOrderList extends React.Component {
                 <Table className={classes.table}>
                 <TableHead>
                     <TableRow>
-                        <CustomTableCell>Icon</CustomTableCell>
+                        <CustomTableCell width="60">Icon</CustomTableCell>
                         <CustomTableCell width="300">Item name</CustomTableCell>
-                        <CustomTableCell width="220">Curr. min. buyout</CustomTableCell>
-                        <CustomTableCell width="50">Qty available</CustomTableCell>
-                        <CustomTableCell width="150">Buy quantity</CustomTableCell>
+                        <CustomTableCell width="300">Curr. min. buyout</CustomTableCell>
+                        <CustomTableCell width="60">Qty available</CustomTableCell>
+                        <CustomTableCell width="100">Buy quantity</CustomTableCell>
                         <CustomTableCell width="350">Price per unit & Total</CustomTableCell>
-                        <CustomTableCell></CustomTableCell>
+                        <CustomTableCell width="60"></CustomTableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -118,7 +118,7 @@ class SellOrderList extends React.Component {
                                     src={`https://s3.eu-central-1.amazonaws.com/wow-icons/icons/${itemSupply.item.icon}.jpg`}/>
 
                             </TableCell>
-                            <CustomTableCell scope="row">
+                            <CustomTableCell align="left" scope="row">
                                 <span>{itemSupply.item.name}</span>
 
                             </CustomTableCell>
@@ -129,8 +129,8 @@ class SellOrderList extends React.Component {
                             </CustomTableCell>
                             <CustomTableCell padding="dense"><MoneyView label="per unit" money={this.props.price[itemSupply.item.id].perUnit}/>
                                 <MoneyView label="total" money={this.props.price[itemSupply.item.id].total}/></CustomTableCell>
-                            <TableCell  padding="dense" align="right">
-                                <Button onClick={() => this.handleBuyClick(itemSupply.item.id)}variant="contained" color="primary"> Buy</Button></TableCell>
+                            <CustomTableCell  padding="dense" align="right">
+                                <Button onClick={() => this.handleBuyClick(itemSupply.item.id)} variant="contained" color="primary"> Buy</Button></CustomTableCell>
                         </TableRow>
                     ))}
                 </TableBody>
