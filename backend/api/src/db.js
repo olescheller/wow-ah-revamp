@@ -330,7 +330,8 @@ function buyItems(db, userName, itemId, amount, givenTotal, givenPerUnit) {
                 return acc + curr.quantity;
             }, 0);
             if(amount > quantity) {
-                reject("The amount of item supplies does not match the amount requested anymore")
+                reject("The amount of item supplies does not match the amount requested anymore");
+                return;
             }
             else {
                 let i = 0;
@@ -348,7 +349,7 @@ function buyItems(db, userName, itemId, amount, givenTotal, givenPerUnit) {
                     }
                     else {
                         // Case buy parts of sell order
-                        buyPartSellOrders.push({sellOrder: sellOrders[i]._id, left: sellOrders[i].quantity - amountLeft});
+                        buyPartSellOrders.push({id: sellOrders[i]._id, left: sellOrders[i].quantity - amountLeft});
                         total += sellOrders[i].price * amountLeft;
                         amountLeft = 0;
                     }
@@ -363,16 +364,21 @@ function buyItems(db, userName, itemId, amount, givenTotal, givenPerUnit) {
                     Users.findOne({name: userName}, (err, user) => {
                         if(err) reject('user not found');
                         const money = user.money - total;
-                        if(money < 0) reject( "user has not enough money");
+                        console.log(money, total)
+                        if(money < 0) {
+                            reject( "user has not enough money");
+                            return;
+                        }
                         //buy fullSellorders
                         for(sellOrder of buyFullSellOrders) {
-                            SellOrders.remove({_id: sellOrder.id});
+                            SellOrders.deleteOne({_id: sellOrder.id});
                         }
                         //buy partSellorders
                         for(sellOrder of buyPartSellOrders) {
-                            SellOrders.update({_id: sellOrder.id}, {$set: {quantity: sellOrder.left}});
+                            console.log({sellOrder})
+                            SellOrders.updateOne({_id: sellOrder.id}, {$set: {quantity: sellOrder.left}});
                         }
-                        Users.update({name: userName},{$set: {money: money}});
+                        Users.updateOne({name: userName},{$set: {money: money}});
                         //publish to subscription
                         resolve({
                             itemId: itemId,
@@ -384,6 +390,7 @@ function buyItems(db, userName, itemId, amount, givenTotal, givenPerUnit) {
                 }
                 else {
                     reject("The price has changed during the operation");
+                    return;
                 }
             }
         });
