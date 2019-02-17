@@ -37,6 +37,18 @@ export async function makePurchase(userName, itemId, amount, total, perUnit) {
     })
 }
 
+export async function downloadRandomItems() {
+    console.log('request')
+    return new Promise((resolve, reject) => {
+        const qry = `{randomItems{id, name, icon, item_class{name},item_sub_class{name}}}`;
+        axios.post("http://localhost:4000/", {"query": qry}).then(response => {
+            console.log({response})
+            resolve(response.data.data.randomItems);
+        })
+    })
+
+}
+
 export async function downloadAverageItemPrice(itemId, amount) {
     return new Promise((resolve, reject) => {
         const qry = `{items_price(itemId: ${itemId}, amount: ${amount}) {perUnit, total}}`;

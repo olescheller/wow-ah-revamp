@@ -4,7 +4,7 @@ import {
 import {
     BUY_QUANTITY_CHANGED, AVERAGE_ITEM_PRICE_SUCCEEDED,
     FETCH_ITEM_SUPPLY_REQUESTED,
-    FETCH_ITEM_SUPPLY_SUCCEEDED, SEARCH_VALUE_CHANGED, BUY_ITEM_SUCCEEDED, BUY_ITEMS_SUCCEEDED
+    FETCH_ITEM_SUPPLY_SUCCEEDED, SEARCH_VALUE_CHANGED, BUY_ITEM_SUCCEEDED, BUY_ITEMS_SUCCEEDED, RANDOM_ITEMS_SUCCEEDED
 } from "./actions/itemActions";
 
 const initState = {
@@ -25,6 +25,7 @@ const initState = {
     showInfoBox: false,
     amountOfItemSupplies: 0,
     quantityExceeded: [],
+    inventoryItems: []
 };
 
 export default (state = initState, action) => {
@@ -75,6 +76,9 @@ export default (state = initState, action) => {
             }
             return {...state, itemSupplies: action.payload.itemSupplies, amountOfItemSupplies: amount, showInfoBox: showInfoBox, price: tmpPrice};
 
+        case RANDOM_ITEMS_SUCCEEDED: {
+            return {...state, inventoryItems: action.payload};
+        }
         case BUY_ITEMS_SUCCEEDED:
             return {...state, money: action.payload.money}
         case SET_LOADING:

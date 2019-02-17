@@ -5,10 +5,15 @@ import {
     downloadItemsSupplyByPartialName,
     fetchAmountOfItemSupplies,
     downloadAverageItemPrice,
-    makePurchase
+    makePurchase, downloadRandomItems
 } from "../api/graphql_api";
 
-import {averageItemPriceSucceeded, buyItemsSucceeded, itemSupplySucceededAction} from "./actions/itemActions";
+import {
+    averageItemPriceSucceeded,
+    buyItemsSucceeded,
+    itemSupplySucceededAction,
+    randomItemsSucceeded
+} from "./actions/itemActions";
 import {setLoading} from "./actions/actions";
 
 function* watchFetchItemSupply() {
@@ -21,6 +26,22 @@ function* watchAverageItemPrice() {
 
 function* watchBuyItems() {
     yield takeEvery('BUY_ITEMS_REQUESTED', buyItems);
+}
+
+function* watchFetchRandomItems () {
+    yield takeEvery('FETCH_RANDOM_ITEMS_REQUESTED', randomItems);
+}
+
+
+export function* randomItems(action) {
+    try{
+        const data = yield call(downloadRandomItems);
+        yield put(randomItemsSucceeded(data));
+    }
+    catch(error) {
+        yield put({type: 'RANDOM_ITEM_FAILED', error})
+    }
+
 }
 
 export function* buyItems(action) {
@@ -75,5 +96,6 @@ export default function* rootSaga() {
         watchFetchItemSupply(),
         watchAverageItemPrice(),
         watchBuyItems(),
+        watchFetchRandomItems(),
     ])
 }

@@ -5,12 +5,18 @@ import {Paper, Tooltip, Typography} from "@material-ui/core";
 import Grid from '@material-ui/core/Grid';
 import './inventoryGrid.css'
 import DetailsCard from "./DetailsCard";
+import {queryAverageItemPriceAction, randomItemsRequested} from "../redux/actions/itemActions";
 
 class InventoryGrid extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {selectedItem: null}
+    }
+
+    componentWillMount() {
+        this.props.dispatch(randomItemsRequested());
+
     }
 
     renderDetails = () => {
@@ -23,17 +29,17 @@ class InventoryGrid extends React.Component {
 
     getItemSupplies = () => {
         const result = [];
-        const arr = [...this.props.itemSupplies];
+        const arr = [...this.props.inventoryItems];
         const len = arr.length;
         console.log(len)
         const empty = len === 0 ? 16 : (len >= 16) ? 0 : 16 - len;
         for(let i = 0; i < 16; i ++) {
             if(arr[i]) {
                 result.push(
-                    <Tooltip disableFocusListener disableTouchListener title={arr[i].item.name}>
-                    <Grid onClick={() => this.showDetails(arr[i].item)} onDragEnd={() => console.log('jo')} className="inventoryItem" item sm={3}spacing={0} key={Math.random()}>
+                    <Tooltip disableFocusListener disableTouchListener title={arr[i].name}>
+                    <Grid onClick={() => this.showDetails(arr[i])} onDragEnd={() => console.log('jo')} className="inventoryItem" item sm={3}spacing={0} key={Math.random()}>
                         <img className="inventoryIcon"
-                             src={`https://s3.eu-central-1.amazonaws.com/wow-icons/icons/${arr[i].item.icon}.jpg`}/>
+                             src={`https://s3.eu-central-1.amazonaws.com/wow-icons/icons/${arr[i].icon}.jpg`}/>
                     </Grid>
                     </Tooltip>
                 )
@@ -78,4 +84,4 @@ class InventoryGrid extends React.Component {
     }
 }
 
-export default connect(({itemSupplies}) => ({itemSupplies}))(InventoryGrid);
+export default connect(({inventoryItems}) => ({inventoryItems}))(InventoryGrid);

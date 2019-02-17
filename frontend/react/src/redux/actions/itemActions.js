@@ -27,6 +27,21 @@ export const buyItemAction = (userName, itemId, amount, total, perItem) => ({
     payload:  {userName, itemId, amount, total, perItem},
 });
 
+
+export const FETCH_RANDOM_ITEMS_REQUESTED = "FETCH_RANDOM_ITEMS_REQUESTED";
+export const randomItemsRequested = () => ({
+  type:  FETCH_RANDOM_ITEMS_REQUESTED,
+    payload: {}
+});
+
+export const RANDOM_ITEMS_SUCCEEDED = "RANDOM_ITEMS_SUCCEEDED";
+export const randomItemsSucceeded = (items) => {
+    return {
+        type: RANDOM_ITEMS_SUCCEEDED,
+        payload: items,
+    }
+}
+
 export const BUY_ITEMS_SUCCEEDED = "BUY_ITEMS_SUCCEEDED";
 export const buyItemsSucceeded = (buyItems) => {
     console.log({buyItems});

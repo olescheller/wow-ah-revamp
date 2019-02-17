@@ -42,6 +42,29 @@ function getItemById(converter, db, itemId) {
     });
 }
 
+function getRandomItems(converter, db) {
+    return new Promise((resolve, reject) => {
+        const Items = db.collection('items');
+
+        // DB CALL
+        Items.find({}).toArray
+            ((err, items) => {
+                if (err) reject(err);
+                if (items.length < 100) {
+                    resolve(null);
+                    return;
+                }
+                const randoms = [];
+                for(let i = 0; i < 16; i ++) {
+                    const randInt = Math.floor(Math.random() * 100);
+                    randoms.push(converter.ItemMongoToGql(items[randInt]));
+                }
+                resolve(randoms)
+            }
+        )
+    });
+}
+
 /**
  * get an item object by its name
  * @param db
@@ -441,4 +464,5 @@ module.exports = {
     getItemsPrice,
     buyItems,
     createSellOrder,
+    getRandomItems,
 };

@@ -1,6 +1,9 @@
 import './inventoryGrid.css'
 import React from 'react';
 import {Button, Card, CardContent, CardMedia, Input, TextField, Typography} from "@material-ui/core";
+import {queryAverageItemPriceAction} from "../redux/actions/itemActions";
+import {connect} from "react-redux";
+import MoneyView from "./MoneyView";
 
 
 
@@ -8,6 +11,19 @@ import {Button, Card, CardContent, CardMedia, Input, TextField, Typography} from
 
 class DetailsCard extends React.Component {
 
+    componentWillMount() {
+        this.props.dispatch(queryAverageItemPriceAction(1, this.props.item.id));
+
+    }
+
+    renderPrice = () => {
+        if(this.props.price[this.props.item.id]) {
+            return(<div>Current min price: <MoneyView money={this.props.price[this.props.item.id].perUnit}/></div>);
+        }
+        else {
+            return(<div> Be the first seller of {this.props.item.name} </div>);
+        }
+    }
 
     render() {
         return(
@@ -18,8 +34,16 @@ class DetailsCard extends React.Component {
                             {this.props.item.name}
                         </Typography>
                         <Typography variant="subtitle1" color="textSecondary">
-                            Some additional information
+                            Category: {this.props.item.item_class.name}
                         </Typography>
+                        <Typography variant="subtitle1" color="textSecondary">
+                        Sub-Category: {this.props.item.item_sub_class.name}
+                        </Typography>
+
+                        <Typography variant="subtitle1" color="textSecondary">
+                            {this.renderPrice()}
+                        </Typography>
+
                     </CardContent>
                     <span className='controls'>
                         <TextField
@@ -46,4 +70,4 @@ class DetailsCard extends React.Component {
     }
 }
 
-export default DetailsCard;
+export default connect(({price}) => ({price})) (DetailsCard);

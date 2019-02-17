@@ -11,7 +11,8 @@ const {
     getUserByNameAndRealm,
     getItemSupplyByName,
     getItemsPrice,
-    buyItems
+    buyItems,
+    getRandomItems
 } = require('./db');
 
 const {MongoClient} = require('mongodb');
@@ -35,6 +36,7 @@ type Query {
   items_count(partialItemName: String): Int
   items_price(itemId: Float!, amount: Int!): Price
   user(name: String, realm: String): User
+  randomItems: [Item]!
 }
 
 type Mutation {
@@ -122,6 +124,9 @@ type User {
             user: async (_, {name, realm}) => {
                 return await getUserByNameAndRealm(db, name, realm)
             },
+            randomItems: async() => {
+                return await getRandomItems(converter, db)
+            }
         },
         Mutation: {
             createUser: (_, {name}) => {
