@@ -18,6 +18,8 @@ import InfoBox from './InfoBox';
 import {quantityExceededAction, setLoading} from "../redux/actions/actions";
 import Input from "@material-ui/core/es/Input/Input";
 import TextField from "@material-ui/core/es/TextField/TextField";
+import Subscription from "react-apollo/Subscriptions";
+import {BUY_SUBSCRIPTION} from "../api/graphql_api";
 
 
 const CustomTableCell = withStyles(theme => ({
@@ -50,6 +52,7 @@ class SellOrderList extends React.Component {
         super(props);
         console.log(this.props.price)
     }
+
 
     handleBuyClick = (itemId) => {
         const {perUnit, total} = this.props.price[itemId];
@@ -89,6 +92,7 @@ class SellOrderList extends React.Component {
 
 
     render() {
+
         const { classes } = this.props;
 
         return (

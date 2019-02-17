@@ -45,7 +45,8 @@ type Mutation {
 }
 
 type Subscription {
-price(itemId: Int): Price
+  price(itemId: Int): Price
+  receipt(itemId: Int): Receipt
 }
 
 type Receipt {
@@ -94,6 +95,7 @@ type User {
 
 `;
 
+
 // 2
     const resolvers = {
         Query: {
@@ -134,13 +136,18 @@ type User {
             },
             fakeBuyMutation: async (_, {itemId, total, perUnit}) => {
                 const price = {perUnit: perUnit + 1, total: total + 1}
-                pubsub.publish("PRICE_CHANGE", {price})
+                pubsub.publish("PRICE_CHANGE", {price});
+                pubsub.publish("ITEM_QUANTITY_CHANGED", {price});
+
                 console.log(price)
                 return price;
             },
             buyItems: async (_, {userName, itemId, amount, total, perUnit}) => {
-                return await buyItems(db, userName, itemId, amount, total, perUnit);
                 //publish to pubsub
+                const receipt = await buyItems(db, userName, itemId, amount, total, perUnit);
+                pubsub.publish("BUY_SUBSCRIPTION", {receipt});
+                console.log({receipt})
+                return receipt;
             },
             createSellOrder: async (_, {itemId, seller_name, seller_realm, quantity, price}) => {
                 return await createSellOrder(converter, db, itemId, seller_name, seller_realm, quantity, price)
@@ -150,14 +157,20 @@ type User {
         Subscription: {
             price: {
                 subscribe: (root, args, {pubsub}) => {
+                    console.log(args)
                     return pubsub.asyncIterator('PRICE_CHANGE')
                 }
             },
-        },
+            receipt: {
+                subscribe: withFilter(() =>  pubsub.asyncIterator('BUY_SUBSCRIPTION'), (payload, variables) => {
+                    return payload.receipt.itemId === variables.itemId;
+                })
+            }
+        }
     };
 
-// 3
     const pubsub = new PubSub();
+
     const server = new GraphQLServer({
         typeDefs,
         resolvers,

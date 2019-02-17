@@ -375,7 +375,6 @@ function buyItems(db, userName, itemId, amount, givenTotal, givenPerUnit) {
                         }
                         //buy partSellorders
                         for(sellOrder of buyPartSellOrders) {
-                            console.log({sellOrder})
                             SellOrders.updateOne({_id: sellOrder.id}, {$set: {quantity: sellOrder.left}});
                         }
                         Users.updateOne({name: userName},{$set: {money: money}});
