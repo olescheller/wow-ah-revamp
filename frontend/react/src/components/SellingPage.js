@@ -1,11 +1,11 @@
 import * as React from "react";
+import InventoryGrid from "./InventoryGrid";
 
 class SellingPage extends React.Component{
     render(){
         return (
             <div>
-                <p>This is the selling page.mhk ?</p>
-
+                <InventoryGrid/>
             </div>
         )
     }

@@ -1,0 +1,8 @@
+.inventoryItem {
+    padding: 2em;
+    height: 3em;
+    width: 3em;
+    text-align: center;
+    color: #006600;
+    margin-bottom: 1em;
+}
