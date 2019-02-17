@@ -31,7 +31,10 @@ function getItemById(converter, db, itemId) {
         Items.findOne({id: itemId},
              (err, item) => {
                 if (err) reject(err);
-                if (item === null) resolve(null);
+                if (item === null) {
+                    resolve(null);
+                    return;
+                }
                 const gqlItem = converter.ItemMongoToGql(item);
                 resolve(gqlItem)
             }
@@ -68,7 +71,6 @@ function getItemNamesByPartialName(db, partialItemName, only_stackable = false) 
         Items.find({'name': {'$regex': ".*" + partialItemName + ".*", '$options': 'i'}, ...stackable}).toArray(
              (err, items) => {
                 if (err) reject(err);
-                if (items.length === 0) resolve(null);
                 let itemNames = [];
                 for (let item of items){
                     itemNames.push(item.name)
