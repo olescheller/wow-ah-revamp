@@ -1,22 +1,51 @@
 
 import React from 'react';
 import {connect} from 'react-redux';
-import {Paper, Typography} from "@material-ui/core";
+import {Paper, Tooltip, Typography} from "@material-ui/core";
 import Grid from '@material-ui/core/Grid';
 import './inventoryGrid.css'
+import DetailsCard from "./DetailsCard";
 
 class InventoryGrid extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {selectedItem: null}
+    }
+
+    renderDetails = () => {
+        return this.state.selectedItem ? <DetailsCard item={this.state.selectedItem}/> : <div></div>
+    }
+
+    showDetails = (item) => {
+        this.setState({selectedItem: item})
+    }
+
     getItemSupplies = () => {
+        const result = [];
         const arr = [...this.props.itemSupplies];
         const len = arr.length;
-        const empty = 16 - len - len%4;
-        arr.slice(0, len - len%4)
-        for(let i = 0; i < empty; i ++) {
-            console.log(i)
-            arr.push({item: {icon: 'inv_jewelcrafting_nobletopaz_02', name: 'placeholder'}})
+        console.log(len)
+        const empty = len === 0 ? 16 : (len >= 16) ? 0 : 16 - len;
+        for(let i = 0; i < 16; i ++) {
+            if(arr[i]) {
+                result.push(
+                    <Tooltip disableFocusListener disableTouchListener title={arr[i].item.name}>
+                    <Grid onClick={() => this.showDetails(arr[i].item)} onDragEnd={() => console.log('jo')} className="inventoryItem" item sm={3}spacing={0} key={Math.random()}>
+                        <img className="inventoryIcon"
+                             src={`https://s3.eu-central-1.amazonaws.com/wow-icons/icons/${arr[i].item.icon}.jpg`}/>
+                    </Grid>
+                    </Tooltip>
+                )
+            }
+            else {
+                result.push(
+                    <Grid className="inventoryItem" item sm={3}spacing={0} key={Math.random()}>
+                    </Grid>
+                )
+            }
         }
-        return arr;
+        return result;
     }
 
     render() {
@@ -25,23 +54,21 @@ class InventoryGrid extends React.Component {
         return (
             <div>
 
-                <Paper elevation={1}>
+                <Paper className='paper' elevation={1}>
                     <Typography variant="h5" component="h3">
                         Inventory
                     </Typography>
 
-                    <Grid container justify='center' spacing={0}>
-                        <Grid container item xs={2} spacing={0}>
-                            <Grid container justify="center" spacing={0}>
-                                {this.getItemSupplies().map(itemSupply => (
-                                    <Grid item sm={3}spacing={0} key={itemSupply.item.name}>
-                                        <Paper>
-                                        <img
-                                            src={`https://s3.eu-central-1.amazonaws.com/wow-icons/icons/${itemSupply.item.icon}.jpg`}/>
-                                        </Paper>
-                                    </Grid>
-                                ))}
+                    <Grid container xs={12} justify='center'>
+                        <Grid container justify='center' item xs={6} sm={6}  spacing={2}>
+                            <Grid container item xs={4} spacing={2}>
+                                <Grid container justify="center" spacing={2}>
+                                    {this.getItemSupplies()}
+                                </Grid>
                             </Grid>
+                        </Grid>
+                        <Grid container item sm={6} spacing={2}>
+                            {this.renderDetails()}
                         </Grid>
                     </Grid>
                 </Paper>

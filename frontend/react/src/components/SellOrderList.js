@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from 'prop-types';
-
 import MoneyView from './MoneyView';
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';

@@ -1,8 +1,53 @@
 .inventoryItem {
-    padding: 2em;
-    height: 3em;
-    width: 3em;
     text-align: center;
-    color: #006600;
-    margin-bottom: 1em;
+    border: 1px solid #FFD700;
+    background:  #505050;
+    border-radius: 6px;
+    height: 60px;
+    width: 60px;
+}
+
+.paper{
+    min-height: 100vh;
+}
+
+.inventoryIcon{
+
+}
+
+.card{
+    display: flex;
+}
+
+.details{
+    display: flex;
+    flex-direction: column;
+}
+
+.content{
+
+    flex: 1 0 auto;
+}
+
+.icon{
+    width: 100px;
+    height: 100px;
+}
+
+.controls{
+    display: flex;
+    align-items: center;
+    padding-left: 0.3em;
+    padding-bottom: 0.2em;
+    margin: 0em 0em 1em 0em ;
+}
+
+#sellButton{
+    margin: 0 2em 0 2em;
+}
+
+.priceInput{
+    width: 12em;
+    margin: 0 2em 0 2em;
+
 }
