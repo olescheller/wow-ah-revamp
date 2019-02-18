@@ -20,7 +20,10 @@ class InventoryGrid extends React.Component {
     }
 
     renderDetails = () => {
-        return this.state.selectedItem ? <DetailsCard item={this.state.selectedItem}/> : <div></div>
+        if(this.state.selectedItem) {
+            this.props.dispatch(queryAverageItemPriceAction(1, this.state.selectedItem.id));
+            return <DetailsCard item={this.state.selectedItem}/>
+        }
     }
 
     showDetails = (item) => {
@@ -37,7 +40,7 @@ class InventoryGrid extends React.Component {
             if(arr[i]) {
                 result.push(
                     <Tooltip disableFocusListener disableTouchListener title={arr[i].name}>
-                    <Grid onClick={() => this.showDetails(arr[i])} onDragEnd={() => console.log('jo')} className="inventoryItem" item sm={3}spacing={0} key={Math.random()}>
+                    <Grid onClick={() => this.showDetails(arr[i])} className="inventoryItem" item sm={3}spacing={0} key={Math.random()}>
                         <img className="inventoryIcon"
                              src={`https://s3.eu-central-1.amazonaws.com/wow-icons/icons/${arr[i].icon}.jpg`}/>
                     </Grid>
