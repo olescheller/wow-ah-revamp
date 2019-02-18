@@ -11,8 +11,42 @@ import { ApolloProvider } from 'react-apollo';
 import rootSaga from './redux/sagas'
 import theme from './theme/materialTheme'
 import reducer from './redux/reducer'
-import ApolloClient from "apollo-boost";
 import {randomItemsRequested} from "./redux/actions/itemActions";
+import { ApolloProvider } from "react-apollo";
+import ApolloClient from "apollo-boost";
+import gql from "graphql-tag";
+import { WebSocketLink } from 'apollo-link-ws';
+import { split } from 'apollo-link';
+import { HttpLink } from 'apollo-link-http';
+import { getMainDefinition } from 'apollo-utilities';
+
+const wsLink = new WebSocketLink({
+    uri: `ws://localhost:4000/`,
+    options: {
+        reconnect: true
+    }
+});
+
+// Create an http link:
+const httpLink = new HttpLink({
+    uri: 'http://localhost:4000/'
+});
+
+
+const link = split(
+    // split based on operation type
+    ({ query }) => {
+        const { kind, operation } = getMainDefinition(query);
+        return kind === 'OperationDefinition' && operation === 'subscription';
+    },
+    wsLink,
+    httpLink,
+);
+
+const client = new ApolloClient({
+    link
+});
+
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const sagaMiddleware = createSagaMiddleware();
 const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk, sagaMiddleware)));
@@ -27,6 +61,8 @@ const client = new ApolloClient({
 
 
 ReactDOM.render(
+    <ApolloProvider client={client}>
+
     <Provider store={store}>
         <MuiThemeProvider theme={theme}>
             <ApolloProvider client={client}>
@@ -35,4 +71,4 @@ ReactDOM.render(
             </BrowserRouter>
             </ApolloProvider>
         </MuiThemeProvider>
-    </Provider>, document.getElementById('root'));
+    </Provider></ApolloProvider>, document.getElementById('root'));

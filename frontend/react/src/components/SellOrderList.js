@@ -17,6 +17,8 @@ import InfoBox from './InfoBox';
 import {quantityExceededAction, setLoading} from "../redux/actions/actions";
 import Input from "@material-ui/core/es/Input/Input";
 import TextField from "@material-ui/core/es/TextField/TextField";
+import Subscription from "react-apollo/Subscriptions";
+import {BUY_SUBSCRIPTION} from "../api/graphql_api";
 
 
 const CustomTableCell = withStyles(theme => ({
@@ -42,6 +44,7 @@ class SellOrderList extends React.Component {
         super(props);
     }
 
+
     handleBuyClick = (itemId) => {
         const {perUnit, total} = this.props.price[itemId];
         const amount = this.props.buyQuantity[itemId];
@@ -52,13 +55,13 @@ class SellOrderList extends React.Component {
     getInputField = (itemSupply) => {
         if(this.props.quantityExceeded.indexOf(itemSupply.item.id) !== -1 ) {
             return (
-                <TextField error variant="outlined" margin="normal" className="buyQuantity" value={this.props.buyQuantity[itemSupply.item.id]}
+                <TextField error variant="outlined" margin="normal" className="buyQuantity" value={this.props.buyQuantity[itemSupply.item.id] || ""}
                            onChange={(e) => this.onInputQty(e, itemSupply)}
                 />
             )
         }
         return (
-            <TextField variant="outlined" margin="normal" className="buyQuantity" value={this.props.buyQuantity[itemSupply.item.id]}
+            <TextField variant="outlined" margin="normal" className="buyQuantity" value={this.props.buyQuantity[itemSupply.item.id] || ""}
                        onChange={(e) => this.onInputQty(e, itemSupply)}
             />
         );
@@ -80,6 +83,7 @@ class SellOrderList extends React.Component {
 
 
     render() {
+
         const { classes } = this.props;
 
         return (

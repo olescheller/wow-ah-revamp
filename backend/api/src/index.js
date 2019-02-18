@@ -31,28 +31,29 @@ const initGraphQL = async (db) => {
     // 1
     const typeDefs = `
 type Query {
-  item(id: Float): Item
-  items(partialItemName: String): [Item]!
-  item_class(id: Float): ItemClass!
-  item_supply(itemName: String): ItemSupply
-  items_supply(partialItemName: String): [ItemSupply]
-  items_count(partialItemName: String): Int
+  item(id: Float!): Item
+  items(partialItemName: String!): [Item]!
+  item_class(id: Float!): ItemClass!
+  item_supply(itemName: String!): ItemSupply
+  items_supply(partialItemName: String!): [ItemSupply]
+  items_count(partialItemName: String!): Int
   items_price(itemId: Float!, amount: Int!): Price
-  user(name: String, realm: String): User
+  user(name: String!, realm: String!): User
   randomItems: [InventoryItem]!
 }
 
 type Mutation {
   createUser(name: String!): User!
-  fakeBuyMutation(itemId: Int, total: Float, perUnit: Float): Price
-  buyItems(userName: String, itemId: Int, amount: Int, total: Float, perUnit: Float): Receipt
+  fakeBuyMutation(itemId: Int!, total: Float!, perUnit: Float!): Price
+  buyItems(userName: String!, itemId: Int, amount: Int!, total: Float!, perUnit: Float!): Receipt
   createSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!, quantity: Int!, price: Float!): SellOrder!
   addItemToSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!, quantity: Int!): SellOrder!
   removeSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!): Boolean!
 }
 
 type Subscription {
-price(itemId: Int): Price
+  price(itemId: Int): Price
+  receipt(itemId: Int): Receipt
 }
 
 type InventoryItem {
@@ -112,6 +113,7 @@ type User {
 
 `;
 
+
 // 2
     const resolvers = {
         Query: {
@@ -155,13 +157,18 @@ type User {
             },
             fakeBuyMutation: async (_, {itemId, total, perUnit}) => {
                 const price = {perUnit: perUnit + 1, total: total + 1}
-                pubsub.publish("PRICE_CHANGE", {price})
+                pubsub.publish("PRICE_CHANGE", {price});
+                pubsub.publish("ITEM_QUANTITY_CHANGED", {price});
+
                 console.log(price)
                 return price;
             },
             buyItems: async (_, {userName, itemId, amount, total, perUnit}) => {
-                return await buyItems(converter, db, userName, itemId, amount, total, perUnit);
                 //publish to pubsub
+                const receipt = await buyItems(db, userName, itemId, amount, total, perUnit);
+                pubsub.publish("BUY_SUBSCRIPTION", {receipt});
+                console.log({receipt})
+                return receipt;
             },
             createSellOrder: async (_, {itemId, seller_name, seller_realm, quantity, price}) => {
                 return await createSellOrder(converter, db, itemId, seller_name, seller_realm, quantity, price)
@@ -177,14 +184,20 @@ type User {
         Subscription: {
             price: {
                 subscribe: (root, args, {pubsub}) => {
+                    console.log(args)
                     return pubsub.asyncIterator('PRICE_CHANGE')
                 }
             },
-        },
+            receipt: {
+                subscribe: withFilter(() =>  pubsub.asyncIterator('BUY_SUBSCRIPTION'), (payload, variables) => {
+                    return payload.receipt.itemId === variables.itemId;
+                })
+            }
+        }
     };
 
-// 3
     const pubsub = new PubSub();
+
     const server = new GraphQLServer({
         typeDefs,
         resolvers,

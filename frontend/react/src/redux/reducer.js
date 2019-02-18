@@ -21,10 +21,8 @@ const initState = {
     searchTerm: "topaz",
     itemSupplies: [],
     buyQuantity: {
-        "2592": 5
     },
     price: {
-        "1": {perUnit: 1, total: 10}
     },
     count: 1,
     isLoading: false,
@@ -81,7 +79,7 @@ export default (state = initState, action) => {
             for(let supply of action.payload.itemSupplies) {
                 tmpPrice[supply.item.id] = {perUnit:0, total:0};
             }
-            return {...state, itemSupplies: action.payload.itemSupplies, amountOfItemSupplies: amount, showInfoBox: showInfoBox, price: tmpPrice};
+            return {...state, itemSupplies: action.payload.itemSupplies, amountOfItemSupplies: amount, showInfoBox: showInfoBox, price: tmpPrice, buyQuantity: {}};
 
         case RANDOM_ITEMS_SUCCEEDED: {
             return {...state, inventoryItems: action.payload};
@@ -141,6 +139,8 @@ export default (state = initState, action) => {
             return {...state, activeSellOrders: sellOrderRemoved, inventoryItems: inventoryAdded}
         }
         case BUY_ITEMS_SUCCEEDED:
+            let oldBuyQuantity = {...state.buyQuantity};
+            delete oldBuyQuantity[action.payload.item.id];
             //TODO: add to inventory
             const updatedInventory = [...state.inventoryItems];
             const items = new Set();
@@ -154,7 +154,7 @@ export default (state = initState, action) => {
             if(count + action.payload.amount < 17) {
                 updatedInventory.push({item: action.payload.item, quantity: action.payload.amount})
             }
-            return {...state, money: action.payload.money, inventoryItems: updatedInventory}
+            return {...state, money: action.payload.money, inventoryItems: updatedInventory, buyQuantity: {...oldBuyQuantity}}
         case SET_LOADING:
             return {...state, isLoading: action.payload};
         case SET_INFO_BOX:

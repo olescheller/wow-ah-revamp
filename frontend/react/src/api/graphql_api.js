@@ -1,4 +1,15 @@
 import axios from 'axios'
+import gql from 'graphql-tag';
+
+export const BUY_SUBSCRIPTION = gql`
+    subscription receipt($itemId: Int!) {
+        receipt(itemId: $itemId) {
+            itemId
+            price
+            amount
+            money
+        }
+    }`;
 
 export const dummyApiCall = (id) => {
     return new Promise((resolve, reject) => {
