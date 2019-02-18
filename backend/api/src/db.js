@@ -52,7 +52,6 @@ function getRandomItems(converter, db) {
                 if (err) reject(err);
                 items.slice(0, 500);
                 items = items.map(item => converter.ItemMongoToGql(item));
-                console.log(items.length)
                 if (items.length < 100) {
                     resolve(null);
                     return;
@@ -348,7 +347,6 @@ function getItemsPrice(db, itemId, amount) {
 }
 
 function buyItems(db, userName, itemId, amount, givenTotal, givenPerUnit) {
-    console.log(userName)
     return new Promise((resolve, reject) => {
         const SellOrders = db.collection('sellorders');
         SellOrders.find({item_id: itemId}).sort({price: 1}).toArray((err, sellOrders) => {
@@ -388,14 +386,12 @@ function buyItems(db, userName, itemId, amount, givenTotal, givenPerUnit) {
                 }
                 let perUnit =(total/amount);
                 //compare price
-                console.log({perUnit, givenPerUnit, total, givenTotal})
                 if(perUnit === givenPerUnit && total === givenTotal) {
                     //decrease money
                     const Users = db.collection('users');
                     Users.findOne({name: userName}, (err, user) => {
                         if(err) reject('user not found');
                         const money = user.money - total;
-                        console.log(money, total)
                         if(money < 0) {
                             reject( "user has not enough money");
                             return;
@@ -406,7 +402,6 @@ function buyItems(db, userName, itemId, amount, givenTotal, givenPerUnit) {
                         }
                         //buy partSellorders
                         for(sellOrder of buyPartSellOrders) {
-                            console.log({sellOrder})
                             SellOrders.updateOne({_id: sellOrder.id}, {$set: {quantity: sellOrder.left}});
                         }
                         Users.updateOne({name: userName},{$set: {money: money}});
@@ -429,14 +424,10 @@ function buyItems(db, userName, itemId, amount, givenTotal, givenPerUnit) {
 }
 
 function createSellOrder(converter, db , itemId, seller_name, seller_realm, quantity, price) {
-    console.log(itemId, seller_name, seller_realm, quantity, price);
-
 
     return new Promise(async (resolve, reject) => {
         // Get item name
         let item =  await getItemById(converter, db, itemId);
-        console.log(item);
-
         const SellOrders = db.collection('sellorders');
         let result = await SellOrders.insertOne({
             item_id: itemId,
@@ -449,7 +440,8 @@ function createSellOrder(converter, db , itemId, seller_name, seller_realm, quan
         });
 
         if (result.result.n === result.result.ok) {
-            resolve(0)
+            console.log({item})
+            resolve({item: item, price: price, quantity: quantity})
             // TODO: On success: Remove items from seller inventory
         } else
             reject(1);

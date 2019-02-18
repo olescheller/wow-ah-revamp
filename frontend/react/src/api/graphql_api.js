@@ -37,6 +37,16 @@ export async function makePurchase(userName, itemId, amount, total, perUnit) {
     })
 }
 
+export async function createSellOrder(itemId, price, quantity) {
+    return new Promise((resolve, reject) => {
+        const mutation = `mutation {createSellOrder(itemId: ${itemId}, price: ${price}, quantity: ${quantity}, seller_name: "Elandura", seller_realm:"Silvermoon") {
+        item {id, name, item_class {name}, icon}, price, quantity} }`;
+        axios.post("http://localhost:4000/", {"query": mutation, operationName: null, variables: {}}).then(response => {
+            resolve(response.data.data.createSellOrder);
+        })
+    });
+}
+
 export async function downloadRandomItems() {
     console.log('request')
     return new Promise((resolve, reject) => {

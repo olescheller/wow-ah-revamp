@@ -6,6 +6,8 @@ import Grid from '@material-ui/core/Grid';
 import './inventoryGrid.css'
 import DetailsCard from "./DetailsCard";
 import {queryAverageItemPriceAction, randomItemsRequested} from "../redux/actions/itemActions";
+import InfoBox from "./InfoBox";
+import {setInfoBox} from "../redux/actions/actions";
 
 class InventoryGrid extends React.Component {
 
@@ -16,6 +18,7 @@ class InventoryGrid extends React.Component {
 
     componentWillMount() {
         this.props.dispatch(randomItemsRequested());
+        this.props.dispatch(setInfoBox(false))
 
     }
 
@@ -62,21 +65,21 @@ class InventoryGrid extends React.Component {
         const { classes } = this.props;
         return (
             <div>
-
+                <InfoBox type="alreadyActiveSellOrder" infoClass="info warning"/>
                 <Paper className='paper' elevation={1}>
                     <Typography variant="h5" component="h3">
                         Inventory
                     </Typography>
 
                     <Grid container xs={12} justify='center'>
-                        <Grid container justify='center' item xs={6} sm={6}  spacing={2}>
-                            <Grid container item xs={4} spacing={2}>
-                                <Grid container justify="center" spacing={2}>
+                        <Grid container justify='center' item xs={6} sm={6}  spacing={0}>
+                            <Grid container item xs={4} spacing={0}>
+                                <Grid container justify="center" spacing={0}>
                                     {this.getItemSupplies()}
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid container item sm={6} spacing={2}>
+                        <Grid container item sm={6} spacing={0}>
                             {this.renderDetails()}
                         </Grid>
                     </Grid>

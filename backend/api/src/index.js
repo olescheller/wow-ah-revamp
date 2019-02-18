@@ -43,11 +43,17 @@ type Mutation {
   createUser(name: String!): User!
   fakeBuyMutation(itemId: Int, total: Float, perUnit: Float): Price
   buyItems(userName: String, itemId: Int, amount: Int, total: Float, perUnit: Float): Receipt
-  createSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!, quantity: Int!, price: Float!): Int!  
+  createSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!, quantity: Int!, price: Float!): SellOrder!
 }
 
 type Subscription {
 price(itemId: Int): Price
+}
+
+type SellOrder {
+    item: Item!
+    price: Float!
+    quantity: Int!
 }
 
 type Receipt {

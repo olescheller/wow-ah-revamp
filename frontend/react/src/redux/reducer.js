@@ -2,9 +2,15 @@ import {
     INCREMENT,
     SELECT_CATEGORY, SET_LOADING, SET_INFO_BOX, QUANTITY_EXCEEDED} from "./actions/actions";
 import {
-    BUY_QUANTITY_CHANGED, AVERAGE_ITEM_PRICE_SUCCEEDED,
+    BUY_QUANTITY_CHANGED,
+    AVERAGE_ITEM_PRICE_SUCCEEDED,
     FETCH_ITEM_SUPPLY_REQUESTED,
-    FETCH_ITEM_SUPPLY_SUCCEEDED, SEARCH_VALUE_CHANGED, BUY_ITEM_SUCCEEDED, BUY_ITEMS_SUCCEEDED, RANDOM_ITEMS_SUCCEEDED
+    FETCH_ITEM_SUPPLY_SUCCEEDED,
+    SEARCH_VALUE_CHANGED,
+    BUY_ITEM_SUCCEEDED,
+    BUY_ITEMS_SUCCEEDED,
+    RANDOM_ITEMS_SUCCEEDED,
+    SELL_ORDER_SUCCEEDED, DELETE_SELL_ORDER
 } from "./actions/itemActions";
 
 const initState = {
@@ -25,7 +31,8 @@ const initState = {
     showInfoBox: false,
     amountOfItemSupplies: 0,
     quantityExceeded: [],
-    inventoryItems: []
+    inventoryItems: [],
+    activeSellOrders: [],
 };
 
 export default (state = initState, action) => {
@@ -78,6 +85,15 @@ export default (state = initState, action) => {
 
         case RANDOM_ITEMS_SUCCEEDED: {
             return {...state, inventoryItems: action.payload};
+        }
+
+        case SELL_ORDER_SUCCEEDED: {
+            return {...state, activeSellOrders: [...state.activeSellOrders, action.payload]}
+        }
+        case DELETE_SELL_ORDER:
+        {
+            const sellOrderRemoved = state.activeSellOrders.filter(sellOrder => sellOrder.item.id !== action.payload);
+            return {...state, activeSellOrders: sellOrderRemoved}
         }
         case BUY_ITEMS_SUCCEEDED:
             return {...state, money: action.payload.money}

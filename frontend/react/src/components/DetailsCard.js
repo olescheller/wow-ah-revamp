@@ -1,9 +1,13 @@
 import './inventoryGrid.css'
 import React from 'react';
-import {Button, Card, CardContent, CardMedia, Input, TextField, Typography} from "@material-ui/core";
-import {queryAverageItemPriceAction} from "../redux/actions/itemActions";
+import {Button, Card, CardContent, CardMedia, IconButton, Input, TextField, Typography} from "@material-ui/core";
+import {createSellOrder, queryAverageItemPriceAction} from "../redux/actions/itemActions";
 import {connect} from "react-redux";
 import MoneyView from "./MoneyView";
+import MinPriceIcon from "@material-ui/icons/PanoramaFishEyeOutlined";
+import LessIcon from "@material-ui/icons/ArrowDownwardOutlined";
+import MoreIcon from "@material-ui/icons/ArrowUpwardOutlined"
+import {setInfoBox} from "../redux/actions/actions";
 
 
 
@@ -11,19 +15,39 @@ import MoneyView from "./MoneyView";
 
 class DetailsCard extends React.Component {
 
-    componentWillMount() {
-        this.props.dispatch(queryAverageItemPriceAction(1, this.props.item.id));
-
+    constructor(props) {
+        super(props);
+        this.state = {currentPrice: 0, amount: 1};
     }
 
     renderPrice = () => {
         if(this.props.price[this.props.item.id]) {
-            return(<div>Current min price: <MoneyView money={this.props.price[this.props.item.id].perUnit}/></div>);
+            return(<div>Current min price: <MoneyView className="price" money={this.props.price[this.props.item.id].perUnit}/></div>);
         }
         else {
             return(<div> Be the first seller of {this.props.item.name} </div>);
         }
-    }
+    };
+
+    calcPrice = (direction) => {
+        const newPrice = direction < 0 ? this.props.price[this.props.item.id].perUnit * 0.9 :
+            (direction > 0) ? this.props.price[this.props.item.id].perUnit * 1.1 : this.props.price[this.props.item.id].perUnit;
+        this.setState({currentPrice: newPrice})
+    };
+
+    sellItem = (item) => {
+        if(this.props.activeSellOrders.reduce((acc, curr) => {
+            return acc || curr.item.id === item.id
+        }, false)) {
+            this.props.dispatch(setInfoBox(true));
+            setTimeout(() => this.props.dispatch(setInfoBox(false)), 3000);
+        }
+        else if(this.state.amount > 0){
+            const sellOrder = {itemId: item.id, price: this.state.currentPrice, quantity: this.state.amount}
+            this.props.dispatch(createSellOrder(sellOrder));
+        }
+        this.setState({currentPrice: 0, amount:  1})
+    };
 
     render() {
         return(
@@ -47,18 +71,48 @@ class DetailsCard extends React.Component {
                     </CardContent>
                     <span className='controls'>
                         <TextField
-                            id="outlined-number"
                             label="Value in Copper"
                             type="number"
-                            className='priceInput'
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            margin="normal"
                             variant="outlined"
+
+                            value={this.state.currentPrice}
+                            onChange={(e) => this.setState({currentPrice: e.target.value})}
+                            className='priceInput'
+                            margin="normal"
                         />
-                       <Button id='sellButton' variant="contained" color="secondary"> Sell item</Button>
+                         <TextField
+                             label="Amoount"
+                             type="number"
+                             variant="outlined"
+                             value={this.state.amount}
+                             onChange={(e) => this.setState({amount: e.target.value})}
+                             className='amountInput'
+                             InputLabelProps={{
+                                 shrink: true,
+                             }}
+                             margin="normal"
+                         />
+                        <Button onClick={() => this.calcPrice(-1)} size="small" color="primary">
+                            <LessIcon />
+                            10%
+                        </Button>
+                        <Button onClick={() => this.calcPrice(0)}  size="small" color="secondary">
+                            <MinPriceIcon />
+                            Min
+                        </Button>
+                        <Button onClick={() => this.calcPrice(1)}  size="small" color="primary">
+                            <MoreIcon />
+                            10%
+                        </Button>
+                        <Button onClick={() => this.sellItem(this.props.item)} id='sellButton' variant="contained" color="secondary"> Sell</Button>
                     </span>
+                    <CardContent className="content">
+
+                        <Typography variant="subtitle1" color="textSecondary">
+                    <MoneyView className="price" money={this.state.currentPrice}/>
+                        </Typography>
+                    </CardContent>
+
                 </div>
                 <CardMedia
                     className='icon'
@@ -70,4 +124,4 @@ class DetailsCard extends React.Component {
     }
 }
 
-export default connect(({price}) => ({price})) (DetailsCard);
+export default connect(({price, activeSellOrders}) => ({price, activeSellOrders})) (DetailsCard);
