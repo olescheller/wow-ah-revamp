@@ -4,17 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --watchAll  --collectCoverage --detectOpenHandles",
     "start": "nodemon .\\src\\index.js"
   },
   "keywords": [],
   "author": "Ole & Jule",
   "license": "ISC",
   "dependencies": {
+    "graphql-subscriptions": "^1.0.0",
     "graphql-yoga": "^1.16.9",
     "mongodb": "^3.1.13"
   },
   "devDependencies": {
+    "jest": "^24.1.0",
     "nodemon": "^1.18.9"
   }
 }

@@ -1,3 +1,4 @@
+
 const MongoToGqlConverter = require("./conversion");
 
 const {GraphQLServer, withFilter, PubSub} = require('graphql-yoga');
@@ -11,7 +12,10 @@ const {
     getUserByNameAndRealm,
     getItemSupplyByName,
     getItemsPrice,
-    buyItems
+    buyItems,
+    getRandomItems,
+    addItemsToSellOrder,
+    removeSellOrder,
 } = require('./db');
 
 const {MongoClient} = require('mongodb');
@@ -35,13 +39,16 @@ type Query {
   items_count(partialItemName: String!): Int
   items_price(itemId: Float!, amount: Int!): Price
   user(name: String!, realm: String!): User
+  randomItems: [InventoryItem]!
 }
 
 type Mutation {
   createUser(name: String!): User!
   fakeBuyMutation(itemId: Int!, total: Float!, perUnit: Float!): Price
   buyItems(userName: String!, itemId: Int, amount: Int!, total: Float!, perUnit: Float!): Receipt
-  createSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!, quantity: Int!, price: Float!): Int!  
+  createSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!, quantity: Int!, price: Float!): SellOrder!
+  addItemToSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!, quantity: Int!): SellOrder!
+  removeSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!): Boolean!
 }
 
 type Subscription {
@@ -49,8 +56,19 @@ type Subscription {
   receipt(itemId: Int): Receipt
 }
 
+type InventoryItem {
+    item: Item!
+    quantity: Int!
+}
+
+type SellOrder {
+    item: Item!
+    price: Float!
+    quantity: Int!
+}
+
 type Receipt {
-  itemId: Int
+  item: Item!
   amount: Int
   price: Int
   money: Float
@@ -124,6 +142,9 @@ type User {
             user: async (_, {name, realm}) => {
                 return await getUserByNameAndRealm(db, name, realm)
             },
+            randomItems: async() => {
+                return await getRandomItems(converter, db)
+            }
         },
         Mutation: {
             createUser: (_, {name}) => {
@@ -152,6 +173,12 @@ type User {
             createSellOrder: async (_, {itemId, seller_name, seller_realm, quantity, price}) => {
                 return await createSellOrder(converter, db, itemId, seller_name, seller_realm, quantity, price)
             },
+            addItemToSellOrder: async(_, {itemId, seller_name, seller_realm, quantity}) => {
+                return await addItemsToSellOrder(converter, db, itemId, seller_name, seller_realm, quantity)
+            },
+            removeSellOrder: async(_, {itemId, seller_name, seller_realm}) => {
+                return await removeSellOrder(converter, db, itemId, seller_name, seller_realm);
+            }
         },
 
         Subscription: {

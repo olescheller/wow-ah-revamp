@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from 'prop-types';
-
 import MoneyView from './MoneyView';
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
@@ -27,13 +26,6 @@ const CustomTableCell = withStyles(theme => ({
     paddingDense: true
 }))(TableCell);
 
-let id = 0;
-
-function createData(name, calories, fat, carbs, protein) {
-    id += 1;
-    return {id, name, calories, fat, carbs, protein};
-}
-
 const styles = theme => ({
     root: {
         width: '100%',
@@ -50,7 +42,6 @@ class SellOrderList extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log(this.props.price)
     }
 
 
@@ -140,7 +131,7 @@ class SellOrderList extends React.Component {
                 </TableBody>
             </Table>
             </Paper>
-                <InfoBox type="moreItems"/>
+                <InfoBox type="moreItems" infoClass="info"/>
             </div>
         )
     }

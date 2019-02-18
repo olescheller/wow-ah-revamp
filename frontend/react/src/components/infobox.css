@@ -33,3 +33,8 @@
     position: absolute;
     right: 0
 }
+
+.warning {
+    background-color: rgba(153, 9, 9, 0.5)
+}
+

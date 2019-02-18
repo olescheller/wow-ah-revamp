@@ -5,10 +5,16 @@ import {
     downloadItemsSupplyByPartialName,
     fetchAmountOfItemSupplies,
     downloadAverageItemPrice,
-    makePurchase
+    makePurchase, downloadRandomItems, createSellOrder, addItemToSellOrder, removeSellOrder
 } from "../api/graphql_api";
 
-import {averageItemPriceSucceeded, buyItemsSucceeded, itemSupplySucceededAction} from "./actions/itemActions";
+import {
+    addItemToSellOrderSucceeded,
+    averageItemPriceSucceeded,
+    buyItemsSucceeded, deleteSellOrderAction, deleteSellOrderSucceeded,
+    itemSupplySucceededAction,
+    randomItemsSucceeded, sellOrderSucceeded
+} from "./actions/itemActions";
 import {setLoading} from "./actions/actions";
 
 function* watchFetchItemSupply() {
@@ -21,6 +27,70 @@ function* watchAverageItemPrice() {
 
 function* watchBuyItems() {
     yield takeEvery('BUY_ITEMS_REQUESTED', buyItems);
+}
+
+function* watchFetchRandomItems () {
+    yield takeEvery('FETCH_RANDOM_ITEMS_REQUESTED', randomItems);
+}
+
+function* watchCreateSellOrder () {
+    yield takeEvery('CREATE_SELL_ORDER', sellOrder);
+}
+
+function* watchAddItemToSellOrder () {
+    yield takeEvery('ADD_TO_SELLORDER_REQUESTED', addToSellOrder);
+}
+
+function* watchRemoveSellOrder () {
+    yield takeEvery('REMOVE_SELLORDER_REQUESTED', _removeSellOrder);
+}
+
+
+export function* sellOrder(action) {
+    const {itemId, price, quantity} = action.payload;
+    try{
+        const data = yield call(createSellOrder, itemId, price, quantity );
+        console.log({data})
+        yield put(sellOrderSucceeded(data))
+    }
+    catch(error){
+        yield put({type: "SELL_ORDER_FAILED", error})
+    }
+}
+
+export function* _removeSellOrder(action) {
+    const {item, quantity} = action.payload;
+    try{
+        const data = yield call(removeSellOrder, item.id);
+        yield put(deleteSellOrderSucceeded({item, quantity}))
+    }
+    catch(error){
+        yield put({type: "DELETE_SELL_ORDER_FAILED", error})
+    }
+}
+
+
+export function* addToSellOrder(action) {
+    const {itemId, quantity} = action.payload;
+    try{
+        const data = yield call(addItemToSellOrder(itemId, quantity));
+        yield put(addItemToSellOrderSucceeded(data));
+    }
+    catch(error) {
+        yield put({type: "ADD_ITEM_TO_SELLORDER_FAILED", error})
+
+    }
+}
+
+export function* randomItems(action) {
+    try{
+        const data = yield call(downloadRandomItems);
+        yield put(randomItemsSucceeded(data));
+    }
+    catch(error) {
+        yield put({type: 'RANDOM_ITEM_FAILED', error})
+    }
+
 }
 
 export function* buyItems(action) {
@@ -75,5 +145,9 @@ export default function* rootSaga() {
         watchFetchItemSupply(),
         watchAverageItemPrice(),
         watchBuyItems(),
+        watchFetchRandomItems(),
+        watchCreateSellOrder(),
+        watchAddItemToSellOrder(),
+        watchRemoveSellOrder(),
     ])
 }

@@ -7,11 +7,11 @@ import {Provider} from 'react-redux'
 import thunk from 'redux-thunk'
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 import createSagaMiddleware from 'redux-saga';
-
+import { ApolloProvider } from 'react-apollo';
 import rootSaga from './redux/sagas'
 import theme from './theme/materialTheme'
 import reducer from './redux/reducer'
-
+import {randomItemsRequested} from "./redux/actions/itemActions";
 import { ApolloProvider } from "react-apollo";
 import ApolloClient from "apollo-boost";
 import gql from "graphql-tag";
@@ -51,14 +51,24 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const sagaMiddleware = createSagaMiddleware();
 const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk, sagaMiddleware)));
 sagaMiddleware.run(rootSaga);
+store.dispatch(randomItemsRequested());
+
+
+
+const client = new ApolloClient({
+    uri: "http://localhost:4000/"
+});
+
 
 ReactDOM.render(
     <ApolloProvider client={client}>
 
     <Provider store={store}>
         <MuiThemeProvider theme={theme}>
+            <ApolloProvider client={client}>
             <BrowserRouter>
                 <App/>
             </BrowserRouter>
+            </ApolloProvider>
         </MuiThemeProvider>
     </Provider></ApolloProvider>, document.getElementById('root'));
