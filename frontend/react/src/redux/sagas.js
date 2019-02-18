@@ -5,13 +5,13 @@ import {
     downloadItemsSupplyByPartialName,
     fetchAmountOfItemSupplies,
     downloadAverageItemPrice,
-    makePurchase, downloadRandomItems, createSellOrder, addItemToSellOrder
+    makePurchase, downloadRandomItems, createSellOrder, addItemToSellOrder, removeSellOrder
 } from "../api/graphql_api";
 
 import {
     addItemToSellOrderSucceeded,
     averageItemPriceSucceeded,
-    buyItemsSucceeded,
+    buyItemsSucceeded, deleteSellOrderAction, deleteSellOrderSucceeded,
     itemSupplySucceededAction,
     randomItemsSucceeded, sellOrderSucceeded
 } from "./actions/itemActions";
@@ -41,6 +41,10 @@ function* watchAddItemToSellOrder () {
     yield takeEvery('ADD_TO_SELLORDER_REQUESTED', addToSellOrder);
 }
 
+function* watchRemoveSellOrder () {
+    yield takeEvery('REMOVE_SELLORDER_REQUESTED', _removeSellOrder);
+}
+
 
 export function* sellOrder(action) {
     const {itemId, price, quantity} = action.payload;
@@ -53,6 +57,18 @@ export function* sellOrder(action) {
         yield put({type: "SELL_ORDER_FAILED", error})
     }
 }
+
+export function* _removeSellOrder(action) {
+    const {item, quantity} = action.payload;
+    try{
+        const data = yield call(removeSellOrder, item.id);
+        yield put(deleteSellOrderSucceeded({item, quantity}))
+    }
+    catch(error){
+        yield put({type: "DELETE_SELL_ORDER_FAILED", error})
+    }
+}
+
 
 export function* addToSellOrder(action) {
     const {itemId, quantity} = action.payload;
@@ -132,5 +148,6 @@ export default function* rootSaga() {
         watchFetchRandomItems(),
         watchCreateSellOrder(),
         watchAddItemToSellOrder(),
+        watchRemoveSellOrder(),
     ])
 }

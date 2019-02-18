@@ -434,6 +434,16 @@ function buyItems(db, userName, itemId, amount, givenTotal, givenPerUnit) {
     });
 }
 
+function removeSellOrder(converter, db, itemId, seller_name, seller_realm) {
+    return new Promise(async (resolve, reject) => {
+        // Get item name
+        let item = await getItemById(converter, db, itemId);
+        const SellOrders = db.collection('sellorders');
+        await SellOrders.deleteOne({item_id: itemId, seller: seller_name, seller_realm: seller_realm});
+        resolve(true);
+    });
+}
+
 function createSellOrder(converter, db , itemId, seller_name, seller_realm, quantity, price) {
     return new Promise(async (resolve, reject) => {
         // Get item name
@@ -488,4 +498,5 @@ module.exports = {
     createSellOrder,
     getRandomItems,
     addItemsToSellOrder,
+    removeSellOrder,
 };

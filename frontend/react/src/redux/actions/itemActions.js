@@ -85,6 +85,7 @@ export const addItemToSellOrderSucceeded = (sellOrder) => {
     }
 }
 
+
 export const AVERAGE_ITEM_PRICE_REQUESTED = "AVERAGE_ITEM_PRICE_REQUESTED";
 export const queryAverageItemPriceAction = (amount, itemId) => ({
     type: AVERAGE_ITEM_PRICE_REQUESTED,
@@ -97,10 +98,18 @@ export const averageItemPriceSucceeded = (itemId, perUnit, total) => ({
     payload: {itemId, perUnit, total}
 });
 
-export const DELETE_SELL_ORDER = "DELETE_SELL_ORDER";
+export const REMOVE_SELLORDER_REQUESTED = "REMOVE_SELLORDER_REQUESTED";
 export const deleteSellOrderAction = (sellOrder) => {
     return {
-        type: DELETE_SELL_ORDER,
+        type: REMOVE_SELLORDER_REQUESTED,
+        payload: sellOrder,
+    }
+}
+
+export const DELETE_SELL_ORDER_SUCCEEDED = "DELETE_SELL_ORDER_SUCCEEDED";
+export const deleteSellOrderSucceeded = (sellOrder) => {
+    return {
+        type: DELETE_SELL_ORDER_SUCCEEDED,
         payload: sellOrder,
     }
 }

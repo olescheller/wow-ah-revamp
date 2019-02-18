@@ -10,7 +10,7 @@ import {
     BUY_ITEM_SUCCEEDED,
     BUY_ITEMS_SUCCEEDED,
     RANDOM_ITEMS_SUCCEEDED,
-    SELL_ORDER_SUCCEEDED, DELETE_SELL_ORDER, ADD_TO_SELLORDER_SUCCEEDED
+    SELL_ORDER_SUCCEEDED, DELETE_SELL_ORDER, ADD_TO_SELLORDER_SUCCEEDED, DELETE_SELL_ORDER_SUCCEEDED
 } from "./actions/itemActions";
 
 const initState = {
@@ -126,7 +126,7 @@ export default (state = initState, action) => {
             return {...state, activeSellOrders: newActiveSellOrders, inventoryItems: newInventory}
         }
 
-        case DELETE_SELL_ORDER:
+        case DELETE_SELL_ORDER_SUCCEEDED:
         {
             const sellOrderRemoved = state.activeSellOrders.filter(sellOrder => sellOrder.item.id !== action.payload.item.id);
             const inventoryAdded = [...state.inventoryItems];

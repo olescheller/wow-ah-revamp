@@ -15,6 +15,7 @@ const {
     buyItems,
     getRandomItems,
     addItemsToSellOrder,
+    removeSellOrder,
 } = require('./db');
 
 const {MongoClient} = require('mongodb');
@@ -47,6 +48,7 @@ type Mutation {
   buyItems(userName: String, itemId: Int, amount: Int, total: Float, perUnit: Float): Receipt
   createSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!, quantity: Int!, price: Float!): SellOrder!
   addItemToSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!, quantity: Int!): SellOrder!
+  removeSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!): Boolean!
 }
 
 type Subscription {
@@ -166,6 +168,9 @@ type User {
             },
             addItemToSellOrder: async(_, {itemId, seller_name, seller_realm, quantity}) => {
                 return await addItemsToSellOrder(converter, db, itemId, seller_name, seller_realm, quantity)
+            },
+            removeSellOrder: async(_, {itemId, seller_name, seller_realm}) => {
+                return await removeSellOrder(converter, db, itemId, seller_name, seller_realm);
             }
         },
 

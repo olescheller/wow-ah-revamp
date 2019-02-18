@@ -59,6 +59,16 @@ export async function addItemToSellOrder(itemId, quantity) {
     });
 }
 
+export async function removeSellOrder(itemId) {
+    console.log(itemId)
+    return new Promise((resolve, reject) => {
+        const mutation = `mutation {removeSellOrder(itemId: ${itemId}, seller_name: "Elandura", seller_realm:"Silvermoon")}`;
+        axios.post("http://localhost:4000/", {"query": mutation, operationName: null, variables: {}}).then(response => {
+            resolve(response.data.data.removeSellOrder);
+        })
+    });
+}
+
 
 export async function downloadRandomItems() {
     console.log('request')

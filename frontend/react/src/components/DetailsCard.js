@@ -10,9 +10,6 @@ import MoreIcon from "@material-ui/icons/ArrowUpwardOutlined"
 import {setInfoBox} from "../redux/actions/actions";
 
 
-
-
-
 class DetailsCard extends React.Component {
 
     constructor(props) {
