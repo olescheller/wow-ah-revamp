@@ -357,8 +357,9 @@ function getItemsPrice(db, itemId, amount) {
     });
 }
 
-function buyItems(db, userName, itemId, amount, givenTotal, givenPerUnit) {
-    return new Promise((resolve, reject) => {
+function buyItems(converter, db, userName, itemId, amount, givenTotal, givenPerUnit) {
+    return new Promise(async (resolve, reject) => {
+        const item = await getItemById(converter, db, itemId)
         const SellOrders = db.collection('sellorders');
         SellOrders.find({item_id: itemId}).sort({price: 1}).toArray((err, sellOrders) => {
             if (err) reject(err);
@@ -418,7 +419,7 @@ function buyItems(db, userName, itemId, amount, givenTotal, givenPerUnit) {
                         Users.updateOne({name: userName},{$set: {money: money}});
                         //publish to subscription
                         resolve({
-                            itemId: itemId,
+                            item: item,
                             amount: amount,
                             price: total,
                             money: money,

@@ -142,7 +142,19 @@ export default (state = initState, action) => {
         }
         case BUY_ITEMS_SUCCEEDED:
             //TODO: add to inventory
-            return {...state, money: action.payload.money}
+            const updatedInventory = [...state.inventoryItems];
+            const items = new Set();
+            let count = 0;
+            for(let inv of updatedInventory) {
+                if(! items.has(inv.item.name)) {
+                    count ++;
+                    items.add(inv.item.name);
+                }
+            }
+            if(count + action.payload.amount < 17) {
+                updatedInventory.push({item: action.payload.item, quantity: action.payload.amount})
+            }
+            return {...state, money: action.payload.money, inventoryItems: updatedInventory}
         case SET_LOADING:
             return {...state, isLoading: action.payload};
         case SET_INFO_BOX:

@@ -67,7 +67,7 @@ type SellOrder {
 }
 
 type Receipt {
-  itemId: Int
+  item: Item!
   amount: Int
   price: Int
   money: Float
@@ -160,7 +160,7 @@ type User {
                 return price;
             },
             buyItems: async (_, {userName, itemId, amount, total, perUnit}) => {
-                return await buyItems(db, userName, itemId, amount, total, perUnit);
+                return await buyItems(converter, db, userName, itemId, amount, total, perUnit);
                 //publish to pubsub
             },
             createSellOrder: async (_, {itemId, seller_name, seller_realm, quantity, price}) => {
