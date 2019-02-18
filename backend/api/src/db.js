@@ -26,7 +26,6 @@ function getUserByNameAndRealm(db, name, realm) {
 function getItemById(converter, db, itemId) {
     return new Promise((resolve, reject) => {
         const Items = db.collection('items');
-
         // DB CALL
         Items.findOne({id: itemId},
              (err, item) => {
@@ -461,7 +460,6 @@ function createSellOrder(converter, db , itemId, seller_name, seller_realm, quan
         });
 
         if (result.result.n === result.result.ok) {
-            console.log({item})
             resolve({item: item, price: price, quantity: quantity})
             // TODO: On success: Remove items from seller inventory
         } else

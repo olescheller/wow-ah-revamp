@@ -118,6 +118,9 @@ export function* fetchAverageItemPrice(action) {
     let amount = action.payload.amount === '' ? 0 : action.payload.amount;
     try {
         const data = yield call(downloadAverageItemPrice, action.payload.itemId, amount);
+        if(!data) {
+            yield put(averageItemPriceSucceeded(action.payload.itemId, null, null));
+        }
         yield put(averageItemPriceSucceeded(action.payload.itemId, data.perUnit, data.total));
     } catch (error) {
         yield put({type: "AVERAGE_ITEM_PRICE_FAILED", error})

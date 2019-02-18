@@ -145,15 +145,29 @@ export default (state = initState, action) => {
             const updatedInventory = [...state.inventoryItems];
             const items = new Set();
             let count = 0;
+            let toStack = false;
             for(let inv of updatedInventory) {
                 if(! items.has(inv.item.name)) {
                     count ++;
+                    if(inv.item.name === action.payload.item.name) toStack = true;
                     items.add(inv.item.name);
                 }
             }
-            if(count + action.payload.amount < 17) {
-                updatedInventory.push({item: action.payload.item, quantity: action.payload.amount})
+            if(toStack) {
+                updatedInventory.map((inv) => {
+                    if(inv.item.name === action.payload.item.name) {
+                        inv.quantity += action.payload.amount;
+                        return inv;
+                    }
+                    return inv;
+                });
             }
+            else {
+                if(count + action.payload.amount < 17) {
+                    updatedInventory.push({item: action.payload.item, quantity: action.payload.amount})
+                }
+            }
+
             return {...state, money: action.payload.money, inventoryItems: updatedInventory, buyQuantity: {...oldBuyQuantity}}
         case SET_LOADING:
             return {...state, isLoading: action.payload};

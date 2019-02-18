@@ -12,7 +12,6 @@ import rootSaga from './redux/sagas'
 import theme from './theme/materialTheme'
 import reducer from './redux/reducer'
 import {randomItemsRequested} from "./redux/actions/itemActions";
-import { ApolloProvider } from "react-apollo";
 import ApolloClient from "apollo-boost";
 import gql from "graphql-tag";
 import { WebSocketLink } from 'apollo-link-ws';
@@ -52,13 +51,6 @@ const sagaMiddleware = createSagaMiddleware();
 const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk, sagaMiddleware)));
 sagaMiddleware.run(rootSaga);
 store.dispatch(randomItemsRequested());
-
-
-
-const client = new ApolloClient({
-    uri: "http://localhost:4000/"
-});
-
 
 ReactDOM.render(
     <ApolloProvider client={client}>

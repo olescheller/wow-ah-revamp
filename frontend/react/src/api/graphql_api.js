@@ -95,6 +95,7 @@ export async function downloadRandomItems() {
 }
 
 export async function downloadAverageItemPrice(itemId, amount) {
+    console.log({itemId, amount})
     return new Promise((resolve, reject) => {
         const qry = `{items_price(itemId: ${itemId}, amount: ${amount}) {perUnit, total}}`;
         axios.post("http://localhost:4000/", {"query": qry}).then(response => {

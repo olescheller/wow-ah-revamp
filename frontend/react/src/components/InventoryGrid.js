@@ -42,6 +42,7 @@ class InventoryGrid extends React.Component {
 
 
     showDetails = (item) => {
+        this.props.dispatch(queryAverageItemPriceAction(1, item.item.id));
         this.setState({selectedItem: item})
     }
 

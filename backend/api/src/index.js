@@ -136,7 +136,6 @@ type User {
                 return await getItemsByPartialName(db, partialItemName);
             },
             items_price: async (_, {itemId, amount}) => {
-                console.log({itemId, amount})
                 return await getItemsPrice(db, itemId, amount);
             },
             user: async (_, {name, realm}) => {
@@ -159,15 +158,12 @@ type User {
                 const price = {perUnit: perUnit + 1, total: total + 1}
                 pubsub.publish("PRICE_CHANGE", {price});
                 pubsub.publish("ITEM_QUANTITY_CHANGED", {price});
-
-                console.log(price)
                 return price;
             },
             buyItems: async (_, {userName, itemId, amount, total, perUnit}) => {
                 //publish to pubsub
-                const receipt = await buyItems(db, userName, itemId, amount, total, perUnit);
+                const receipt = await buyItems(converter, db, userName, itemId, amount, total, perUnit);
                 pubsub.publish("BUY_SUBSCRIPTION", {receipt});
-                console.log({receipt})
                 return receipt;
             },
             createSellOrder: async (_, {itemId, seller_name, seller_realm, quantity, price}) => {
@@ -184,7 +180,6 @@ type User {
         Subscription: {
             price: {
                 subscribe: (root, args, {pubsub}) => {
-                    console.log(args)
                     return pubsub.asyncIterator('PRICE_CHANGE')
                 }
             },
