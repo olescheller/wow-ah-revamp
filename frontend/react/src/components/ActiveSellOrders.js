@@ -38,8 +38,8 @@ const styles = theme => ({
 class ActiveSellOrders extends React.Component {
 
 
-    deleteSellOrder = (itemId) => {
-        this.props.dispatch(deleteSellOrderAction(itemId));
+    deleteSellOrder = (sellOrder) => {
+        this.props.dispatch(deleteSellOrderAction(sellOrder));
     }
 
     render(){
@@ -80,7 +80,7 @@ class ActiveSellOrders extends React.Component {
                                         </CustomTableCell>
                                         <CustomTableCell padding="dense">{sellOrder.quantity}</CustomTableCell>
                                         <CustomTableCell padding="dense" align="right">
-                                            <Button onClick={() => this.deleteSellOrder(sellOrder.item.id)} variant="contained" color="primary"> Delete</Button></CustomTableCell>
+                                            <Button onClick={() => this.deleteSellOrder(sellOrder)} variant="contained" color="primary"> Delete</Button></CustomTableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

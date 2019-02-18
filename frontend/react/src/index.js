@@ -12,10 +12,12 @@ import rootSaga from './redux/sagas'
 import theme from './theme/materialTheme'
 import reducer from './redux/reducer'
 import ApolloClient from "apollo-boost";
+import {randomItemsRequested} from "./redux/actions/itemActions";
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const sagaMiddleware = createSagaMiddleware();
 const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk, sagaMiddleware)));
 sagaMiddleware.run(rootSaga);
+store.dispatch(randomItemsRequested());
 
 
 const client = new ApolloClient({

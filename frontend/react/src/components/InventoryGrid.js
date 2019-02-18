@@ -1,7 +1,7 @@
 
 import React from 'react';
 import {connect} from 'react-redux';
-import {Paper, Tooltip, Typography} from "@material-ui/core";
+import {Badge, Paper, Tooltip, Typography} from "@material-ui/core";
 import Grid from '@material-ui/core/Grid';
 import './inventoryGrid.css'
 import DetailsCard from "./DetailsCard";
@@ -17,17 +17,29 @@ class InventoryGrid extends React.Component {
     }
 
     componentWillMount() {
-        this.props.dispatch(randomItemsRequested());
         this.props.dispatch(setInfoBox(false))
 
     }
 
     renderDetails = () => {
         if(this.state.selectedItem) {
-            this.props.dispatch(queryAverageItemPriceAction(1, this.state.selectedItem.id));
-            return <DetailsCard item={this.state.selectedItem}/>
+            console.log(this.state.selectedItem)
+            this.props.dispatch(queryAverageItemPriceAction(1, this.state.selectedItem.item.id));
+            return <DetailsCard inventoryItem={this.state.selectedItem}/>
         }
     }
+
+    renderIconWithBadge = (inventoryItem) => {
+        return inventoryItem.quantity > 1 ?
+            <Badge badgeContent={inventoryItem.quantity} color="secondary">
+                <img className="inventoryIcon"
+                     src={`https://s3.eu-central-1.amazonaws.com/wow-icons/icons/${inventoryItem.item.icon}.jpg`}/>
+            </Badge>
+            :
+            <img className="inventoryIcon"
+                 src={`https://s3.eu-central-1.amazonaws.com/wow-icons/icons/${inventoryItem.item.icon}.jpg`}/>
+    };
+
 
     showDetails = (item) => {
         this.setState({selectedItem: item})
@@ -42,17 +54,16 @@ class InventoryGrid extends React.Component {
         for(let i = 0; i < 16; i ++) {
             if(arr[i]) {
                 result.push(
-                    <Tooltip disableFocusListener disableTouchListener title={arr[i].name}>
-                    <Grid onClick={() => this.showDetails(arr[i])} className="inventoryItem" item sm={3}spacing={0} key={Math.random()}>
-                        <img className="inventoryIcon"
-                             src={`https://s3.eu-central-1.amazonaws.com/wow-icons/icons/${arr[i].icon}.jpg`}/>
+                    <Tooltip key={arr[i].item.name} disableFocusListener disableTouchListener title={arr[i].item.name}>
+                    <Grid onClick={() => this.showDetails(arr[i])} className="inventoryItem" item sm={3}key={Math.random()}>
+                        {this.renderIconWithBadge(arr[i])}
                     </Grid>
                     </Tooltip>
                 )
             }
             else {
                 result.push(
-                    <Grid className="inventoryItem" item sm={3}spacing={0} key={Math.random()}>
+                    <Grid className="inventoryItem" item sm={3} key={Math.random()}>
                     </Grid>
                 )
             }
@@ -71,15 +82,15 @@ class InventoryGrid extends React.Component {
                         Inventory
                     </Typography>
 
-                    <Grid container xs={12} justify='center'>
-                        <Grid container justify='center' item xs={6} sm={6}  spacing={0}>
-                            <Grid container item xs={4} spacing={0}>
-                                <Grid container justify="center" spacing={0}>
+                    <Grid container justify='center'>
+                        <Grid container justify='center' item xs={6} sm={6}  >
+                            <Grid container item xs={4} >
+                                <Grid container justify="center" >
                                     {this.getItemSupplies()}
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid container item sm={6} spacing={0}>
+                        <Grid container item sm={6} >
                             {this.renderDetails()}
                         </Grid>
                     </Grid>

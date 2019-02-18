@@ -1,3 +1,4 @@
+
 const MongoToGqlConverter = require("./conversion");
 
 const {GraphQLServer, withFilter, PubSub} = require('graphql-yoga');
@@ -12,7 +13,8 @@ const {
     getItemSupplyByName,
     getItemsPrice,
     buyItems,
-    getRandomItems
+    getRandomItems,
+    addItemsToSellOrder,
 } = require('./db');
 
 const {MongoClient} = require('mongodb');
@@ -36,7 +38,7 @@ type Query {
   items_count(partialItemName: String): Int
   items_price(itemId: Float!, amount: Int!): Price
   user(name: String, realm: String): User
-  randomItems: [Item]!
+  randomItems: [InventoryItem]!
 }
 
 type Mutation {
@@ -44,10 +46,16 @@ type Mutation {
   fakeBuyMutation(itemId: Int, total: Float, perUnit: Float): Price
   buyItems(userName: String, itemId: Int, amount: Int, total: Float, perUnit: Float): Receipt
   createSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!, quantity: Int!, price: Float!): SellOrder!
+  addItemToSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!, quantity: Int!): SellOrder!
 }
 
 type Subscription {
 price(itemId: Int): Price
+}
+
+type InventoryItem {
+    item: Item!
+    quantity: Int!
 }
 
 type SellOrder {
@@ -156,6 +164,9 @@ type User {
             createSellOrder: async (_, {itemId, seller_name, seller_realm, quantity, price}) => {
                 return await createSellOrder(converter, db, itemId, seller_name, seller_realm, quantity, price)
             },
+            addItemToSellOrder: async(_, {itemId, seller_name, seller_realm, quantity}) => {
+                return await addItemsToSellOrder(converter, db, itemId, seller_name, seller_realm, quantity)
+            }
         },
 
         Subscription: {

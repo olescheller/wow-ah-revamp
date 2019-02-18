@@ -10,7 +10,7 @@ import {
     BUY_ITEM_SUCCEEDED,
     BUY_ITEMS_SUCCEEDED,
     RANDOM_ITEMS_SUCCEEDED,
-    SELL_ORDER_SUCCEEDED, DELETE_SELL_ORDER
+    SELL_ORDER_SUCCEEDED, DELETE_SELL_ORDER, ADD_TO_SELLORDER_SUCCEEDED
 } from "./actions/itemActions";
 
 const initState = {
@@ -88,14 +88,60 @@ export default (state = initState, action) => {
         }
 
         case SELL_ORDER_SUCCEEDED: {
-            return {...state, activeSellOrders: [...state.activeSellOrders, action.payload]}
+            let newInventory = [...state.inventoryItems]
+                .filter((item) => {
+                    return !(item.item.id === action.payload.item.id && item.quantity === action.payload.quantity)
+                })
+                .map(item => {
+                    const quantity = item.quantity;
+                if(item.item.id === action.payload.item.id) return {...item, quantity: quantity- action.payload.quantity}
+                return item;
+            });
+            return {...state, activeSellOrders: [...state.activeSellOrders, action.payload], inventoryItems: newInventory}
         }
+
+        case  ADD_TO_SELLORDER_SUCCEEDED: {
+            let newInventory = [...state.inventoryItems]
+                .filter((item) => {
+                    return !(item.item.id === action.payload.itemId && item.quantity === action.payload.quantity)
+                })
+                .map(item => {
+                    const quantity = item.quantity;
+                    if (item.item.id === action.payload.itemId) {
+                        return {
+                            ...item,
+                            quantity: quantity - action.payload.quantity
+                        }
+                    }
+                    return item;
+                });
+            let newActiveSellOrders = [...state.activeSellOrders]
+                .map((sellOrder) => {
+                    if(sellOrder.item.id === action.payload.itemId) {
+                        const quantity = sellOrder.quantity;
+                        return {...sellOrder, quantity: quantity + action.payload.quantity};
+                    }
+                    return sellOrder;
+                });
+            return {...state, activeSellOrders: newActiveSellOrders, inventoryItems: newInventory}
+        }
+
         case DELETE_SELL_ORDER:
         {
-            const sellOrderRemoved = state.activeSellOrders.filter(sellOrder => sellOrder.item.id !== action.payload);
-            return {...state, activeSellOrders: sellOrderRemoved}
+            const sellOrderRemoved = state.activeSellOrders.filter(sellOrder => sellOrder.item.id !== action.payload.item.id);
+            const inventoryAdded = [...state.inventoryItems];
+            let wasAdded = false;
+            for(let inventory of inventoryAdded){
+                if(inventory.item.id === action.payload.item.id) {
+                    inventory.quantity += action.payload.quantity;
+                    wasAdded = true;
+                }
+            }
+            if(!wasAdded) inventoryAdded.push(action.payload);
+            return {...state, activeSellOrders: sellOrderRemoved, inventoryItems: inventoryAdded}
         }
         case BUY_ITEMS_SUCCEEDED:
+            //TODO: add to inventory
             return {...state, money: action.payload.money}
         case SET_LOADING:
             return {...state, isLoading: action.payload};

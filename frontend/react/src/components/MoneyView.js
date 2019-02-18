@@ -26,7 +26,7 @@ constructor(props) {
         else if(silver > 0) {coins.push(silverItem, copperItem);}
         else {coins.push(copperItem);}
         return(
-            <div class='coins'>{coins} {label}</div>
+            <div className='coins'>{coins} {label}</div>
         )
     };
 

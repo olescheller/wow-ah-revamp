@@ -56,10 +56,21 @@ function getRandomItems(converter, db) {
                     resolve(null);
                     return;
                 }
-                const randoms = [];
-                for(let i = 0; i < 16; i ++) {
+                let randoms = [];
+                const itemSet = new Set();
+
+                for(let i = 0; i < 14; i ++) {
                     const randInt = Math.floor(Math.random() * 100);
-                    randoms.push((items[randInt]));
+                        randoms.map((random) => {
+                            if(random.item.name === items[randInt].name) {
+                                random.quantity += 1;
+                            }
+                            return random;
+                        });
+                    if(! itemSet.has(items[randInt].name)) {
+                        randoms.push({item: items[randInt], quantity: 1});
+                        itemSet.add(items[randInt].name);
+                    }
                 }
                 resolve(randoms)
             }
@@ -424,7 +435,6 @@ function buyItems(db, userName, itemId, amount, givenTotal, givenPerUnit) {
 }
 
 function createSellOrder(converter, db , itemId, seller_name, seller_realm, quantity, price) {
-
     return new Promise(async (resolve, reject) => {
         // Get item name
         let item =  await getItemById(converter, db, itemId);
@@ -445,10 +455,24 @@ function createSellOrder(converter, db , itemId, seller_name, seller_realm, quan
             // TODO: On success: Remove items from seller inventory
         } else
             reject(1);
+    })
+}
 
+function addItemsToSellOrder(converter, db, itemId, seller_name, seller_realm, quantity) {
+    return new Promise(async (resolve, reject) => {
+        // Get item name
+        let item =  await getItemById(converter, db, itemId);
+        const SellOrders = db.collection('sellorders');
+        await SellOrders.findOne({item_id: itemId, seller: seller_name, seller_realm: seller_realm}, (err, sellOrder) => {
+            if(err) {
+                reject('sellorder was not found');
+            }
+            const newQuantity = sellOrder.quantity + quantity
+            SellOrders.updateOne({_id: sellOrder.id}, {$set: {quantity: newQuantity}});
+            resolve({item:item, price: sellOrder.price, quantity: quantity});
+        })
 
     })
-
 }
 
 module.exports = {
@@ -463,4 +487,5 @@ module.exports = {
     buyItems,
     createSellOrder,
     getRandomItems,
+    addItemsToSellOrder,
 };

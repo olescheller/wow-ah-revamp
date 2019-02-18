@@ -67,6 +67,24 @@ export const sellOrderSucceeded = (sellOrder) => {
     };
 }
 
+
+export const ADD_TO_SELLORDER_REQUESTED = 'ADD_TO_SELLORDER_REQUESTED';
+export const addItemToSellOrderRequested = (sellOrder) => {
+    return {
+        type: ADD_TO_SELLORDER_REQUESTED,
+        payload: sellOrder,
+    }
+}
+
+
+export const ADD_TO_SELLORDER_SUCCEEDED = 'ADD_TO_SELLORDER_SUCCEEDED';
+export const addItemToSellOrderSucceeded = (sellOrder) => {
+    return {
+        type: ADD_TO_SELLORDER_SUCCEEDED,
+        payload: sellOrder,
+    }
+}
+
 export const AVERAGE_ITEM_PRICE_REQUESTED = "AVERAGE_ITEM_PRICE_REQUESTED";
 export const queryAverageItemPriceAction = (amount, itemId) => ({
     type: AVERAGE_ITEM_PRICE_REQUESTED,
@@ -80,9 +98,9 @@ export const averageItemPriceSucceeded = (itemId, perUnit, total) => ({
 });
 
 export const DELETE_SELL_ORDER = "DELETE_SELL_ORDER";
-export const deleteSellOrderAction = (itemId) => {
+export const deleteSellOrderAction = (sellOrder) => {
     return {
         type: DELETE_SELL_ORDER,
-        payload: itemId,
+        payload: sellOrder,
     }
 }

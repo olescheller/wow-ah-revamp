@@ -47,10 +47,23 @@ export async function createSellOrder(itemId, price, quantity) {
     });
 }
 
+
+
+export async function addItemToSellOrder(itemId, quantity) {
+    return new Promise((resolve, reject) => {
+        const mutation = `mutation {addItemToSellOrder(itemId: ${itemId}, quantity: ${quantity}, seller_name: "Elandura", seller_realm:"Silvermoon") {
+        item {id, name, item_class {name}, icon}, price, quantity} }`;
+        axios.post("http://localhost:4000/", {"query": mutation, operationName: null, variables: {}}).then(response => {
+            resolve(response.data.data.addItemToSellOrder);
+        })
+    });
+}
+
+
 export async function downloadRandomItems() {
     console.log('request')
     return new Promise((resolve, reject) => {
-        const qry = `{randomItems{id, name, icon, item_class{name},item_sub_class{name}}}`;
+        const qry = `{randomItems{quantity, item {id, name, icon, item_class{name},item_sub_class{name}}}}`;
         axios.post("http://localhost:4000/", {"query": qry}).then(response => {
             console.log({response})
             resolve(response.data.data.randomItems);
