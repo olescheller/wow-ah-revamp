@@ -27,10 +27,16 @@ class DetailsCard extends React.Component {
     };
 
     calcPrice = (direction) => {
-        const newPrice = direction < 0 ? this.props.price[this.props.inventoryItem.item.id].perUnit * 0.9 :
-            (direction > 0) ? this.props.price[this.props.inventoryItem.item.id].perUnit * 1.1 :
-                this.props.price[this.props.inventoryItem.item.id].perUnit;
-        this.setState({currentPrice: newPrice})
+        if(this.props.price[this.props.inventoryItem.item.id]) {
+            const newPrice = direction < 0 ? this.props.price[this.props.inventoryItem.item.id].perUnit * 0.9 :
+                (direction > 0) ? this.props.price[this.props.inventoryItem.item.id].perUnit * 1.1 :
+                    this.props.price[this.props.inventoryItem.item.id].perUnit;
+            this.setState({currentPrice: newPrice})
+        }
+        else {
+            this.setState({currentPrice: 0})
+
+        }
     };
 
     sellItem = (item) => {
