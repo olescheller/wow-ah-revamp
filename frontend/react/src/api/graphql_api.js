@@ -11,33 +11,6 @@ export const BUY_SUBSCRIPTION = gql`
         }
     }`;
 
-export const dummyApiCall = (id) => {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => resolve([
-            {
-                "item": {
-                    "icon": "inv_fabric_wool_01",
-                    "id": "2592",
-                    "name": "Wool Cloth"
-                },
-                "quantity": 6794,
-                "min_price": 1969
-            },
-            {
-
-                "item": {
-                    "icon": "inv_misc_flower_02",
-                    "id": "2447",
-                    "name": "Peacebloom"
-                },
-                "quantity": 5334,
-                "min_price": 30000
-            }
-
-        ]), 2500);
-    });
-};
-
 export async function makePurchase(userName, itemId, amount, total, perUnit) {
     return new Promise((resolve, reject) => {
         const mutation = `mutation {buyItems(userName: "Elandura-Silvermoon", itemId: ${itemId},amount: ${amount}, total: ${total}, perUnit: ${perUnit}) 
@@ -72,7 +45,6 @@ export async function addItemToSellOrder(itemId, quantity) {
 }
 
 export async function removeSellOrder(itemId) {
-    console.log(itemId)
     return new Promise((resolve, reject) => {
         const mutation = `mutation {removeSellOrder(itemId: ${itemId}, seller_name: "Elandura", seller_realm:"Silvermoon")}`;
         axios.post("http://localhost:4000/", {"query": mutation, operationName: null, variables: {}}).then(response => {
@@ -83,11 +55,9 @@ export async function removeSellOrder(itemId) {
 
 
 export async function downloadRandomItems() {
-    console.log('request')
     return new Promise((resolve, reject) => {
         const qry = `{randomItems{quantity, item {id, name, icon, item_class{name},item_sub_class{name}}}}`;
         axios.post("http://localhost:4000/", {"query": qry}).then(response => {
-            console.log({response})
             resolve(response.data.data.randomItems);
         })
     })
@@ -95,7 +65,6 @@ export async function downloadRandomItems() {
 }
 
 export async function downloadAverageItemPrice(itemId, amount) {
-    console.log({itemId, amount})
     return new Promise((resolve, reject) => {
         const qry = `{items_price(itemId: ${itemId}, amount: ${amount}) {perUnit, total}}`;
         axios.post("http://localhost:4000/", {"query": qry}).then(response => {
@@ -122,6 +91,21 @@ export async function downloadItemsSupplyByPartialName(partialName) {
         axios.post("http://localhost:4000/", {"query": qry}).then(response => {
 
             resolve(response.data.data.items_supply.filter(item => item!==null))
+        })
+    })
+}
+export async function getUserMoney(userName, realmName) {
+    return new Promise((resolve, reject) => {
+        const qry = `
+              {
+                user(name: \"${userName}\", realm: \"${realmName}\" ) {
+                  name,
+                  money
+                }
+              }
+            `;
+        axios.post("http://localhost:4000/", {"query": qry}).then(response => {
+            resolve(response.data.data.user)
         })
     })
 }

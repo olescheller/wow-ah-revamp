@@ -18,6 +18,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ShoppingIcon from '@material-ui/icons/ShoppingCart';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import SettingsIcon from '@material-ui/icons/Settings';
 import {Route, Switch, withRouter} from "react-router-dom";
 import {Link} from "react-router-dom";
@@ -27,13 +28,15 @@ import Badge from "@material-ui/core/Badge";
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from '@material-ui/icons/Search';
-import { fade } from '@material-ui/core/styles/colorManipulator';
+import {fade} from '@material-ui/core/styles/colorManipulator';
 import Button from "@material-ui/core/Button";
 import {connect} from "react-redux";
 import {itemSupplyRequestAction, searchValueChangedAction} from "../redux/actions/itemActions";
 import MoneyView from "./MoneyView";
 import {SellOrderAlertSubscription} from "./SubscriptionComponent";
-import Paper from "./SellOrderList";
+import Paper from "@material-ui/core/Paper";
+import SettingsPage from "./SettingsPage";
+import AccountCircle from '@material-ui/icons/AccountCircle';
 
 
 const drawerWidth = 240;
@@ -103,7 +106,7 @@ const styles = theme => ({
     },
     grow: {
         flexGrow: 1,
-    },search: {
+    }, search: {
         position: 'relative',
         borderRadius: theme.shape.borderRadius,
         backgroundColor: fade(theme.palette.common.white, 0.15),
@@ -211,31 +214,29 @@ class DrawerLayout extends React.Component {
                         </Typography>
                         <div className={classes.search}>
                             <div className={classes.searchIcon}>
-                                <SearchIcon />
+                                <SearchIcon/>
                             </div>
-                            <InputBase value={this.props.searchTerm} onChange={this.handleChangeSearchValue} onKeyPress={this.handleOnSearchKeyPress}
-                                placeholder="Search item ..."
-                                classes={{
-                                    root: classes.inputRoot,
-                                    input: classes.inputInput,
-                                }}
+                            <InputBase value={this.props.searchTerm} onChange={this.handleChangeSearchValue}
+                                       onKeyPress={this.handleOnSearchKeyPress}
+                                       placeholder="Search item ..."
+                                       classes={{
+                                           root: classes.inputRoot,
+                                           input: classes.inputInput,
+                                       }}
                             />
                         </div>
-                        <div>
-                            <Button variant="outlined" color="secondary" className={classes.button}>Select category</Button>
-                        </div>
 
-                        <div className={classes.grow} />
-                        <div>
-                            <MoneyView  displayClass="coins-block" label="credit" money={this.props.money}/>
-                        </div>
-                        <div className={classes.sectionDesktop}>
-                            <IconButton color="inherit">
-                                <Badge badgeContent={1} color="secondary">
-                                    <NotificationsIcon />
-                                </Badge>
-                            </IconButton>
-                        </div>
+                        <div className={classes.grow}/>
+                        <AccountCircle style={{marginRight: "5px"}}/>
+                            <Typography color={"inherit"}
+                                        variant={"h6"} style={{marginRight: "25px"}}>{"" + this.props.user || "Loading user ..."}</Typography>
+
+
+                                <MonetizationOnIcon style={{marginRight: "5px"}}/>
+                                <Typography color={"inherit"} variant={"h6"}>
+                                    <MoneyView displayClass="coins-block" label="" money={this.props.money}/>
+                                </Typography>
+
                     </Toolbar>
                 </AppBar>
                 <Drawer
@@ -270,7 +271,7 @@ class DrawerLayout extends React.Component {
                     </List>
                     <Divider/>
                     <List>
-                        <ListItem button key="Settings" component={Link} to={'/'}>
+                        <ListItem button key="Settings" component={Link} to={'settings'}>
                             <ListItemIcon><SettingsIcon/></ListItemIcon>
                             <ListItemText primary="Settings"/>
                         </ListItem>
@@ -278,11 +279,12 @@ class DrawerLayout extends React.Component {
                 </Drawer>
 
                 <main className={classes.content}>
-                    <div className={classes.toolbar} />
+                    <div className={classes.toolbar}/>
                     <Switch>
-                        <Route exact path='/' render={(props) => (<div>Home</div>)}/>
+                        <Route exact path='/' render={(props) => (<div>Pick a category</div>)}/>
                         <Route path='/buy' component={BuyingPage}/>
                         <Route path='/sell' component={SellingPage}/>
+                        <Route path='/settings' component={SettingsPage}/>
                     </Switch>
                 </main>
             </div>
@@ -296,6 +298,6 @@ DrawerLayout.propTypes = {
 };
 
 export default withRouter(
-    connect(({searchTerm, money, user})=>({searchTerm, money, user}))
-        (withStyles(styles, {withTheme: true})(DrawerLayout))
-    );
+    connect(({searchTerm, money, user}) => ({searchTerm, money, user}))
+    (withStyles(styles, {withTheme: true})(DrawerLayout))
+);

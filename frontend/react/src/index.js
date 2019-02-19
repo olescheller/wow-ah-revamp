@@ -11,7 +11,7 @@ import { ApolloProvider } from 'react-apollo';
 import rootSaga from './redux/sagas'
 import theme from './theme/materialTheme'
 import reducer from './redux/reducer'
-import {randomItemsRequested} from "./redux/actions/itemActions";
+import {randomItemsRequested, userMoneyAction} from "./redux/actions/itemActions";
 import ApolloClient from "apollo-client";
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { WebSocketLink } from 'apollo-link-ws';
@@ -52,6 +52,7 @@ const sagaMiddleware = createSagaMiddleware();
 const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk, sagaMiddleware)));
 sagaMiddleware.run(rootSaga);
 store.dispatch(randomItemsRequested());
+store.dispatch(userMoneyAction("Elandura", "Silvermoon"));
 
 ReactDOM.render(
     <ApolloProvider client={client}>

@@ -49,7 +49,7 @@ class ActiveSellOrders extends React.Component {
                 <div>
                     <Paper elevation={1} className={classes.root}>
                         <Typography variant="h5" component="h3">
-                            Active SellOrders
+                            My Sell Orders
                         </Typography>
 
                         <Table className={classes.table}>

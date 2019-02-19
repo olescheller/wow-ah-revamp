@@ -59,7 +59,7 @@ def get_users(raw_auctions) -> List:
     users = []
     user_names = set([f"{order.get('owner')}-{order.get('ownerRealm')}" for order in raw_auctions])
     for name in user_names:
-        users.append({"name": name, "money": random.randint(100000000, 1000000000)})
+        users.append({"name": name, "money": random.randint(10000000000, 100000000000)})
     return users
 
 

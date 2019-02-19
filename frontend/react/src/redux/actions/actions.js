@@ -31,6 +31,4 @@ export const QUANTITY_EXCEEDED = 'QUANTITY_EXCEEDED';
 export const quantityExceededAction = (itemId) => ({
     type: QUANTITY_EXCEEDED,
     payload: {itemId}
-})
-
-
+});
