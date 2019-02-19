@@ -145,7 +145,10 @@ export default (state = initState, action) => {
                     wasAdded = true;
                 }
             }
-            if (!wasAdded) inventoryAdded.push(action.payload);
+            if (!wasAdded) {
+                console.log(action.payload)
+                inventoryAdded.push(action.payload);
+            }
             return {...state, activeSellOrders: sellOrderRemoved, inventoryItems: inventoryAdded}
         }
         case BUY_ITEMS_SUCCEEDED:

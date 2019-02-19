@@ -39,6 +39,8 @@ class ActiveSellOrders extends React.Component {
 
 
     deleteSellOrder = (sellOrder) => {
+        const [seller_name, seller_realm] = this.props.user.split('-');
+        sellOrder = {...sellOrder, seller_name, seller_realm}
         this.props.dispatch(deleteSellOrderAction(sellOrder));
     }
 
@@ -95,4 +97,4 @@ ActiveSellOrders.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default connect(({activeSellOrders}) => ({activeSellOrders})) (withStyles(styles) (ActiveSellOrders));
+export default connect(({activeSellOrders, user}) => ({activeSellOrders, user})) (withStyles(styles) (ActiveSellOrders));

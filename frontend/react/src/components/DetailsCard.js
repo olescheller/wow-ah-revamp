@@ -49,7 +49,8 @@ class DetailsCard extends React.Component {
            // setTimeout(() => this.props.dispatch(setInfoBox(false)), 3000);
         }
         else if(this.state.amount > 0 && this.state.amount <= this.props.inventoryItem.quantity){
-            const sellOrder = {itemId: item.id, price: this.state.currentPrice, quantity: this.state.amount}
+            const [seller_name, seller_realm] = this.props.user.split("-");
+            const sellOrder = {itemId: item.id, price: this.state.currentPrice, quantity: this.state.amount, seller_name: seller_name.toString(), seller_realm: seller_realm.toString()}
             this.props.dispatch(createSellOrder(sellOrder));
         }
         this.setState({currentPrice: 0, amount:  1})
@@ -130,4 +131,4 @@ class DetailsCard extends React.Component {
     }
 }
 
-export default connect(({price, activeSellOrders}) => ({price, activeSellOrders})) (DetailsCard);
+export default connect(({price, activeSellOrders, user}) => ({price, activeSellOrders, user})) (DetailsCard);

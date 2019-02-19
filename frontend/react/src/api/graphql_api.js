@@ -22,9 +22,10 @@ export async function makePurchase(userName, itemId, amount, total, perUnit) {
     })
 }
 
-export async function createSellOrder(itemId, price, quantity) {
+export async function createSellOrder(itemId, price, quantity,  seller_name, seller_realm) {
+    console.log(seller_name)
     return new Promise((resolve, reject) => {
-        const mutation = `mutation {createSellOrder(itemId: ${itemId}, price: ${price}, quantity: ${quantity}, seller_name: "Elandura", seller_realm:"Silvermoon") {
+        const mutation = `mutation {createSellOrder(itemId: ${itemId},  seller_name: "${seller_name}", seller_realm: "${seller_realm}", price: ${price}, quantity: ${quantity}) {
         item {id, name, item_class {name}, icon}, price, quantity} }`;
         axios.post("http://localhost:4000/", {"query": mutation, operationName: null, variables: {}}).then(response => {
             resolve(response.data.data.createSellOrder);
@@ -34,9 +35,9 @@ export async function createSellOrder(itemId, price, quantity) {
 
 
 
-export async function addItemToSellOrder(itemId, quantity) {
+export async function addItemToSellOrder(itemId, quantity, seller_name, seller_realm) {
     return new Promise((resolve, reject) => {
-        const mutation = `mutation {addItemToSellOrder(itemId: ${itemId}, quantity: ${quantity}, seller_name: "Elandura", seller_realm:"Silvermoon") {
+        const mutation = `mutation {addItemToSellOrder(itemId: ${itemId}, quantity: ${quantity}, seller_name: "${seller_name}", seller_realm: "${seller_realm}") {
         item {id, name, item_class {name}, icon}, price, quantity} }`;
         axios.post("http://localhost:4000/", {"query": mutation, operationName: null, variables: {}}).then(response => {
             resolve(response.data.data.addItemToSellOrder);
@@ -44,9 +45,9 @@ export async function addItemToSellOrder(itemId, quantity) {
     });
 }
 
-export async function removeSellOrder(itemId) {
+export async function removeSellOrder(itemId, seller_name, seller_realm) {
     return new Promise((resolve, reject) => {
-        const mutation = `mutation {removeSellOrder(itemId: ${itemId}, seller_name: "Elandura", seller_realm:"Silvermoon")}`;
+        const mutation = `mutation {removeSellOrder(itemId: ${itemId},  seller_name: "${seller_name}", seller_realm: "${seller_realm}")}`;
         axios.post("http://localhost:4000/", {"query": mutation, operationName: null, variables: {}}).then(response => {
             resolve(response.data.data.removeSellOrder);
         })

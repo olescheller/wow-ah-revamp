@@ -178,6 +178,7 @@ type User {
                 return receipt;
             },
             createSellOrder: async (_, {itemId, seller_name, seller_realm, quantity, price}) => {
+                console.log(seller_name)
                 return await createSellOrder(converter, db, itemId, seller_name, seller_realm, quantity, price)
             },
             addItemToSellOrder: async(_, {itemId, seller_name, seller_realm, quantity}) => {
@@ -201,7 +202,6 @@ type User {
             },
             sellOrderAlert: {
                 subscribe: withFilter(() => { return pubsub.asyncIterator('SELL_ORDER_SUBSCRIPTION')}, (payload, variables) => {
-                    console.log(payload)
                     const check = payload.sellOrderAlert.filter(alert => alert.sellerName === variables.sellerName);
                     return check.length > 0;
                 })

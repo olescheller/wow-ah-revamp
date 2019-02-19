@@ -60,9 +60,9 @@ export function* updateUserMoney(action) {
 }
 
 export function* sellOrder(action) {
-    const {itemId, price, quantity} = action.payload;
+    const {itemId, price, quantity, seller_name, seller_realm} = action.payload;
     try{
-        const data = yield call(createSellOrder, itemId, price, quantity );
+        const data = yield call(createSellOrder, itemId, price, quantity, seller_name, seller_realm );
         yield put(sellOrderSucceeded(data))
     }
     catch(error){
@@ -71,9 +71,9 @@ export function* sellOrder(action) {
 }
 
 export function* _removeSellOrder(action) {
-    const {item, quantity} = action.payload;
+    const {item, quantity, seller_name, seller_realm} = action.payload;
     try{
-        const data = yield call(removeSellOrder, item.id);
+        const data = yield call(removeSellOrder, item.id, seller_name, seller_realm);
         yield put(deleteSellOrderSucceeded({item, quantity}))
     }
     catch(error){
@@ -83,9 +83,9 @@ export function* _removeSellOrder(action) {
 
 
 export function* addToSellOrder(action) {
-    const {itemId, quantity} = action.payload;
+    const {itemId, quantity, seller_name, seller_realm} = action.payload;
     try{
-        const data = yield call(addItemToSellOrder(itemId, quantity));
+        const data = yield call(addItemToSellOrder(itemId, quantity, seller_name, seller_realm));
         yield put(addItemToSellOrderSucceeded(data));
     }
     catch(error) {
