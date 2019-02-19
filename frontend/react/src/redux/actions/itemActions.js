@@ -112,6 +112,14 @@ export const deleteSellOrderSucceeded = (sellOrder) => {
         type: DELETE_SELL_ORDER_SUCCEEDED,
         payload: sellOrder,
     }
+};
+
+export const ITEM_SUPPLY_CHANGED = "ITEM_SUPPLY_CHANGED";
+export const itemSupplyChangedAction = (itemId, quantity) => {
+    return {
+        type: ITEM_SUPPLY_CHANGED,
+        payload: {itemId, quantity}
+    }
 }
 
 export const USER_MONEY_REQUESTED = "USER_MONEY_REQUESTED";

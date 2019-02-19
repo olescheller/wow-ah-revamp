@@ -27,7 +27,7 @@ import Badge from "@material-ui/core/Badge";
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from '@material-ui/icons/Search';
-import { fade } from '@material-ui/core/styles/colorManipulator';
+import {fade} from '@material-ui/core/styles/colorManipulator';
 import Button from "@material-ui/core/Button";
 import {connect} from "react-redux";
 import {itemSupplyRequestAction, searchValueChangedAction} from "../redux/actions/itemActions";
@@ -102,7 +102,7 @@ const styles = theme => ({
     },
     grow: {
         flexGrow: 1,
-    },search: {
+    }, search: {
         position: 'relative',
         borderRadius: theme.shape.borderRadius,
         backgroundColor: fade(theme.palette.common.white, 0.15),
@@ -209,30 +209,34 @@ class DrawerLayout extends React.Component {
                         </Typography>
                         <div className={classes.search}>
                             <div className={classes.searchIcon}>
-                                <SearchIcon />
+                                <SearchIcon/>
                             </div>
-                            <InputBase value={this.props.searchTerm} onChange={this.handleChangeSearchValue} onKeyPress={this.handleOnSearchKeyPress}
-                                placeholder="Search item ..."
-                                classes={{
-                                    root: classes.inputRoot,
-                                    input: classes.inputInput,
-                                }}
+                            <InputBase value={this.props.searchTerm} onChange={this.handleChangeSearchValue}
+                                       onKeyPress={this.handleOnSearchKeyPress}
+                                       placeholder="Search item ..."
+                                       classes={{
+                                           root: classes.inputRoot,
+                                           input: classes.inputInput,
+                                       }}
                             />
                         </div>
                         <div>
-                            <Button variant="outlined" color="secondary" className={classes.button}>Select category</Button>
-                        </div>
-
-                        <div className={classes.grow} />
-                        <div className={classes.sectionDesktop}>
-                            <div>
-                            <Typography color={"inherit"} variant={"h6"}>{this.props.user + "  "|| "Loading user"}</Typography>
-
+                            <Button variant="outlined" color="secondary" className={classes.button}>Select
+                                category</Button>
                         </div>
 
                         <div>
-                            <Typography color={"inherit"} variant={"h6"}><MoneyView label="" money={this.props.money}/></Typography>
+                            <Typography color={"inherit"}
+                                        variant={"h6"}>{this.props.user + "" || "Loading user"}</Typography>
                         </div>
+                        <div className={classes.grow}/>
+                        <div className={classes.sectionDesktop}>
+
+                            <div>
+                                <Typography color={"inherit"} variant={"h6"}>
+                                    <MoneyView displayClass="coins-block" label="" money={this.props.money}/>
+                                </Typography>
+                            </div>
 
                         </div>
                     </Toolbar>
@@ -277,7 +281,7 @@ class DrawerLayout extends React.Component {
                 </Drawer>
 
                 <main className={classes.content}>
-                    <div className={classes.toolbar} />
+                    <div className={classes.toolbar}/>
                     <Switch>
                         <Route exact path='/' render={(props) => (<div>Home</div>)}/>
                         <Route path='/buy' component={BuyingPage}/>
@@ -295,6 +299,6 @@ DrawerLayout.propTypes = {
 };
 
 export default withRouter(
-    connect(({searchTerm, money, user})=>({searchTerm, money, user}))
-        (withStyles(styles, {withTheme: true})(DrawerLayout))
-    );
+    connect(({searchTerm, money, user}) => ({searchTerm, money, user}))
+    (withStyles(styles, {withTheme: true})(DrawerLayout))
+);

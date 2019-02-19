@@ -8,5 +8,6 @@ img {
     text-align: center;
 }
 
-
-
+.coins-block {
+    display: block;
+}
