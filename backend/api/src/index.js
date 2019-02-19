@@ -44,7 +44,7 @@ type Query {
 
 type Mutation {
   createUser(name: String!): User!
-  fakeBuyMutation(itemId: Int!, total: Float!, perUnit: Float!): Price
+  fakeBuyMutation: Price
   buyItems(userName: String!, itemId: Int, amount: Int!, total: Float!, perUnit: Float!): Receipt
   createSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!, quantity: Int!, price: Float!): SellOrder!
   addItemToSellOrder(itemId: Int!, seller_name: String!, seller_realm: String!, quantity: Int!): SellOrder!
@@ -52,7 +52,7 @@ type Mutation {
 }
 
 type Subscription {
-  price(itemId: Int): Price
+  price: Price
   receipt(itemId: Int): Receipt
 }
 
@@ -71,6 +71,7 @@ type Receipt {
   item: Item!
   amount: Int
   price: Int
+  min_price: Float!
   money: Float
 }
 
@@ -154,10 +155,9 @@ type User {
                 users = [...users, newUser];
                 return newUser;
             },
-            fakeBuyMutation: async (_, {itemId, total, perUnit}) => {
-                const price = {perUnit: perUnit + 1, total: total + 1}
+            fakeBuyMutation: async () => {
+                const price = {perUnit: 1, total: 1}
                 pubsub.publish("PRICE_CHANGE", {price});
-                pubsub.publish("ITEM_QUANTITY_CHANGED", {price});
                 return price;
             },
             buyItems: async (_, {userName, itemId, amount, total, perUnit}) => {
@@ -180,12 +180,14 @@ type User {
         Subscription: {
             price: {
                 subscribe: (root, args, {pubsub}) => {
+                    console.log('sub')
                     return pubsub.asyncIterator('PRICE_CHANGE')
                 }
             },
             receipt: {
-                subscribe: withFilter(() =>  pubsub.asyncIterator('BUY_SUBSCRIPTION'), (payload, variables) => {
-                    return payload.receipt.itemId === variables.itemId;
+                subscribe: withFilter(() =>  {console.log('sub'); return pubsub.asyncIterator('BUY_SUBSCRIPTION')}, (payload, variables) => {
+                    console.log(payload)
+                    return payload.receipt.item.id === variables.itemId;
                 })
             }
         }

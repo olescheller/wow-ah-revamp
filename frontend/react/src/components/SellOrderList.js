@@ -15,10 +15,8 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import InfoBox from './InfoBox';
 import {quantityExceededAction, setLoading} from "../redux/actions/actions";
-import Input from "@material-ui/core/es/Input/Input";
 import TextField from "@material-ui/core/es/TextField/TextField";
-import Subscription from "react-apollo/Subscriptions";
-import {BUY_SUBSCRIPTION} from "../api/graphql_api";
+import ReceipeSubscription from "./SubscriptionComponent";
 
 
 const CustomTableCell = withStyles(theme => ({
@@ -92,7 +90,6 @@ class SellOrderList extends React.Component {
                 <Typography variant="h5" component="h3">
                     Buy
                 </Typography>
-
                 <Table className={classes.table}>
                 <TableHead>
                     <TableRow>
@@ -117,8 +114,12 @@ class SellOrderList extends React.Component {
                                 <span>{itemSupply.item.name}</span>
 
                             </CustomTableCell>
-                            <CustomTableCell  padding="dense"><MoneyView money={itemSupply.min_price}></MoneyView></CustomTableCell>
-                            <CustomTableCell padding="dense">{itemSupply.quantity}</CustomTableCell>
+                            <CustomTableCell  padding="dense">
+                                {ReceipeSubscription(itemSupply, "PRICE")}
+                            </CustomTableCell>
+                            <CustomTableCell padding="dense">
+                                {ReceipeSubscription(itemSupply, "QUANTITY")}
+                            </CustomTableCell>
                             <CustomTableCell padding="dense">
                                 {this.getInputField(itemSupply)}
                             </CustomTableCell>

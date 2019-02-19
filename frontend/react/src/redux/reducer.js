@@ -10,7 +10,11 @@ import {
     BUY_ITEM_SUCCEEDED,
     BUY_ITEMS_SUCCEEDED,
     RANDOM_ITEMS_SUCCEEDED,
-    SELL_ORDER_SUCCEEDED, DELETE_SELL_ORDER, ADD_TO_SELLORDER_SUCCEEDED, DELETE_SELL_ORDER_SUCCEEDED
+    SELL_ORDER_SUCCEEDED,
+    DELETE_SELL_ORDER,
+    ADD_TO_SELLORDER_SUCCEEDED,
+    DELETE_SELL_ORDER_SUCCEEDED,
+    ITEM_SUPPLY_CHANGED
 } from "./actions/itemActions";
 
 const initState = {
@@ -173,6 +177,15 @@ export default (state = initState, action) => {
             return {...state, isLoading: action.payload};
         case SET_INFO_BOX:
             return {...state, showInfoBox: action.payload};
+
+        case ITEM_SUPPLY_CHANGED:
+            let updatedItemSupplies = [...state.itemSupplies].map(supply => {
+               if(supply.item.id === action.payload.itemId) {
+                   return {...supply, quantity: action.payload.quantity}
+               }
+               return supply
+            });
+            return {...state, itemSupplies: updatedItemSupplies}
         default:
             return state
     }
