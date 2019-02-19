@@ -112,4 +112,28 @@ export const deleteSellOrderSucceeded = (sellOrder) => {
         type: DELETE_SELL_ORDER_SUCCEEDED,
         payload: sellOrder,
     }
+};
+
+export const ITEM_SUPPLY_CHANGED = "ITEM_SUPPLY_CHANGED";
+export const itemSupplyChangedAction = (itemId, quantity) => {
+    return {
+        type: ITEM_SUPPLY_CHANGED,
+        payload: {itemId, quantity}
+    }
+}
+
+export const USER_MONEY_REQUESTED = "USER_MONEY_REQUESTED";
+export const userMoneyAction = (userName, realmName) => {
+    return {
+        type: USER_MONEY_REQUESTED,
+        payload: {userName, realmName}
+    }
+}
+
+export const USER_MONEY_REQUEST_SUCCEEDED = "USER_MONEY_REQUEST_SUCCEEDED";
+export const userMoneySucceededAction = ({name, money}) => {
+    return {
+        type: USER_MONEY_REQUEST_SUCCEEDED,
+        payload: {name, money}
+    }
 }

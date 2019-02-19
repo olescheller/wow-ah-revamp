@@ -416,13 +416,19 @@ function buyItems(converter, db, userName, itemId, amount, givenTotal, givenPerU
                             SellOrders.updateOne({_id: sellOrder.id}, {$set: {quantity: sellOrder.left}});
                         }
                         Users.updateOne({name: userName},{$set: {money: money}});
-                        //publish to subscription
-                        resolve({
-                            item: item,
-                            amount: amount,
-                            price: total,
-                            money: money,
-                        });
+                        SellOrders.find({item_id: itemId}).sort({price: 1}).toArray((err, sellOrders) => {
+                            if (err) reject(err);
+                            const newMinPrice = sellOrders[0].price;
+                            const newQuantity = quantity - amount;
+                            //publish to subscription
+                            resolve({
+                                item: item,
+                                amount: newQuantity,
+                                price: total,
+                                min_price: newMinPrice,
+                                money: money,
+                            });
+                        })
                     });
                 }
                 else {
