@@ -1,4 +1,3 @@
-
 const MongoToGqlConverter = require("./conversion");
 
 const {GraphQLServer, withFilter, PubSub} = require('graphql-yoga');
@@ -16,6 +15,8 @@ const {
     getRandomItems,
     addItemsToSellOrder,
     removeSellOrder,
+    getSellOrders,
+
 } = require('./db');
 
 const {MongoClient} = require('mongodb');
@@ -40,6 +41,7 @@ type Query {
   items_price(itemId: Float!, amount: Int!): Price
   user(name: String!, realm: String!): User
   randomItems: [InventoryItem]!
+  sell_order(userName: String!, realmName: String!): [SellOrder]
 }
 
 type Mutation {
@@ -151,8 +153,11 @@ type User {
             user: async (_, {name, realm}) => {
                 return await getUserByNameAndRealm(db, name, realm)
             },
-            randomItems: async() => {
+            randomItems: async () => {
                 return await getRandomItems(converter, db)
+            },
+            sell_order: async (_, {userName, realmName}) => {
+                return await getSellOrders(converter, db, userName, realmName)
             }
         },
         Mutation: {
@@ -181,10 +186,10 @@ type User {
                 console.log(seller_name)
                 return await createSellOrder(converter, db, itemId, seller_name, seller_realm, quantity, price)
             },
-            addItemToSellOrder: async(_, {itemId, seller_name, seller_realm, quantity}) => {
+            addItemToSellOrder: async (_, {itemId, seller_name, seller_realm, quantity}) => {
                 return await addItemsToSellOrder(converter, db, itemId, seller_name, seller_realm, quantity)
             },
-            removeSellOrder: async(_, {itemId, seller_name, seller_realm}) => {
+            removeSellOrder: async (_, {itemId, seller_name, seller_realm}) => {
                 return await removeSellOrder(converter, db, itemId, seller_name, seller_realm);
             }
         },
@@ -196,7 +201,9 @@ type User {
                 }
             },
             receipt: {
-                subscribe: withFilter(() => { return pubsub.asyncIterator('BUY_SUBSCRIPTION')}, (payload, variables) => {
+                subscribe: withFilter(() => {
+                    return pubsub.asyncIterator('BUY_SUBSCRIPTION')
+                }, (payload, variables) => {
                     return payload.receipt.item.id === variables.itemId;
                 })
             },

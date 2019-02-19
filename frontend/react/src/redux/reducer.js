@@ -181,8 +181,20 @@ export default (state = initState, action) => {
                 }
             }
 
+            // Go through all item supplies to see if amount goes down to 0. If so, remove it.
+            let newItemSupplies = state.itemSupplies;
+
+            for (let i in state.itemSupplies) {
+                if (state.itemSupplies[i].item.id === action.payload.item.id){
+                    if(action.payload.amount === 0) {
+                        newItemSupplies.splice(i, 1);
+                    }
+                }
+            }
+
             return {
                 ...state,
+                itemSupplies: newItemSupplies,
                 money: action.payload.money,
                 inventoryItems: updatedInventory,
                 buyQuantity: {...oldBuyQuantity}
