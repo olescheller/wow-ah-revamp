@@ -223,8 +223,13 @@ class MongoDbAdapter:
 
 
 if __name__ == '__main__':
-    port = sys.argv[1]
-    db = MongoDbAdapter(port = int(port))
+
+    try:
+        port = sys.argv[1]
+    except:
+        port = 27017
+
+    db = MongoDbAdapter(port=int(port))
 
     item_id_to_name_mapping = {item.get("id"): item.get("name") for item in get_raw_items()}
 
