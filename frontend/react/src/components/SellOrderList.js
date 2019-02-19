@@ -77,7 +77,11 @@ class SellOrderList extends React.Component {
             this.props.dispatch(buyQuantityChangedAction(itemSupply.item.id, buyQty));
             this.props.dispatch(queryAverageItemPriceAction(buyQty, itemSupply.item.id));
             }
-        }
+        };
+
+        isBuyQuantityEmpty = (itemId) => {
+            return ! this.props.buyQuantity[itemId];
+        };
 
 
     render() {
@@ -123,10 +127,10 @@ class SellOrderList extends React.Component {
                             <CustomTableCell padding="dense">
                                 {this.getInputField(itemSupply)}
                             </CustomTableCell>
-                            <CustomTableCell padding="dense"><MoneyView label="per unit" money={this.props.price[itemSupply.item.id].perUnit}/>
-                                <MoneyView label="total" money={this.props.price[itemSupply.item.id].total}/></CustomTableCell>
+                            <CustomTableCell padding="dense">  {! this.isBuyQuantityEmpty(itemSupply.item.id) ?  <MoneyView displayClass="coins-block" label="per unit" money={this.props.price[itemSupply.item.id].perUnit}/> : '' }
+                                {! this.isBuyQuantityEmpty(itemSupply.item.id) ? <MoneyView  displayClass="coins-block" label="total" money={this.props.price[itemSupply.item.id].total}/> : ''}</CustomTableCell>
                             <CustomTableCell  padding="dense" align="right">
-                                <Button onClick={() => this.handleBuyClick(itemSupply.item.id)} variant="contained" color="primary"> Buy</Button></CustomTableCell>
+                                <Button disabled={this.isBuyQuantityEmpty(itemSupply.item.id)} onClick={() => this.handleBuyClick(itemSupply.item.id)} variant="contained" color="primary"> Buy</Button></CustomTableCell>
                         </TableRow>
                     ))}
                 </TableBody>

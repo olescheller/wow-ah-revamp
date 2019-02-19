@@ -42,9 +42,9 @@ const ReceiptSubscription = (itemSupply, type) => {
         {({ data, loading, error }) => {
             if(!loading && data.receipt.amount && data.receipt.min_price) {
                 //change quantity in store and refer to quantity in store
-                return (type === "QUANTITY") ? data.receipt.amount : (type === "PRICE") ? <MoneyView money={data.receipt.min_price} /> : 0;
+                return (type === "QUANTITY") ? data.receipt.amount : (type === "PRICE") ? <MoneyView  displayClass="coins-block"  money={data.receipt.min_price} /> : 0;
             }
-            return(type === "QUANTITY") ? itemSupply.quantity : (type === "PRICE") ? <MoneyView money={itemSupply.min_price} /> : 0;
+            return(type === "QUANTITY") ? itemSupply.quantity : (type === "PRICE") ? <MoneyView displayClass="coins-block" money={itemSupply.min_price} /> : 0;
         }}
     </Subscription>
 )};
