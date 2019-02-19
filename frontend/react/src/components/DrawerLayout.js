@@ -34,6 +34,7 @@ import {itemSupplyRequestAction, searchValueChangedAction} from "../redux/action
 import MoneyView from "./MoneyView";
 import Paper from "@material-ui/core/Paper";
 import SettingsPage from "./SettingsPage";
+import AccountCircle from '@material-ui/icons/AccountCircle';
 
 
 const drawerWidth = 240;
@@ -221,16 +222,12 @@ class DrawerLayout extends React.Component {
                                        }}
                             />
                         </div>
-                        <div>
-                            <Button variant="outlined" color="secondary" className={classes.button}>Select
-                                category</Button>
-                        </div>
 
-                        <div>
-                            <Typography color={"inherit"}
-                                        variant={"h6"}>{this.props.user + "" || "Loading user"}</Typography>
-                        </div>
                         <div className={classes.grow}/>
+                        <AccountCircle style={{marginRight: "5px"}}/>
+                            <Typography color={"inherit"}
+                                        variant={"h6"} style={{marginRight: "25px"}}>{"Logged in as: " + this.props.user || "Loading user ..."}</Typography>
+
                         <div className={classes.sectionDesktop}>
 
                             <div>

@@ -10,9 +10,9 @@ class SettingsPage extends React.Component {
     render() {
         return (
             <div>
-                <Grid container justify='left'>
+                <Grid container sm={4} justify='left'>
 
-                    <Grid item sm={4}>
+                    <Grid item sm={12}>
                         <Card style={{margin: "10px"}}>
                             <CardContent>
                                 <Typography variant="h5" component="h2" style={{marginBottom: "15px"}}>Switch user</Typography>
@@ -24,7 +24,7 @@ class SettingsPage extends React.Component {
                         </Card>
                     </Grid>
 
-                    <Grid item sm={4}>
+                    <Grid item sm={12}>
                         <Card style={{margin: "10px"}}>
                             <CardContent>
                                 <Typography variant="h5" component="h2" style={{marginBottom: "15px"}}>Stock up on gold</Typography>
