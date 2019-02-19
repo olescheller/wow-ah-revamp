@@ -18,6 +18,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ShoppingIcon from '@material-ui/icons/ShoppingCart';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import SettingsIcon from '@material-ui/icons/Settings';
 import {Route, Switch, withRouter} from "react-router-dom";
 import {Link} from "react-router-dom";
@@ -226,17 +227,14 @@ class DrawerLayout extends React.Component {
                         <div className={classes.grow}/>
                         <AccountCircle style={{marginRight: "5px"}}/>
                             <Typography color={"inherit"}
-                                        variant={"h6"} style={{marginRight: "25px"}}>{"Logged in as: " + this.props.user || "Loading user ..."}</Typography>
+                                        variant={"h6"} style={{marginRight: "25px"}}>{"" + this.props.user || "Loading user ..."}</Typography>
 
-                        <div className={classes.sectionDesktop}>
 
-                            <div>
+                                <MonetizationOnIcon style={{marginRight: "5px"}}/>
                                 <Typography color={"inherit"} variant={"h6"}>
                                     <MoneyView displayClass="coins-block" label="" money={this.props.money}/>
                                 </Typography>
-                            </div>
 
-                        </div>
                     </Toolbar>
                 </AppBar>
                 <Drawer

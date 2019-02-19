@@ -80,7 +80,7 @@ class InventoryGrid extends React.Component {
                 <InfoBox type="alreadyActiveSellOrder" infoClass="info warning"/>
                 <Paper className='paper' elevation={1}>
                     <Typography variant="h5" component="h3">
-                        Inventory
+                        My Inventory
                     </Typography>
 
                     <Grid container justify='center'>
