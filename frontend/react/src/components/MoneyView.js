@@ -10,7 +10,9 @@ constructor(props) {
     super(props);
 }
 
-    renderMoney = () => {
+
+ renderMoney = () => {
+        const displayClass = this.props.displayClass;
         const label = this.props.label ? this.props.label : '';
         //100 money = 1 silver,  10.000 money = 1 gold
         const money = Math.floor(this.props.money);
@@ -26,7 +28,7 @@ constructor(props) {
         else if(silver > 0) {coins.push(silverItem, copperItem);}
         else {coins.push(copperItem);}
         return(
-            <div className='coins'>{coins} {label}</div>
+            <span className={displayClass}>{coins} {label}</span>
         )
     };
 

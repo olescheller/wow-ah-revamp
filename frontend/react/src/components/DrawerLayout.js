@@ -224,7 +224,7 @@ class DrawerLayout extends React.Component {
 
                         <div className={classes.grow} />
                         <div>
-                            <MoneyView label="credit" money={this.props.money}/>
+                            <MoneyView  displayClass="coins-block" label="credit" money={this.props.money}/>
                         </div>
                         <div className={classes.sectionDesktop}>
                             <IconButton color="inherit">
