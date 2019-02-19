@@ -160,15 +160,15 @@ export default (state = initState, action) => {
             if(toStack) {
                 updatedInventory.map((inv) => {
                     if(inv.item.name === action.payload.item.name) {
-                        inv.quantity += action.payload.amount;
+                        inv.quantity += action.payload.amountBought;
                         return inv;
                     }
                     return inv;
                 });
             }
             else {
-                if(count + action.payload.amount < 17) {
-                    updatedInventory.push({item: action.payload.item, quantity: action.payload.amount})
+                if(count + action.payload.amountBought < 17) {
+                    updatedInventory.push({item: action.payload.item, quantity: action.payload.amountBought})
                 }
             }
 

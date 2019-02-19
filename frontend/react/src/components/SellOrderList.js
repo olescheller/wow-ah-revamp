@@ -16,7 +16,8 @@ import Typography from "@material-ui/core/Typography";
 import InfoBox from './InfoBox';
 import {quantityExceededAction, setLoading} from "../redux/actions/actions";
 import TextField from "@material-ui/core/es/TextField/TextField";
-import ReceipeSubscription from "./SubscriptionComponent";
+import {ReceiptSubscription, SellOrderAlertSubscription} from "./SubscriptionComponent";
+import CustomizedSnackbar from "./SnackBar";
 
 
 const CustomTableCell = withStyles(theme => ({
@@ -119,10 +120,10 @@ class SellOrderList extends React.Component {
 
                             </CustomTableCell>
                             <CustomTableCell  padding="dense">
-                                {ReceipeSubscription(itemSupply, "PRICE")}
+                                {ReceiptSubscription(itemSupply, "PRICE")}
                             </CustomTableCell>
                             <CustomTableCell padding="dense">
-                                {ReceipeSubscription(itemSupply, "QUANTITY")}
+                                {ReceiptSubscription(itemSupply, "QUANTITY")}
                             </CustomTableCell>
                             <CustomTableCell padding="dense">
                                 {this.getInputField(itemSupply)}

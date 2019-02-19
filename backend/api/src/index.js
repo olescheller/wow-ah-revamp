@@ -53,7 +53,14 @@ type Mutation {
 
 type Subscription {
   price: Price
-  receipt(itemId: Int): Receipt
+  receipt(itemId: Int!): Receipt
+  sellOrderAlert(sellerName: String!): [SellOrderAlert]
+}
+
+type SellOrderAlert {
+    sellerName: String!
+    itemName: String!
+    amount: Int!
 }
 
 type InventoryItem {
@@ -70,9 +77,11 @@ type SellOrder {
 type Receipt {
   item: Item!
   amount: Int
+  amountBought: Int
   price: Int
   min_price: Float!
   money: Float
+  sold: [SellOrderAlert]
 }
 
 type ItemSupply{
@@ -164,6 +173,8 @@ type User {
                 //publish to pubsub
                 const receipt = await buyItems(converter, db, userName, itemId, amount, total, perUnit);
                 pubsub.publish("BUY_SUBSCRIPTION", {receipt});
+                const sellOrderAlert = receipt.sold;
+                pubsub.publish('SELL_ORDER_SUBSCRIPTION', {sellOrderAlert});
                 return receipt;
             },
             createSellOrder: async (_, {itemId, seller_name, seller_realm, quantity, price}) => {
@@ -180,14 +191,19 @@ type User {
         Subscription: {
             price: {
                 subscribe: (root, args, {pubsub}) => {
-                    console.log('sub')
                     return pubsub.asyncIterator('PRICE_CHANGE')
                 }
             },
             receipt: {
-                subscribe: withFilter(() =>  {console.log('sub'); return pubsub.asyncIterator('BUY_SUBSCRIPTION')}, (payload, variables) => {
-                    console.log(payload)
+                subscribe: withFilter(() => { return pubsub.asyncIterator('BUY_SUBSCRIPTION')}, (payload, variables) => {
                     return payload.receipt.item.id === variables.itemId;
+                })
+            },
+            sellOrderAlert: {
+                subscribe: withFilter(() => { return pubsub.asyncIterator('SELL_ORDER_SUBSCRIPTION')}, (payload, variables) => {
+                    console.log(payload)
+                    const check = payload.sellOrderAlert.filter(alert => alert.sellerName === variables.sellerName);
+                    return check.length > 0;
                 })
             }
         }

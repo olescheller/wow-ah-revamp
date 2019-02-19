@@ -379,6 +379,7 @@ function buyItems(converter, db, userName, itemId, amount, givenTotal, givenPerU
                 let amountLeft = amount;
                 let buyFullSellOrders = [];
                 let buyPartSellOrders = [];
+                const sold = [];
                 //lock db
                 while(amountLeft > 0 && i < sellOrders.length) {
                     if(sellOrders[i].quantity <= amountLeft) {
@@ -386,13 +387,14 @@ function buyItems(converter, db, userName, itemId, amount, givenTotal, givenPerU
                         buyFullSellOrders.push({id: sellOrders[i]._id});
                         total += sellOrders[i].price * sellOrders[i].quantity;
                         amountLeft = amountLeft - sellOrders[i].quantity;
+                        sold.push({sellerName: sellOrders[i].seller_full, itemName: item.name, amount: sellOrders[i].quantity});
                     }
                     else {
                         // Case buy parts of sell order
                         buyPartSellOrders.push({id: sellOrders[i]._id, left: sellOrders[i].quantity - amountLeft});
+                        sold.push({sellerName: sellOrders[i].seller_full, itemName: item.name, amount: amountLeft});
                         total += sellOrders[i].price * amountLeft;
-                        amountLeft = 0;
-                    }
+                        amountLeft = 0;}
                     i++;
                 }
                 let perUnit =(total/amount);
@@ -418,15 +420,17 @@ function buyItems(converter, db, userName, itemId, amount, givenTotal, givenPerU
                         Users.updateOne({name: userName},{$set: {money: money}});
                         SellOrders.find({item_id: itemId}).sort({price: 1}).toArray((err, sellOrders) => {
                             if (err) reject(err);
-                            const newMinPrice = sellOrders[0].price;
+                            const newMinPrice = sellOrders.length > 0 ? sellOrders[0].price : null;
                             const newQuantity = quantity - amount;
                             //publish to subscription
                             resolve({
                                 item: item,
                                 amount: newQuantity,
+                                amountBought: amount,
                                 price: total,
                                 min_price: newMinPrice,
                                 money: money,
+                                sold: sold,
                             });
                         })
                     });

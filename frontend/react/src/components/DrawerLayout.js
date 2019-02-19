@@ -32,6 +32,8 @@ import Button from "@material-ui/core/Button";
 import {connect} from "react-redux";
 import {itemSupplyRequestAction, searchValueChangedAction} from "../redux/actions/itemActions";
 import MoneyView from "./MoneyView";
+import {SellOrderAlertSubscription} from "./SubscriptionComponent";
+import Paper from "./SellOrderList";
 
 
 const drawerWidth = 240;
@@ -185,6 +187,7 @@ class DrawerLayout extends React.Component {
 
         return (
             <div className={classes.root}>
+                {SellOrderAlertSubscription(this.props.user)}
                 <CssBaseline/>
                 <AppBar
                     position="fixed"
@@ -293,6 +296,6 @@ DrawerLayout.propTypes = {
 };
 
 export default withRouter(
-    connect(({searchTerm, money})=>({searchTerm, money}))
+    connect(({searchTerm, money, user})=>({searchTerm, money, user}))
         (withStyles(styles, {withTheme: true})(DrawerLayout))
     );
