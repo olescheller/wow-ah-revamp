@@ -79,7 +79,7 @@ type Receipt {
   amount: Int
   amountBought: Int
   price: Int
-  min_price: Float!
+  min_price: Float
   money: Float
   sold: [SellOrderAlert]
 }
