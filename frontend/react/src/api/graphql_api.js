@@ -45,7 +45,6 @@ export async function addItemToSellOrder(itemId, quantity) {
 }
 
 export async function removeSellOrder(itemId) {
-    console.log(itemId)
     return new Promise((resolve, reject) => {
         const mutation = `mutation {removeSellOrder(itemId: ${itemId}, seller_name: "Elandura", seller_realm:"Silvermoon")}`;
         axios.post("http://localhost:4000/", {"query": mutation, operationName: null, variables: {}}).then(response => {
@@ -56,11 +55,9 @@ export async function removeSellOrder(itemId) {
 
 
 export async function downloadRandomItems() {
-    // console.log('request')
     return new Promise((resolve, reject) => {
         const qry = `{randomItems{quantity, item {id, name, icon, item_class{name},item_sub_class{name}}}}`;
         axios.post("http://localhost:4000/", {"query": qry}).then(response => {
-            // console.log({response})
             resolve(response.data.data.randomItems);
         })
     })
@@ -68,7 +65,6 @@ export async function downloadRandomItems() {
 }
 
 export async function downloadAverageItemPrice(itemId, amount) {
-    console.log({itemId, amount})
     return new Promise((resolve, reject) => {
         const qry = `{items_price(itemId: ${itemId}, amount: ${amount}) {perUnit, total}}`;
         axios.post("http://localhost:4000/", {"query": qry}).then(response => {

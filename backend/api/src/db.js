@@ -46,7 +46,7 @@ function getRandomItems(converter, db) {
         const Items = db.collection('items');
         const SellOrders = db.collection('sellorders');
         // DB CALL
-        Items.find({}).toArray
+        Items.find({"is_stackable": true}).toArray
             ((err, items) => {
                 if (err) reject(err);
                 items.slice(0, 500);
@@ -58,7 +58,7 @@ function getRandomItems(converter, db) {
                 let randoms = [];
                 const itemSet = new Set();
 
-                for(let i = 0; i < 14; i ++) {
+                for(let i = 0; i < 8; i ++) {
                     const randInt = Math.floor(Math.random() * 100);
                         randoms.map((random) => {
                             if(random.item.name === items[randInt].name) {
