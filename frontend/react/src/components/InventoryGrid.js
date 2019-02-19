@@ -51,12 +51,12 @@ class InventoryGrid extends React.Component {
         const arr = [...this.props.inventoryItems];
         const len = arr.length;
         console.log(len)
-        const empty = len === 0 ? 16 : (len >= 16) ? 0 : 16 - len;
-        for(let i = 0; i < 16; i ++) {
+        const empty = len === 0 ? 20 : (len >= 20) ? 0 : 20 - len;
+        for(let i = 0; i < 20; i ++) {
             if(arr[i]) {
                 result.push(
                     <Tooltip key={arr[i].item.name} disableFocusListener disableTouchListener title={arr[i].item.name}>
-                    <Grid onClick={() => this.showDetails(arr[i])} className="inventoryItem" item sm={3}key={Math.random()}>
+                    <Grid onClick={() => this.showDetails(arr[i])} className="inventoryItem" item sm={3} key={Math.random()}>
                         {this.renderIconWithBadge(arr[i])}
                     </Grid>
                     </Tooltip>
@@ -86,7 +86,7 @@ class InventoryGrid extends React.Component {
                     <Grid container justify='center'>
                         <Grid container justify='center' item xs={6} sm={6}  >
                             <Grid container item xs={4} >
-                                <Grid container justify="center" >
+                                <Grid container justify="center" alignItems="flex-start" spacing={0}>
                                     {this.getItemSupplies()}
                                 </Grid>
                             </Grid>

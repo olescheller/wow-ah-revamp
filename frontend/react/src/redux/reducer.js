@@ -29,7 +29,6 @@ const initState = {
     },
     price: {
     },
-    count: 1,
     isLoading: false,
     showInfoBox: false,
     amountOfItemSupplies: 0,
@@ -40,12 +39,8 @@ const initState = {
 
 export default (state = initState, action) => {
     switch(action.type) {
-        case INCREMENT:
-            return {...state, count: state.count + 1};
         case SELECT_CATEGORY:
             return {...state, selectedCategory: action.payload};
-        // case FETCH_ITEM_SUPPLY_REQUESTED:
-        //     return {...state, searchTerm: action.payload.term};
         case SEARCH_VALUE_CHANGED:
             return {...state, searchTerm: action.payload.term}; // missing: category (combine main & subcategory)
         case BUY_QUANTITY_CHANGED:
@@ -168,7 +163,7 @@ export default (state = initState, action) => {
                 });
             }
             else {
-                if(count + action.payload.amount < 17) {
+                if(count + action.payload.amount <= 20) {
                     updatedInventory.push({item: action.payload.item, quantity: action.payload.amount})
                 }
             }

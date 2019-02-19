@@ -33,6 +33,7 @@ import {connect} from "react-redux";
 import {itemSupplyRequestAction, searchValueChangedAction} from "../redux/actions/itemActions";
 import MoneyView from "./MoneyView";
 import Paper from "@material-ui/core/Paper";
+import SettingsPage from "./SettingsPage";
 
 
 const drawerWidth = 240;
@@ -273,7 +274,7 @@ class DrawerLayout extends React.Component {
                     </List>
                     <Divider/>
                     <List>
-                        <ListItem button key="Settings" component={Link} to={'/'}>
+                        <ListItem button key="Settings" component={Link} to={'settings'}>
                             <ListItemIcon><SettingsIcon/></ListItemIcon>
                             <ListItemText primary="Settings"/>
                         </ListItem>
@@ -283,9 +284,10 @@ class DrawerLayout extends React.Component {
                 <main className={classes.content}>
                     <div className={classes.toolbar}/>
                     <Switch>
-                        <Route exact path='/' render={(props) => (<div>Home</div>)}/>
+                        <Route exact path='/' render={(props) => (<div>Pick a category</div>)}/>
                         <Route path='/buy' component={BuyingPage}/>
                         <Route path='/sell' component={SellingPage}/>
+                        <Route path='/settings' component={SettingsPage}/>
                     </Switch>
                 </main>
             </div>
