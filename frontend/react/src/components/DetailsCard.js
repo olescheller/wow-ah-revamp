@@ -18,7 +18,7 @@ class DetailsCard extends React.Component {
     }
 
     renderPrice = () => {
-        if(this.props.price[this.props.inventoryItem.item.id].perUnit) {
+        if(this.props.price[this.props.inventoryItem.item.id] && this.props.price[this.props.inventoryItem.item.id].perUnit ) {
             return(<div>Current min price: <MoneyView className="price" money={this.props.price[this.props.inventoryItem.item.id].perUnit}/></div>);
         }
         else {

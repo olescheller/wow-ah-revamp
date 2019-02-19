@@ -31,6 +31,7 @@ import { fade } from '@material-ui/core/styles/colorManipulator';
 import Button from "@material-ui/core/Button";
 import {connect} from "react-redux";
 import {itemSupplyRequestAction, searchValueChangedAction} from "../redux/actions/itemActions";
+import MoneyView from "./MoneyView";
 
 
 const drawerWidth = 240;
@@ -220,7 +221,11 @@ class DrawerLayout extends React.Component {
                         <div>
                             <Button variant="outlined" color="secondary" className={classes.button}>Select category</Button>
                         </div>
+
                         <div className={classes.grow} />
+                        <div>
+                            <MoneyView label="credit" money={this.props.money}/>
+                        </div>
                         <div className={classes.sectionDesktop}>
                             <IconButton color="inherit">
                                 <Badge badgeContent={1} color="secondary">
@@ -288,6 +293,6 @@ DrawerLayout.propTypes = {
 };
 
 export default withRouter(
-    connect(({searchTerm})=>({searchTerm}))
+    connect(({searchTerm, money})=>({searchTerm, money}))
         (withStyles(styles, {withTheme: true})(DrawerLayout))
     );

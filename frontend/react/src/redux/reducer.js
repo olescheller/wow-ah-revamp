@@ -14,8 +14,8 @@ import {
 } from "./actions/itemActions";
 
 const initState = {
-    user: "Anonymous",
-    money: 1000000000,
+    user: "Elandura-Silvermoon",
+    money: 10000000,
     selectedCategory: NaN,
     selectedSubCategory: NaN,
     searchTerm: "topaz",
