@@ -1,11 +1,10 @@
 import {all, call, put, takeEvery, takeLatest} from 'redux-saga/effects'
 
 import {
-    dummyApiCall,
     downloadItemsSupplyByPartialName,
     fetchAmountOfItemSupplies,
     downloadAverageItemPrice,
-    makePurchase, downloadRandomItems, createSellOrder, addItemToSellOrder, removeSellOrder
+    makePurchase, downloadRandomItems, createSellOrder, addItemToSellOrder, removeSellOrder, getUserMoney
 } from "../api/graphql_api";
 
 import {
@@ -13,7 +12,7 @@ import {
     averageItemPriceSucceeded,
     buyItemsSucceeded, deleteSellOrderAction, deleteSellOrderSucceeded,
     itemSupplySucceededAction,
-    randomItemsSucceeded, sellOrderSucceeded
+    randomItemsSucceeded, sellOrderSucceeded, USER_MONEY_REQUESTED, userMoneySucceededAction
 } from "./actions/itemActions";
 import {setLoading} from "./actions/actions";
 
@@ -44,13 +43,26 @@ function* watchAddItemToSellOrder () {
 function* watchRemoveSellOrder () {
     yield takeEvery('REMOVE_SELLORDER_REQUESTED', _removeSellOrder);
 }
+function* watchGetUserMoney () {
+    yield takeEvery(USER_MONEY_REQUESTED, updateUserMoney);
+}
 
+export function* updateUserMoney(action) {
+    const {userName , realmName} = action.payload;
+    try{
+        const data = yield call(getUserMoney, userName, realmName);
+        console.log(data);
+        console.log("asd")
+        yield put(userMoneySucceededAction(data))
+    } catch (e) {
+
+    }
+}
 
 export function* sellOrder(action) {
     const {itemId, price, quantity} = action.payload;
     try{
         const data = yield call(createSellOrder, itemId, price, quantity );
-        console.log({data})
         yield put(sellOrderSucceeded(data))
     }
     catch(error){
@@ -105,15 +117,6 @@ export function* buyItems(action) {
     }
 }
 
-export function* fetchItemSupply(action) {
-    try {
-        const data = yield call(dummyApiCall, action.payload.term);
-        yield put(itemSupplySucceededAction(data))
-    } catch (error) {
-        yield put({type: "FETCH_ITEM_SUPPLY_FAILED", error})
-    }
-}
-
 export function* fetchAverageItemPrice(action) {
     let amount = action.payload.amount === '' ? 0 : action.payload.amount;
     try {
@@ -152,5 +155,6 @@ export default function* rootSaga() {
         watchCreateSellOrder(),
         watchAddItemToSellOrder(),
         watchRemoveSellOrder(),
+        watchGetUserMoney(),
     ])
 }
