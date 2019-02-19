@@ -32,6 +32,7 @@ import Button from "@material-ui/core/Button";
 import {connect} from "react-redux";
 import {itemSupplyRequestAction, searchValueChangedAction} from "../redux/actions/itemActions";
 import MoneyView from "./MoneyView";
+import Paper from "@material-ui/core/Paper";
 
 
 const drawerWidth = 240;
@@ -223,15 +224,16 @@ class DrawerLayout extends React.Component {
                         </div>
 
                         <div className={classes.grow} />
-                        <div>
-                            <MoneyView label="credit" money={this.props.money}/>
-                        </div>
                         <div className={classes.sectionDesktop}>
-                            <IconButton color="inherit">
-                                <Badge badgeContent={1} color="secondary">
-                                    <NotificationsIcon />
-                                </Badge>
-                            </IconButton>
+                            <div>
+                            <Typography color={"inherit"} variant={"h6"}>{this.props.user + "  "|| "Loading user"}</Typography>
+
+                        </div>
+
+                        <div>
+                            <Typography color={"inherit"} variant={"h6"}><MoneyView label="" money={this.props.money}/></Typography>
+                        </div>
+
                         </div>
                     </Toolbar>
                 </AppBar>
@@ -293,6 +295,6 @@ DrawerLayout.propTypes = {
 };
 
 export default withRouter(
-    connect(({searchTerm, money})=>({searchTerm, money}))
+    connect(({searchTerm, money, user})=>({searchTerm, money, user}))
         (withStyles(styles, {withTheme: true})(DrawerLayout))
     );

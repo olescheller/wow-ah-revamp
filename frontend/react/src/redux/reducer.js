@@ -10,12 +10,16 @@ import {
     BUY_ITEM_SUCCEEDED,
     BUY_ITEMS_SUCCEEDED,
     RANDOM_ITEMS_SUCCEEDED,
-    SELL_ORDER_SUCCEEDED, DELETE_SELL_ORDER, ADD_TO_SELLORDER_SUCCEEDED, DELETE_SELL_ORDER_SUCCEEDED
+    SELL_ORDER_SUCCEEDED,
+    DELETE_SELL_ORDER,
+    ADD_TO_SELLORDER_SUCCEEDED,
+    DELETE_SELL_ORDER_SUCCEEDED,
+    USER_MONEY_REQUEST_SUCCEEDED
 } from "./actions/itemActions";
 
 const initState = {
-    user: "Elandura-Silvermoon",
-    money: 10000000,
+    user: "",
+    money: 0,
     selectedCategory: NaN,
     selectedSubCategory: NaN,
     searchTerm: "topaz",
@@ -173,6 +177,8 @@ export default (state = initState, action) => {
             return {...state, isLoading: action.payload};
         case SET_INFO_BOX:
             return {...state, showInfoBox: action.payload};
+        case USER_MONEY_REQUEST_SUCCEEDED:
+            return {...state, money: action.payload.money, user: action.payload.name};
         default:
             return state
     }
