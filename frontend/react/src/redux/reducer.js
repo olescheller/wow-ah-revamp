@@ -1,10 +1,9 @@
 import {
-    INCREMENT,
-    SELECT_CATEGORY, SET_LOADING, SET_INFO_BOX, QUANTITY_EXCEEDED} from "./actions/actions";
+    SELECT_CATEGORY, SET_LOADING, SET_INFO_BOX, QUANTITY_EXCEEDED, CHANGE_LOGGED_IN_USER
+} from "./actions/actions";
 import {
     BUY_QUANTITY_CHANGED,
     AVERAGE_ITEM_PRICE_SUCCEEDED,
-    FETCH_ITEM_SUPPLY_REQUESTED,
     FETCH_ITEM_SUPPLY_SUCCEEDED,
     SEARCH_VALUE_CHANGED,
     BUY_ITEM_SUCCEEDED,
@@ -25,10 +24,8 @@ const initState = {
     selectedSubCategory: NaN,
     searchTerm: "topaz",
     itemSupplies: [],
-    buyQuantity: {
-    },
-    price: {
-    },
+    buyQuantity: {},
+    price: {},
     isLoading: false,
     showInfoBox: false,
     amountOfItemSupplies: 0,
@@ -38,7 +35,7 @@ const initState = {
 };
 
 export default (state = initState, action) => {
-    switch(action.type) {
+    switch (action.type) {
         case SELECT_CATEGORY:
             return {...state, selectedCategory: action.payload};
         case SEARCH_VALUE_CHANGED:
@@ -47,20 +44,20 @@ export default (state = initState, action) => {
             let tempBuyQuantity = {...state.buyQuantity};
             tempBuyQuantity[action.payload.itemId] = parseInt(action.payload.amount);
             let tmpQuantityExceeded = [...state.quantityExceeded]
-            if(tmpQuantityExceeded.indexOf(action.payload.itemId) !== -1) {
+            if (tmpQuantityExceeded.indexOf(action.payload.itemId) !== -1) {
                 tmpQuantityExceeded = tmpQuantityExceeded.filter(i => i !== action.payload.itemId);
             }
-            if(action.payload.amount === '') {
+            if (action.payload.amount === '') {
                 let tmpPrice = {...state.price}
-                tmpPrice[action.payload.itemId] = {perUnit:0, total:0};
+                tmpPrice[action.payload.itemId] = {perUnit: 0, total: 0};
                 return {...state, buyQuantity: tempBuyQuantity, price: tmpPrice};
             }
-            return {...state, buyQuantity: tempBuyQuantity, quantityExceeded: tmpQuantityExceeded };
+            return {...state, buyQuantity: tempBuyQuantity, quantityExceeded: tmpQuantityExceeded};
         case QUANTITY_EXCEEDED:
             tempBuyQuantity = {...state.buyQuantity};
             tempBuyQuantity[action.payload.itemId] = parseInt(action.payload.amount);
             tmpPrice = {...state.price}
-            tmpPrice[action.payload.itemId] = {perUnit:0, total:0};
+            tmpPrice[action.payload.itemId] = {perUnit: 0, total: 0};
             tmpQuantityExceeded = [...state.quantityExceeded];
             tmpQuantityExceeded.push(action.payload.itemId);
             return {...state, price: tmpPrice, buyQuantity: tempBuyQuantity, quantityExceeded: tmpQuantityExceeded};
@@ -71,15 +68,22 @@ export default (state = initState, action) => {
         case FETCH_ITEM_SUPPLY_SUCCEEDED:
             let amount = 0;
             let showInfoBox = false;
-            if(action.payload.amount > 25) {
+            if (action.payload.amount > 25) {
                 amount = parseInt(action.payload.amount);
                 showInfoBox = true;
             }
             let tmpPrice = {...state.price};
-            for(let supply of action.payload.itemSupplies) {
-                tmpPrice[supply.item.id] = {perUnit:0, total:0};
+            for (let supply of action.payload.itemSupplies) {
+                tmpPrice[supply.item.id] = {perUnit: 0, total: 0};
             }
-            return {...state, itemSupplies: action.payload.itemSupplies, amountOfItemSupplies: amount, showInfoBox: showInfoBox, price: tmpPrice, buyQuantity: {}};
+            return {
+                ...state,
+                itemSupplies: action.payload.itemSupplies,
+                amountOfItemSupplies: amount,
+                showInfoBox: showInfoBox,
+                price: tmpPrice,
+                buyQuantity: {}
+            };
 
         case RANDOM_ITEMS_SUCCEEDED: {
             return {...state, inventoryItems: action.payload};
@@ -92,10 +96,17 @@ export default (state = initState, action) => {
                 })
                 .map(item => {
                     const quantity = item.quantity;
-                if(item.item.id === action.payload.item.id) return {...item, quantity: quantity- action.payload.quantity}
-                return item;
-            });
-            return {...state, activeSellOrders: [...state.activeSellOrders, action.payload], inventoryItems: newInventory}
+                    if (item.item.id === action.payload.item.id) return {
+                        ...item,
+                        quantity: quantity - action.payload.quantity
+                    }
+                    return item;
+                });
+            return {
+                ...state,
+                activeSellOrders: [...state.activeSellOrders, action.payload],
+                inventoryItems: newInventory
+            }
         }
 
         case  ADD_TO_SELLORDER_SUCCEEDED: {
@@ -115,7 +126,7 @@ export default (state = initState, action) => {
                 });
             let newActiveSellOrders = [...state.activeSellOrders]
                 .map((sellOrder) => {
-                    if(sellOrder.item.id === action.payload.itemId) {
+                    if (sellOrder.item.id === action.payload.itemId) {
                         const quantity = sellOrder.quantity;
                         return {...sellOrder, quantity: quantity + action.payload.quantity};
                     }
@@ -124,18 +135,17 @@ export default (state = initState, action) => {
             return {...state, activeSellOrders: newActiveSellOrders, inventoryItems: newInventory}
         }
 
-        case DELETE_SELL_ORDER_SUCCEEDED:
-        {
+        case DELETE_SELL_ORDER_SUCCEEDED: {
             const sellOrderRemoved = state.activeSellOrders.filter(sellOrder => sellOrder.item.id !== action.payload.item.id);
             const inventoryAdded = [...state.inventoryItems];
             let wasAdded = false;
-            for(let inventory of inventoryAdded){
-                if(inventory.item.id === action.payload.item.id) {
+            for (let inventory of inventoryAdded) {
+                if (inventory.item.id === action.payload.item.id) {
                     inventory.quantity += action.payload.quantity;
                     wasAdded = true;
                 }
             }
-            if(!wasAdded) inventoryAdded.push(action.payload);
+            if (!wasAdded) inventoryAdded.push(action.payload);
             return {...state, activeSellOrders: sellOrderRemoved, inventoryItems: inventoryAdded}
         }
         case BUY_ITEMS_SUCCEEDED:
@@ -146,29 +156,33 @@ export default (state = initState, action) => {
             const items = new Set();
             let count = 0;
             let toStack = false;
-            for(let inv of updatedInventory) {
-                if(! items.has(inv.item.name)) {
-                    count ++;
-                    if(inv.item.name === action.payload.item.name) toStack = true;
+            for (let inv of updatedInventory) {
+                if (!items.has(inv.item.name)) {
+                    count++;
+                    if (inv.item.name === action.payload.item.name) toStack = true;
                     items.add(inv.item.name);
                 }
             }
-            if(toStack) {
+            if (toStack) {
                 updatedInventory.map((inv) => {
-                    if(inv.item.name === action.payload.item.name) {
+                    if (inv.item.name === action.payload.item.name) {
                         inv.quantity += action.payload.amount;
                         return inv;
                     }
                     return inv;
                 });
-            }
-            else {
-                if(count + action.payload.amount <= 20) {
+            } else {
+                if (count + action.payload.amount <= 20) {
                     updatedInventory.push({item: action.payload.item, quantity: action.payload.amount})
                 }
             }
 
-            return {...state, money: action.payload.money, inventoryItems: updatedInventory, buyQuantity: {...oldBuyQuantity}}
+            return {
+                ...state,
+                money: action.payload.money,
+                inventoryItems: updatedInventory,
+                buyQuantity: {...oldBuyQuantity}
+            }
         case SET_LOADING:
             return {...state, isLoading: action.payload};
         case SET_INFO_BOX:
@@ -178,10 +192,10 @@ export default (state = initState, action) => {
 
         case ITEM_SUPPLY_CHANGED:
             let updatedItemSupplies = [...state.itemSupplies].map(supply => {
-               if(supply.item.id === action.payload.itemId) {
-                   return {...supply, quantity: action.payload.quantity}
-               }
-               return supply
+                if (supply.item.id === action.payload.itemId) {
+                    return {...supply, quantity: action.payload.quantity}
+                }
+                return supply
             });
             return {...state, itemSupplies: updatedItemSupplies}
         default:
