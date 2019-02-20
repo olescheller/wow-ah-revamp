@@ -234,8 +234,20 @@ export default (state = initState, action) => {
                 return supply
             });
             return {...state, itemSupplies: updatedItemSupplies}
-        case ITEM_SOLD_ALERT:
-            return {...state, soldAlert: action.payload.alert, alert: true}
+        case ITEM_SOLD_ALERT:{
+            const activeSellOrders = [...state.activeSellOrders];
+            const updatedSellOrders = activeSellOrders.filter(sellOrder => {
+                return (sellOrder.item.name !== action.payload.alert.itemName) ||
+                (sellOrder.item.name === action.payload.alert.itemName && sellOrder.quantity - action.payload.alert.amount > 0)
+            }).map(sellOrder => {
+                if(sellOrder.item.name === action.payload.alert.itemName) {
+                    const quantity = sellOrder.quantity - action.payload.alert.amount;
+                    return {...sellOrder, quantity: quantity};
+                }
+                return sellOrder;
+            });
+            return {...state, activeSellOrders: updatedSellOrders, soldAlert: action.payload.alert, alert: true}
+        }
         case REMOVE_ALERT:
             return {...state, alert: false}
 
