@@ -132,7 +132,7 @@ export function* buyItems(action) {
     const {userName, itemId, amount, total, perItem} = action.payload;
     try{
         const data = yield call(makePurchase, userName, itemId, amount, total, perItem);
-        yield put(buyItemsSucceeded(data));
+        yield put(buyItemsSucceededAction(data));
     } catch(error) {
         yield put({type: "BUY_ITEM_FAILED", error})
     }
