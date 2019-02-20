@@ -35,7 +35,7 @@ QUANTITY = "quantity"
 def get_auctions() -> List:
     """Returns a list of auctions read from the local json file."""
     with open(wowdata_auction_house_path, 'r') as f:
-        return json.load(f).get("auctions")
+        return list(filter(lambda auction: auction.get("buyout") > 0, json.load(f).get("auctions")))
 
 
 def get_raw_items() -> List:
@@ -238,6 +238,7 @@ if __name__ == '__main__':
     db.insert_items()
 
     auctions = get_auctions()
+
     db.insert_users(get_users(auctions))
 
     db.insert_sell_orders(raw_api_auctions_to_sell_orders(auctions))
