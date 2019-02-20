@@ -519,6 +519,7 @@ function addItemsToSellOrder(converter, db, itemId, seller_name, seller_realm, q
         }, (err, sellOrder) => {
             if (err) {
                 reject('sellorder was not found');
+                return;
             }
             const newQuantity = sellOrder.quantity + quantity
             SellOrders.updateOne({_id: sellOrder.id}, {$set: {quantity: newQuantity}});

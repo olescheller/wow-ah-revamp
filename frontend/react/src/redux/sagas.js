@@ -51,8 +51,6 @@ export function* updateUserMoney(action) {
     const {userName , realmName} = action.payload;
     try{
         const data = yield call(getUserMoney, userName, realmName);
-        console.log(data);
-        console.log("asd")
         yield put(userMoneySucceededAction(data))
     } catch (e) {
 
@@ -85,7 +83,7 @@ export function* _removeSellOrder(action) {
 export function* addToSellOrder(action) {
     const {itemId, quantity, seller_name, seller_realm} = action.payload;
     try{
-        const data = yield call(addItemToSellOrder(itemId, quantity, seller_name, seller_realm));
+        const data = yield call(addItemToSellOrder, itemId, quantity, seller_name, seller_realm);
         yield put(addItemToSellOrderSucceeded(data));
     }
     catch(error) {
@@ -107,10 +105,8 @@ export function* randomItems(action) {
 
 export function* buyItems(action) {
     const {userName, itemId, amount, total, perItem} = action.payload;
-    console.log(perItem)
     try{
         const data = yield call(makePurchase, userName, itemId, amount, total, perItem);
-        console.log(data)
         yield put(buyItemsSucceeded(data));
     } catch(error) {
         yield put({type: "BUY_ITEM_FAILED", error})

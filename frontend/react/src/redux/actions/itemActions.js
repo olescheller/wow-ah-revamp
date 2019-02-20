@@ -44,7 +44,6 @@ export const randomItemsSucceeded = (items) => {
 
 export const BUY_ITEMS_SUCCEEDED = "BUY_ITEMS_SUCCEEDED";
 export const buyItemsSucceeded = (buyItems) => {
-    console.log({buyItems});
     return {
         type: BUY_ITEMS_SUCCEEDED,
         payload: buyItems,
@@ -135,5 +134,13 @@ export const userMoneySucceededAction = ({name, money}) => {
     return {
         type: USER_MONEY_REQUEST_SUCCEEDED,
         payload: {name, money}
+    }
+}
+
+export const SOLD_ALERT = "SOLD_ALERT";
+export const soldAlertAction = (alert) => {
+    return {
+        type: SOLD_ALERT,
+        payload: {alert}
     }
 }

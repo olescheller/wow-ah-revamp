@@ -12,6 +12,8 @@ import WarningIcon from '@material-ui/icons/Warning';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import {connect} from "react-redux";
+import {closeAlertAction} from "../redux/actions/actions";
 
 
 const variantIcon = {
@@ -61,17 +63,6 @@ function MySnackbarContent(props) {
                     {message}
         </span>
             }
-            action={[
-                <IconButton
-                    key="close"
-                    aria-label="Close"
-                    color="inherit"
-                    className={classes.close}
-                    onClick={onClose}
-                >
-                    <CloseIcon className={classes.icon} />
-                </IconButton>,
-            ]}
             {...other}
         />
     );
@@ -96,18 +87,13 @@ const styles2 = theme => ({
 
 class CustomizedSnackbar extends React.Component {
 
-
     state = {
         open: true,
     };
 
-    handleClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
-        this.setState({ open: false });
-    };
+    createMessage = () => {
+        return this.props.soldAlert ? `You sold ${this.props.soldAlert.amount} piece of ${this.props.soldAlert.itemName}` : ''
+    }
 
     render() {
         const { classes } = this.props;
@@ -118,13 +104,12 @@ class CustomizedSnackbar extends React.Component {
                         vertical: 'bottom',
                         horizontal: 'left',
                     }}
-                    open={this.state.open}
+                    open={this.props.alert}
                     autoHideDuration={6000}
-                    onClose={this.handleClose}
                 >
                     <MySnackbarContentWrapper
                         variant={this.props.variant}
-                        message={this.props.message}
+                        message={this.createMessage()}
                     />
                 </Snackbar>
         );
@@ -135,4 +120,4 @@ CustomizedSnackbar.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles2)(CustomizedSnackbar);
+export default connect(({alert, soldAlert}) => ({alert, soldAlert})) (withStyles(styles2)(CustomizedSnackbar));

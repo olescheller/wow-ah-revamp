@@ -31,12 +31,14 @@ import SearchIcon from '@material-ui/icons/Search';
 import {fade} from '@material-ui/core/styles/colorManipulator';
 import Button from "@material-ui/core/Button";
 import {connect} from "react-redux";
-import {itemSupplyRequestAction, searchValueChangedAction} from "../redux/actions/itemActions";
+import {itemSupplyRequestAction, searchValueChangedAction, soldAlertAction} from "../redux/actions/itemActions";
 import MoneyView from "./MoneyView";
 import {SellOrderAlertSubscription} from "./SubscriptionComponent";
 import Paper from "@material-ui/core/Paper";
 import SettingsPage from "./SettingsPage";
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import CustomizedSnackbar from "./SnackBar";
+import {closeAlertAction} from "../redux/actions/actions";
 
 
 const drawerWidth = 240;
@@ -185,12 +187,19 @@ class DrawerLayout extends React.Component {
         }
     };
 
+    dispatchSubscriptionData = (alert) => {
+        this.props.dispatch(soldAlertAction(alert));
+        setTimeout(() => this.props.dispatch(closeAlertAction()), 5000);
+    }
+
+
     render() {
         const {classes, theme} = this.props;
 
         return (
             <div className={classes.root}>
-                {SellOrderAlertSubscription(this.props.user)}
+                <CustomizedSnackbar open={true} variant="success"/>
+                {SellOrderAlertSubscription(this.props.user, this.dispatchSubscriptionData)}
                 <CssBaseline/>
                 <AppBar
                     position="fixed"

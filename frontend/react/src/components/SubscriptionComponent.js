@@ -42,42 +42,38 @@ const SELL_ORDER_ALERT_SUBSCRIPTION = gql`
   }
 `;
 
-export const ReceiptSubscription = (itemSupply, type) => {
+export const ReceiptSubscription = (itemSupply, type, callback) => {
     const itemId = parseInt(itemSupply.item.id);
     return (
     <Subscription
         subscription={RECEIPT_SUBSCRIPTION}
         variables={{itemId}}
         shouldResubscribe={true}
+        onSubscriptionData={(data) => {
+            const receipt = data.subscriptionData.data.receipt;
+            callback(receipt);
+        }}
     >
         {({ data, loading, error }) => {
-            if(!loading && data.receipt.amount && data.receipt.min_price) {
-                return (type === "QUANTITY") ? data.receipt.amount : (type === "PRICE") ? <MoneyView  displayClass="coins-block"  money={data.receipt.min_price} /> : 0;
-            }
-            return(type === "QUANTITY") ? itemSupply.quantity : (type === "PRICE") ? <MoneyView displayClass="coins-block" money={itemSupply.min_price} /> : 0;
+            return ''
         }}
     </Subscription>
 )};
 
 
-export const SellOrderAlertSubscription = (sellerName) => {
+export const SellOrderAlertSubscription = (sellerName, callback) => {
     return (
         <Subscription
             subscription={SELL_ORDER_ALERT_SUBSCRIPTION}
             variables={{sellerName}}
             shouldResubscribe={true}
+            onSubscriptionData={(data) => {
+                const alerts = data.subscriptionData.data.sellOrderAlert.filter(alert => alert.sellerName === sellerName);
+                callback(...alerts);
+            }}
         >
             {({ data, loading, error }) => {
-                if(!loading && data.sellOrderAlert) {
-                    const userSellOrders = data.sellOrderAlert.filter(alert => {
-                        return alert.sellerName === sellerName
-                    }).map(alert => {
-
-                        return (<CustomizedSnackbar variant="success" message = {`You sold ${alert.amount} pieces of ${alert.itemName}`}/>)
-                    })
-                    return userSellOrders;
-                }
-                return <div></div>
+                return ''
             }}
         </Subscription>
     )

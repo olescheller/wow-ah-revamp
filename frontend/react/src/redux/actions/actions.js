@@ -32,3 +32,6 @@ export const quantityExceededAction = (itemId) => ({
     type: QUANTITY_EXCEEDED,
     payload: {itemId}
 });
+
+export const REMOVE_ALERT = 'REMOVE_ALERT';
+export const closeAlertAction = () => ({type: REMOVE_ALERT})

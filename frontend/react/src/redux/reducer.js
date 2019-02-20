@@ -1,5 +1,5 @@
 import {
-    SELECT_CATEGORY, SET_LOADING, SET_INFO_BOX, QUANTITY_EXCEEDED, CHANGE_LOGGED_IN_USER
+    SELECT_CATEGORY, SET_LOADING, SET_INFO_BOX, QUANTITY_EXCEEDED, CHANGE_LOGGED_IN_USER, REMOVE_ALERT
 } from "./actions/actions";
 import {
     BUY_QUANTITY_CHANGED,
@@ -14,7 +14,7 @@ import {
     ADD_TO_SELLORDER_SUCCEEDED,
     DELETE_SELL_ORDER_SUCCEEDED,
     USER_MONEY_REQUEST_SUCCEEDED,
-    ITEM_SUPPLY_CHANGED
+    ITEM_SUPPLY_CHANGED, SOLD_ALERT
 } from "./actions/itemActions";
 
 const initState = {
@@ -32,6 +32,8 @@ const initState = {
     quantityExceeded: [],
     inventoryItems: [],
     activeSellOrders: [],
+    soldAlert:null,
+    alert: false,
 };
 
 export default (state = initState, action) => {
@@ -112,11 +114,11 @@ export default (state = initState, action) => {
         case  ADD_TO_SELLORDER_SUCCEEDED: {
             let newInventory = [...state.inventoryItems]
                 .filter((item) => {
-                    return !(item.item.id === action.payload.itemId && item.quantity === action.payload.quantity)
+                    return !(item.item.id === action.payload.item.id && item.quantity === action.payload.quantity)
                 })
                 .map(item => {
                     const quantity = item.quantity;
-                    if (item.item.id === action.payload.itemId) {
+                    if (item.item.id === action.payload.item.id) {
                         return {
                             ...item,
                             quantity: quantity - action.payload.quantity
@@ -126,7 +128,7 @@ export default (state = initState, action) => {
                 });
             let newActiveSellOrders = [...state.activeSellOrders]
                 .map((sellOrder) => {
-                    if (sellOrder.item.id === action.payload.itemId) {
+                    if (sellOrder.item.id === action.payload.item.id) {
                         const quantity = sellOrder.quantity;
                         return {...sellOrder, quantity: quantity + action.payload.quantity};
                     }
@@ -146,7 +148,6 @@ export default (state = initState, action) => {
                 }
             }
             if (!wasAdded) {
-                console.log(action.payload)
                 inventoryAdded.push(action.payload);
             }
             return {...state, activeSellOrders: sellOrderRemoved, inventoryItems: inventoryAdded}
@@ -214,6 +215,24 @@ export default (state = initState, action) => {
                 return supply
             });
             return {...state, itemSupplies: updatedItemSupplies}
+        case SOLD_ALERT:
+            return {...state, soldAlert: action.payload.alert, alert: true}
+        case REMOVE_ALERT:
+            return {...state, alert: false}
+
+        case 'BUY_SUBSCRIPTION':
+        {
+            const receipt = action.payload.receipt;
+            let itemSupplies = [...state.itemSupplies];
+            itemSupplies = itemSupplies
+                .map(supply => {
+                    if(supply.item.id === receipt.item.id) {
+                        return {...supply, quantity: receipt.amount, min_price: receipt.min_price };
+                    }
+                    return supply;
+                });
+            return {...state, itemSupplies: itemSupplies};
+        }
         default:
             return state
     }

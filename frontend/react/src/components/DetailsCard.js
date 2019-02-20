@@ -1,7 +1,12 @@
 import './inventoryGrid.css'
 import React from 'react';
 import {Button, Card, CardContent, CardMedia, IconButton, Input, TextField, Typography} from "@material-ui/core";
-import {addItemToSellOrderSucceeded, createSellOrder, queryAverageItemPriceAction} from "../redux/actions/itemActions";
+import {
+    addItemToSellOrderRequested,
+    addItemToSellOrderSucceeded,
+    createSellOrder,
+    queryAverageItemPriceAction
+} from "../redux/actions/itemActions";
 import {connect} from "react-redux";
 import MoneyView from "./MoneyView";
 import MinPriceIcon from "@material-ui/icons/PanoramaFishEyeOutlined";
@@ -40,16 +45,16 @@ class DetailsCard extends React.Component {
     };
 
     sellItem = (item) => {
+        const [seller_name, seller_realm] = this.props.user.split("-");
         if(this.props.activeSellOrders.reduce((acc, curr) => {
             return acc || curr.item.id === item.id
         }, false)) {
-            const sellOrder = {itemId: item.id, quantity: this.state.amount}
-            this.props.dispatch(addItemToSellOrderSucceeded(sellOrder));
+            const sellOrder = {itemId: item.id, quantity: this.state.amount, seller_name: seller_name.toString(), seller_realm: seller_realm.toString()}
+            this.props.dispatch(addItemToSellOrderRequested(sellOrder));
             //this.props.dispatch(setInfoBox(true));
            // setTimeout(() => this.props.dispatch(setInfoBox(false)), 3000);
         }
         else if(this.state.amount > 0 && this.state.amount <= this.props.inventoryItem.quantity){
-            const [seller_name, seller_realm] = this.props.user.split("-");
             const sellOrder = {itemId: item.id, price: this.state.currentPrice, quantity: this.state.amount, seller_name: seller_name.toString(), seller_realm: seller_realm.toString()}
             this.props.dispatch(createSellOrder(sellOrder));
         }

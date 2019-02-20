@@ -13,17 +13,15 @@ export const BUY_SUBSCRIPTION = gql`
 
 export async function makePurchase(userName, itemId, amount, total, perUnit) {
     return new Promise((resolve, reject) => {
-        const mutation = `mutation {buyItems(userName: "Elandura-Silvermoon", itemId: ${itemId},amount: ${amount}, total: ${total}, perUnit: ${perUnit}) 
+        const mutation = `mutation {buyItems(userName: "${userName}", itemId: ${itemId},amount: ${amount}, total: ${total}, perUnit: ${perUnit}) 
         {money, amount, amountBought, item{id, name, item_class{ name }, item_sub_class{name}, icon},price}}`;
         axios.post("http://localhost:4000/", {"query": mutation, operationName: null, variables: {}}).then(response => {
-            console.log(response.data.data.buyItems)
             resolve(response.data.data.buyItems);
         })
     })
 }
 
 export async function createSellOrder(itemId, price, quantity,  seller_name, seller_realm) {
-    console.log(seller_name)
     return new Promise((resolve, reject) => {
         const mutation = `mutation {createSellOrder(itemId: ${itemId},  seller_name: "${seller_name}", seller_realm: "${seller_realm}", price: ${price}, quantity: ${quantity}) {
         item {id, name, item_class {name}, icon,  item_sub_class{name}}, price, quantity} }`;

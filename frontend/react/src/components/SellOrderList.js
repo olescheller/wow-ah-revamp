@@ -47,8 +47,7 @@ class SellOrderList extends React.Component {
     handleBuyClick = (itemId) => {
         const {perUnit, total} = this.props.price[itemId];
         const amount = this.props.buyQuantity[itemId];
-        const userName = "Elandura-Silvermoon";
-        this.props.dispatch(buyItemAction(userName, itemId, amount, total, perUnit))
+        this.props.dispatch(buyItemAction(this.props.user, itemId, amount, total, perUnit))
     };
 
     getInputField = (itemSupply) => {
@@ -68,7 +67,6 @@ class SellOrderList extends React.Component {
 
     onInputQty = (e, itemSupply) => {
         const buyQty = e.target.value;
-        console.log(buyQty, itemSupply.quantity)
         if(buyQty > itemSupply.quantity) {
             //set error
             this.props.dispatch(quantityExceededAction(itemSupply.item.id));
@@ -83,6 +81,10 @@ class SellOrderList extends React.Component {
         isBuyQuantityEmpty = (itemId) => {
             return ! this.props.buyQuantity[itemId];
         };
+
+        dispatchReceipt = (receipt) => {
+            this.props.dispatch({type: "BUY_SUBSCRIPTION", payload: {receipt}})
+        }
 
 
     render() {
@@ -120,10 +122,11 @@ class SellOrderList extends React.Component {
 
                             </CustomTableCell>
                             <CustomTableCell  padding="dense">
-                                {ReceiptSubscription(itemSupply, "PRICE")}
+                                {ReceiptSubscription(itemSupply, "QUANTITY", this.dispatchReceipt)}
+                                <MoneyView displayClass="coins-inline" money={itemSupply.min_price}/>
                             </CustomTableCell>
                             <CustomTableCell padding="dense">
-                                {ReceiptSubscription(itemSupply, "QUANTITY")}
+                                {itemSupply.quantity}
                             </CustomTableCell>
                             <CustomTableCell padding="dense">
                                 {this.getInputField(itemSupply)}
@@ -148,4 +151,4 @@ SellOrderList.propTypes = {
 };
 
 
-export default connect(({itemSupplies, buyQuantity, price, quantityExceeded}) => ({itemSupplies, buyQuantity, price, quantityExceeded}))(withStyles(styles)(SellOrderList));
+export default connect(({itemSupplies, buyQuantity, price, quantityExceeded, user}) => ({itemSupplies, buyQuantity, price, quantityExceeded, user}))(withStyles(styles)(SellOrderList));
