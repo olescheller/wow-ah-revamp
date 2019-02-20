@@ -26,7 +26,7 @@ export async function createSellOrder(itemId, price, quantity,  seller_name, sel
     console.log(seller_name)
     return new Promise((resolve, reject) => {
         const mutation = `mutation {createSellOrder(itemId: ${itemId},  seller_name: "${seller_name}", seller_realm: "${seller_realm}", price: ${price}, quantity: ${quantity}) {
-        item {id, name, item_class {name}, icon}, price, quantity} }`;
+        item {id, name, item_class {name}, icon,  item_sub_class{name}}, price, quantity} }`;
         axios.post("http://localhost:4000/", {"query": mutation, operationName: null, variables: {}}).then(response => {
             resolve(response.data.data.createSellOrder);
         })
@@ -38,7 +38,7 @@ export async function createSellOrder(itemId, price, quantity,  seller_name, sel
 export async function addItemToSellOrder(itemId, quantity, seller_name, seller_realm) {
     return new Promise((resolve, reject) => {
         const mutation = `mutation {addItemToSellOrder(itemId: ${itemId}, quantity: ${quantity}, seller_name: "${seller_name}", seller_realm: "${seller_realm}") {
-        item {id, name, item_class {name}, icon}, price, quantity} }`;
+        item {id, name, item_class {name}, icon, item_sub_class{name}}, price, quantity} }`;
         axios.post("http://localhost:4000/", {"query": mutation, operationName: null, variables: {}}).then(response => {
             resolve(response.data.data.addItemToSellOrder);
         })
