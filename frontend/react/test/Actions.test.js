@@ -60,3 +60,34 @@ describe('itemActions', () => {
         expect(itemActions.itemSupplySucceededAction([1,2,3], 3)).toEqual(expectedAction)
     })
 });
+
+
+describe('itemActions', () => {
+    it('should create an action to change the buy quantity of an item', () => {
+        const expectedAction = {
+            type: itemActions.BUY_QUANTITY_CHANGED,
+            payload: {amount: 42, itemId: 1337}
+        };
+        expect(itemActions.buyQuantityChangedAction(1337, 42)).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to request to buy an item', () => {
+        const expectedAction = {
+            type: itemActions.BUY_ITEMS_REQUESTED,
+            payload: {userName: "John-Doe", itemId: 42, amount: 2, total: 11, perItem: 22}
+        };
+        expect(itemActions.buyItemsRequestedAction("John-Doe", 42, 2, 11,22 )).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to fetch random items ', () => {
+        const expectedAction = {
+            type: itemActions.FETCH_RANDOM_ITEMS_REQUESTED,
+            payload: {}
+        };
+        expect(itemActions.fetchRandomItemsRequestedAction()).toEqual(expectedAction)
+    })
+});

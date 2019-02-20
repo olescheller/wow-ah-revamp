@@ -12,7 +12,7 @@ import rootSaga from './redux/sagas'
 import theme from './theme/materialTheme'
 import reducer from './redux/reducer'
 import {
-    randomItemsRequested,
+    fetchRandomItemsRequestedAction,
     userMoneyRequestedAction,
     userSellOrdersRequestedAction
 } from "./redux/actions/itemActions";
@@ -62,7 +62,7 @@ const initialUserName = "Elandura";
 const initialRealmName = "Silvermoon";
 
 // Fetch random items and place them into the user inventory
-store.dispatch(randomItemsRequested());
+store.dispatch(fetchRandomItemsRequestedAction());
 
 // Fetch user name and their gold
 store.dispatch(userMoneyRequestedAction(initialUserName, initialRealmName));

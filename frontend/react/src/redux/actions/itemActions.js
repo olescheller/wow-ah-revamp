@@ -21,14 +21,14 @@ export const buyQuantityChangedAction = (itemId, amount) => ({
 });
 
 export const BUY_ITEMS_REQUESTED = "BUY_ITEMS_REQUESTED";
-export const buyItemAction = (userName, itemId, amount, total, perItem) => ({
+export const buyItemsRequestedAction = (userName, itemId, amount, total, perItem) => ({
     type: BUY_ITEMS_REQUESTED,
     payload:  {userName, itemId, amount, total, perItem},
 });
 
 
 export const FETCH_RANDOM_ITEMS_REQUESTED = "FETCH_RANDOM_ITEMS_REQUESTED";
-export const randomItemsRequested = () => ({
+export const fetchRandomItemsRequestedAction = () => ({
   type:  FETCH_RANDOM_ITEMS_REQUESTED,
     payload: {}
 });
