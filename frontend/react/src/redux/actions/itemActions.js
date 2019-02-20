@@ -1,4 +1,3 @@
-
 export const SEARCH_VALUE_CHANGED = "SEARCH_VALUE_CHANGED";
 export const searchValueChangedAction = (itemNameTerm) => ({
     type: SEARCH_VALUE_CHANGED,

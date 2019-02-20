@@ -30,3 +30,33 @@ describe('actions', () => {
         expect(actions.setInfoBox(true)).toEqual(expectedAction)
     })
 });
+
+describe('itemActions', () => {
+    it('should create an action to set the current search value', () => {
+        const expectedAction = {
+            type: itemActions.SEARCH_VALUE_CHANGED,
+            payload: {term: "Foo"}
+        };
+        expect(itemActions.searchValueChangedAction("Foo")).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to fetch item supply', () => {
+        const expectedAction = {
+            type: itemActions.FETCH_ITEM_SUPPLY_REQUESTED,
+            payload: {term: "Foo", category: 1}
+        };
+        expect(itemActions.itemSupplyRequestAction("Foo", 1)).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to fetch the correct amount of item supplies', () => {
+        const expectedAction = {
+            type: itemActions.FETCH_ITEM_SUPPLY_SUCCEEDED,
+            payload: {itemSupplies: [1, 2, 3], amount: 3}
+        };
+        expect(itemActions.itemSupplySucceededAction([1,2,3], 3)).toEqual(expectedAction)
+    })
+});

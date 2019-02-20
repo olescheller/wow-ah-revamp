@@ -1,5 +1,5 @@
 import {
-    SELECT_CATEGORY, SET_LOADING, SET_INFO_BOX, QUANTITY_EXCEEDED, CHANGE_LOGGED_IN_USER
+     SET_LOADING, SET_INFO_BOX, QUANTITY_EXCEEDED
 } from "./actions/actions";
 import {
     BUY_QUANTITY_CHANGED,
@@ -36,8 +36,6 @@ const initState = {
 
 export default (state = initState, action) => {
     switch (action.type) {
-        case SELECT_CATEGORY:
-            return {...state, selectedCategory: action.payload};
 
         // The search value is changed in the search box
         case SEARCH_VALUE_CHANGED:
