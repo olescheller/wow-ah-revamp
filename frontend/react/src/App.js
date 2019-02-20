@@ -4,7 +4,6 @@ import DrawerLayout from "./components/DrawerLayout";
 
 class App extends Component {
 
-
     render() {
         return (
             <div className="App">

@@ -1,0 +1,66 @@
+.inventoryItem {
+    text-align: center;
+    border: 1px solid #FFD700;
+    background:  #505050;
+    border-radius: 6px;
+    height: 60px;
+    width: 60px;
+}
+
+.paper{
+    width: 100%;
+    margin-top: 1em;
+    overflow-x:  auto;
+    padding: 1em;
+}
+
+.inventoryIcon{
+
+}
+
+.card{
+    display: flex;
+}
+
+.details{
+    display: flex;
+    flex-direction: column;
+}
+
+.content{
+    flex: 1 0 auto;
+}
+
+
+.icon{
+    width: 100px;
+    height: 100px;
+}
+
+.controls{
+    display: flex;
+    align-items: center;
+}
+
+#sellButton{
+    margin: 0 2em 0 2em;
+}
+
+
+.priceInput{
+    min-width: 6em;
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
+.amountInput {
+    margin-left: 2em;
+    margin-right: 2em;
+    min-width: 3em;
+
+}
+
+.coins-inline {
+    display: inline;
+}
+

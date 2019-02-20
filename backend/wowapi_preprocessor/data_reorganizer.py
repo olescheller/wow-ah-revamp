@@ -17,6 +17,7 @@ from typing import List
 
 import pandas as pd
 from pymongo import MongoClient, ASCENDING
+import sys
 
 wowdata_dir = os.path.abspath("../data")
 wowdata_items_path = os.path.join(wowdata_dir, "items.json")
@@ -58,7 +59,7 @@ def get_users(raw_auctions) -> List:
     users = []
     user_names = set([f"{order.get('owner')}-{order.get('ownerRealm')}" for order in raw_auctions])
     for name in user_names:
-        users.append({"name": name, "money": random.randint(100000000, 1000000000)})
+        users.append({"name": name, "money": random.randint(10000000000, 100000000000)})
     return users
 
 
@@ -222,7 +223,13 @@ class MongoDbAdapter:
 
 
 if __name__ == '__main__':
-    db = MongoDbAdapter()
+
+    try:
+        port = sys.argv[1]
+    except:
+        port = 27017
+
+    db = MongoDbAdapter(port=int(port))
 
     item_id_to_name_mapping = {item.get("id"): item.get("name") for item in get_raw_items()}
 

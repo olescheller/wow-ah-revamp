@@ -21,6 +21,8 @@ class InfoBox extends React.Component {
         switch (this.props.type) {
             case 'moreItems':
                 return `There are ${this.props.amountOfItemSupplies} total results for ${this.props.searchTerm} but only 25 are shown. Please specify your search term to view more auctions.`;
+            case 'alreadyActiveSellOrder':
+                return `This item is already part of an active SellOrder`;
             default:
                 return ''
         }
@@ -28,7 +30,7 @@ class InfoBox extends React.Component {
     render() {
         if(this.props.showInfoBox) {
             return (
-                <div  className="info">
+                <div  className={this.props.infoClass}>
                     <InfoIcon className="icon"/> <span id="space"/><Typography>{this.renderText()}</Typography> <CloseIcon onClick={this.handleClose} className="icon2"/>
                 </div>
             );

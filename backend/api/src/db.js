@@ -26,14 +26,52 @@ function getUserByNameAndRealm(db, name, realm) {
 function getItemById(converter, db, itemId) {
     return new Promise((resolve, reject) => {
         const Items = db.collection('items');
-
         // DB CALL
         Items.findOne({id: itemId},
-             (err, item) => {
+            (err, item) => {
                 if (err) reject(err);
-                if (item === null) resolve(null);
+                if (item === null) {
+                    resolve(null);
+                    return;
+                }
                 const gqlItem = converter.ItemMongoToGql(item);
                 resolve(gqlItem)
+            }
+        )
+    });
+}
+
+function getRandomItems(converter, db) {
+    return new Promise((resolve, reject) => {
+        const Items = db.collection('items');
+        const SellOrders = db.collection('sellorders');
+        // DB CALL
+        Items.find({"is_stackable": true}).toArray
+        ((err, items) => {
+                if (err) reject(err);
+                items.slice(0, 500);
+                items = items.map(item => converter.ItemMongoToGql(item));
+                if (items.length < 100) {
+                    resolve(null);
+                    return;
+                }
+                let randoms = [];
+                const itemSet = new Set();
+
+                for (let i = 0; i < 8; i++) {
+                    const randInt = Math.floor(Math.random() * 100);
+                    randoms.map((random) => {
+                        if (random.item.name === items[randInt].name) {
+                            random.quantity += 1;
+                        }
+                        return random;
+                    });
+                    if (!itemSet.has(items[randInt].name)) {
+                        randoms.push({item: items[randInt], quantity: 1});
+                        itemSet.add(items[randInt].name);
+                    }
+                }
+                resolve(randoms)
             }
         )
     });
@@ -66,11 +104,10 @@ function getItemNamesByPartialName(db, partialItemName, only_stackable = false) 
 
         // DB CALL
         Items.find({'name': {'$regex': ".*" + partialItemName + ".*", '$options': 'i'}, ...stackable}).toArray(
-             (err, items) => {
+            (err, items) => {
                 if (err) reject(err);
-                if (items.length === 0) resolve(null);
                 let itemNames = [];
-                for (let item of items){
+                for (let item of items) {
                     itemNames.push(item.name)
                 }
                 resolve(itemNames);
@@ -102,6 +139,32 @@ function getItemsSupplyByPartialName(db, partialItemName) {
     })
 }
 
+function getSellOrders(converter, db, userName, realmName) {
+    return new Promise((resolve, reject) => {
+        const SellOrders = db.collection('sellorders');
+        SellOrders.find({seller: userName, seller_realm: realmName}).toArray((err, sellOrders) => {
+                if (err) reject(err);
+                if (sellOrders.length === 0) {
+                    resolve(null);
+                    return;
+                }
+
+                let gqlSellOrders = [];
+
+                for (let mongoSellOrder of  sellOrders) {
+                    const item = getItemById(converter, db , mongoSellOrder.item_id);
+                    const price = mongoSellOrder.price;
+                    const quantity = mongoSellOrder.quantity;
+
+                    gqlSellOrders.push({item, price, quantity})
+                }
+
+                resolve(gqlSellOrders)
+            }
+        )
+    })
+}
+
 /**
  * Get a class by its id
  * @param db: database object
@@ -112,7 +175,7 @@ function getItemsSupplyByPartialName(db, partialItemName) {
 function getItemClassById(db, classId, subClassId) {
     return new Promise((resolve, reject) => {
         const ItemClasses = db.collection('itemclasses');
-        ItemClasses.findOne({id: classId},  (err, itemClass) => {
+        ItemClasses.findOne({id: classId}, (err, itemClass) => {
             if (err) reject(err);
             if (!itemClass) {
                 resolve(null)
@@ -145,7 +208,10 @@ function getItemSupplyByName(db, itemName) {
             const SellOrders = db.collection('sellorders');
             SellOrders.find({item_id: item.id}).toArray((err, sellOrders) => {
                 if (err) reject(err);
-                if (sellOrders.length === 0) resolve(null);
+                if (sellOrders.length === 0) {
+                    resolve(null);
+                    return;
+                }
                 const quantity = sellOrders.reduce((acc, curr) => {
                     return acc + curr.quantity;
                 }, 0);
@@ -172,12 +238,17 @@ function getItemsByPartialNameOPTIMIZED(converter, db, partialItemName, only_sta
         const stackable = only_stackable ? {"is_stackable": true} : {};
 
         // DB CALL
-        Items.find({'name': {'$regex': ".*" + partialItemName + ".*", '$options': 'i'}, ...stackable}).limit(limit).toArray(
-             (err, items) => {
+        Items.find({
+            'name': {
+                '$regex': ".*" + partialItemName + ".*",
+                '$options': 'i'
+            }, ...stackable
+        }).limit(limit).toArray(
+            (err, items) => {
                 if (err) reject(err);
                 if (items.length === 0) resolve(null);
                 let gqlItems = [];
-                items.forEach( item => {
+                items.forEach(item => {
                     gqlItems.push(converter.ItemMongoToGql(item));
                 });
                 resolve(gqlItems);
@@ -190,15 +261,15 @@ function getItemsByPartialNameCount(converter, db, partialItemName, only_stackab
         const SellOrders = db.collection('sellorders');
         const stackable = only_stackable ? {"is_stackable": true} : {};
 
-            SellOrders.aggregate([
-                { $match: {'item_name': {'$regex': ".*" + partialItemName + ".*", '$options': 'i'},  ...stackable}} ,
-                { $group: { _id: "$item_name"}, },
-                { $sort: {item_name: 1}}
+        SellOrders.aggregate([
+            {$match: {'item_name': {'$regex': ".*" + partialItemName + ".*", '$options': 'i'}, ...stackable}},
+            {$group: {_id: "$item_name"},},
+            {$sort: {item_name: 1}}
 
-                ]).toArray((err, items) => {
+        ]).toArray((err, items) => {
             resolve(items.length)
 
-            })
+        })
     });
 }
 
@@ -275,38 +346,35 @@ function getItemsPrice(db, itemId, amount) {
         const SellOrders = db.collection('sellorders');
         SellOrders.find({item_id: itemId}).sort({price: 1}).toArray((err, sellOrders) => {
             if (err) reject(err);
-            if (sellOrders.length === 0){
+            if (sellOrders.length === 0) {
                 resolve(null);
                 return;
             }
             const quantity = sellOrders.reduce((acc, curr) => {
                 return acc + curr.quantity;
             }, 0);
-            if(amount > quantity) {
+            if (amount > quantity) {
                 reject("The amount of item supplies does not match the amount requested")
-            }
-            else if(amount === 0) {
+            } else if (amount === 0) {
                 resolve({perUnit: 0, total: 0});
 
-            }
-            else {
+            } else {
                 let i = 0;
                 let total = 0;
                 let amountLeft = amount;
-                while(amountLeft > 0 && i < sellOrders.length) {
-                    if(sellOrders[i].quantity <= amountLeft) {
+                while (amountLeft > 0 && i < sellOrders.length) {
+                    if (sellOrders[i].quantity <= amountLeft) {
                         // Case buy whole sell order
                         total += sellOrders[i].price * sellOrders[i].quantity;
                         amountLeft = amountLeft - sellOrders[i].quantity;
-                    }
-                    else {
+                    } else {
                         // Case buy parts of sell order
                         total += sellOrders[i].price * amountLeft;
                         amountLeft = 0;
                     }
                     i++;
                 }
-                let perUnit =(total/amount);
+                let perUnit = (total / amount);
                 resolve({
                     perUnit,
                     total,
@@ -316,15 +384,110 @@ function getItemsPrice(db, itemId, amount) {
     });
 }
 
-function createSellOrder(converter, db , itemId, seller_name, seller_realm, quantity, price) {
-    console.log(itemId, seller_name, seller_realm, quantity, price);
+function buyItems(converter, db, userName, itemId, amount, givenTotal, givenPerUnit) {
+    return new Promise(async (resolve, reject) => {
+        const item = await getItemById(converter, db, itemId)
+        const SellOrders = db.collection('sellorders');
+        SellOrders.find({item_id: itemId}).sort({price: 1}).toArray((err, sellOrders) => {
+            if (err) reject(err);
+            if (sellOrders.length === 0) {
+                resolve(null);
+                return;
+            }
+            const quantity = sellOrders.reduce((acc, curr) => {
+                return acc + curr.quantity;
+            }, 0);
+            if (amount > quantity) {
+                reject("The amount of item supplies does not match the amount requested anymore");
+                return;
+            } else {
+                let i = 0;
+                let total = 0;
+                let amountLeft = amount;
+                let buyFullSellOrders = [];
+                let buyPartSellOrders = [];
+                const sold = [];
+                //lock db
+                while (amountLeft > 0 && i < sellOrders.length) {
+                    if (sellOrders[i].quantity <= amountLeft) {
+                        // Case buy whole sell order
+                        buyFullSellOrders.push({id: sellOrders[i]._id});
+                        total += sellOrders[i].price * sellOrders[i].quantity;
+                        amountLeft = amountLeft - sellOrders[i].quantity;
+                        sold.push({
+                            sellerName: sellOrders[i].seller_full,
+                            itemName: item.name,
+                            amount: sellOrders[i].quantity
+                        });
+                    } else {
+                        // Case buy parts of sell order
+                        buyPartSellOrders.push({id: sellOrders[i]._id, left: sellOrders[i].quantity - amountLeft});
+                        sold.push({sellerName: sellOrders[i].seller_full, itemName: item.name, amount: amountLeft});
+                        total += sellOrders[i].price * amountLeft;
+                        amountLeft = 0;
+                    }
+                    i++;
+                }
+                let perUnit = (total / amount);
+                //compare price
+                if (perUnit === givenPerUnit && total === givenTotal) {
+                    //decrease money
+                    const Users = db.collection('users');
+                    Users.findOne({name: userName}, (err, user) => {
+                        if (err) reject('user not found');
+                        const money = user.money - total;
+                        if (money < 0) {
+                            reject("user has not enough money");
+                            return;
+                        }
+                        //buy fullSellorders
+                        for (sellOrder of buyFullSellOrders) {
+                            SellOrders.deleteOne({_id: sellOrder.id});
+                        }
+                        //buy partSellorders
+                        for (sellOrder of buyPartSellOrders) {
+                            SellOrders.updateOne({_id: sellOrder.id}, {$set: {quantity: sellOrder.left}});
+                        }
+                        Users.updateOne({name: userName}, {$set: {money: money}});
+                        SellOrders.find({item_id: itemId}).sort({price: 1}).toArray((err, sellOrders) => {
+                            if (err) reject(err);
+                            const newMinPrice = sellOrders.length > 0 ? sellOrders[0].price : null;
+                            const newQuantity = quantity - amount;
+                            //publish to subscription
+                            resolve({
+                                item: item,
+                                amount: newQuantity,
+                                amountBought: amount,
+                                price: total,
+                                min_price: newMinPrice,
+                                money: money,
+                                sold: sold,
+                            });
+                        })
+                    });
+                } else {
+                    reject("The price has changed during the operation");
+                    return;
+                }
+            }
+        });
+    });
+}
 
-
+function removeSellOrder(converter, db, itemId, seller_name, seller_realm) {
     return new Promise(async (resolve, reject) => {
         // Get item name
-        let item =  await getItemById(converter, db, itemId);
-        console.log(item);
+        let item = await getItemById(converter, db, itemId);
+        const SellOrders = db.collection('sellorders');
+        await SellOrders.deleteOne({item_id: itemId, seller: seller_name, seller_realm: seller_realm});
+        resolve(true);
+    });
+}
 
+function createSellOrder(converter, db, itemId, seller_name, seller_realm, quantity, price) {
+    return new Promise(async (resolve, reject) => {
+        // Get item name
+        let item = await getItemById(converter, db, itemId);
         const SellOrders = db.collection('sellorders');
         let result = await SellOrders.insertOne({
             item_id: itemId,
@@ -337,14 +500,33 @@ function createSellOrder(converter, db , itemId, seller_name, seller_realm, quan
         });
 
         if (result.result.n === result.result.ok) {
-            resolve(0)
+            resolve({item: item, price: price, quantity: quantity})
             // TODO: On success: Remove items from seller inventory
         } else
             reject(1);
+    })
+}
 
+function addItemsToSellOrder(converter, db, itemId, seller_name, seller_realm, quantity) {
+    return new Promise(async (resolve, reject) => {
+        // Get item name
+        let item = await getItemById(converter, db, itemId);
+        const SellOrders = db.collection('sellorders');
+        await SellOrders.findOne({
+            item_id: itemId,
+            seller: seller_name,
+            seller_realm: seller_realm
+        }, (err, sellOrder) => {
+            if (err) {
+                reject('sellorder was not found');
+                return;
+            }
+            const newQuantity = sellOrder.quantity + quantity
+            SellOrders.updateOne({_id: sellOrder.id}, {$set: {quantity: newQuantity}});
+            resolve({item: item, price: sellOrder.price, quantity: quantity});
+        })
 
     })
-
 }
 
 module.exports = {
@@ -356,5 +538,10 @@ module.exports = {
     getItemSuppliesByPartialNameOPTIMIZED,
     getItemsByPartialNameCount,
     getItemsPrice,
+    buyItems,
     createSellOrder,
+    getRandomItems,
+    addItemsToSellOrder,
+    removeSellOrder,
+    getSellOrders,
 };
