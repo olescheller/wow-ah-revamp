@@ -39,16 +39,15 @@ export const randomItemsSucceeded = (items) => {
         type: RANDOM_ITEMS_SUCCEEDED,
         payload: items,
     }
-}
+};
 
 export const BUY_ITEMS_SUCCEEDED = "BUY_ITEMS_SUCCEEDED";
 export const buyItemsSucceeded = (buyItems) => {
-    console.log({buyItems});
     return {
         type: BUY_ITEMS_SUCCEEDED,
         payload: buyItems,
     };
-}
+};
 
 export const CREATE_SELL_ORDER = "CREATE_SELL_ORDER";
 export const createSellOrder = (sellOrder) => {
@@ -56,7 +55,7 @@ export const createSellOrder = (sellOrder) => {
         type: CREATE_SELL_ORDER,
         payload: sellOrder,
     }
-}
+};
 
 export const SELL_ORDER_SUCCEEDED = "SELL_ORDER_SUCCEEDED";
 export const sellOrderSucceeded = (sellOrder) => {
@@ -64,7 +63,7 @@ export const sellOrderSucceeded = (sellOrder) => {
         type: SELL_ORDER_SUCCEEDED,
         payload: sellOrder
     };
-}
+};
 
 
 export const ADD_TO_SELLORDER_REQUESTED = 'ADD_TO_SELLORDER_REQUESTED';
@@ -73,8 +72,7 @@ export const addItemToSellOrderRequested = (sellOrder) => {
         type: ADD_TO_SELLORDER_REQUESTED,
         payload: sellOrder,
     }
-}
-
+};
 
 export const ADD_TO_SELLORDER_SUCCEEDED = 'ADD_TO_SELLORDER_SUCCEEDED';
 export const addItemToSellOrderSucceeded = (sellOrder) => {
@@ -82,8 +80,7 @@ export const addItemToSellOrderSucceeded = (sellOrder) => {
         type: ADD_TO_SELLORDER_SUCCEEDED,
         payload: sellOrder,
     }
-}
-
+};
 
 export const AVERAGE_ITEM_PRICE_REQUESTED = "AVERAGE_ITEM_PRICE_REQUESTED";
 export const queryAverageItemPriceAction = (amount, itemId) => ({
@@ -103,7 +100,7 @@ export const deleteSellOrderAction = (sellOrder) => {
         type: REMOVE_SELLORDER_REQUESTED,
         payload: sellOrder,
     }
-}
+};
 
 export const DELETE_SELL_ORDER_SUCCEEDED = "DELETE_SELL_ORDER_SUCCEEDED";
 export const deleteSellOrderSucceeded = (sellOrder) => {
@@ -127,7 +124,7 @@ export const userMoneyRequestedAction = (userName, realmName) => {
         type: USER_MONEY_REQUESTED,
         payload: {userName, realmName}
     }
-}
+};
 
 export const USER_MONEY_REQUEST_SUCCEEDED = "USER_MONEY_REQUEST_SUCCEEDED";
 export const userMoneyRequestSucceededAction = ({name, money}) => {
@@ -135,7 +132,7 @@ export const userMoneyRequestSucceededAction = ({name, money}) => {
         type: USER_MONEY_REQUEST_SUCCEEDED,
         payload: {name, money}
     }
-}
+};
 
 export const USER_SELL_ORDERS_REQUESTED = "USER_SELL_ORDERS_REQUESTED";
 export const userSellOrdersRequestedAction = (userName, realmName) => {
@@ -143,7 +140,7 @@ export const userSellOrdersRequestedAction = (userName, realmName) => {
         type: USER_SELL_ORDERS_REQUESTED,
         payload: {userName, realmName}
     }
-}
+};
 
 export const USER_SELL_ORDERS_REQUEST_SUCCEEDED = "USER_SELL_ORDERS_REQUEST_SUCCEEDED";
 export const userSellOrdersRequestSucceededAction = (sellOrders) => {
@@ -151,4 +148,4 @@ export const userSellOrdersRequestSucceededAction = (sellOrders) => {
         type: USER_SELL_ORDERS_REQUEST_SUCCEEDED,
         payload: {sellOrders}
     }
-}
+};
