@@ -88,9 +88,12 @@ class SellOrderList extends React.Component {
             return ! this.props.buyQuantity[itemId];
         };
 
+        canUserAffordItem = (itemId) => (this.props.money >= this.props.price[itemId].total);
+
+
         dispatchReceipt = (receipt) => {
             this.props.dispatch(itemBoughtSubscriptionAction(receipt));
-        }
+        };
 
 
     render() {
@@ -143,7 +146,7 @@ class SellOrderList extends React.Component {
                             <CustomTableCell padding="dense">  {! this.isBuyQuantityEmpty(itemSupply.item.id) ?  <MoneyView displayClass="coins-block" label="per unit" money={this.props.price[itemSupply.item.id].perUnit}/> : '' }
                                 {! this.isBuyQuantityEmpty(itemSupply.item.id) ? <MoneyView  displayClass="coins-block" label="total" money={this.props.price[itemSupply.item.id].total}/> : ''}</CustomTableCell>
                             <CustomTableCell  padding="dense" align="right">
-                                <Button disabled={this.isBuyQuantityEmpty(itemSupply.item.id)} onClick={() => this.handleBuyClick(itemSupply.item.id)} variant="contained" color="primary"> Buy</Button></CustomTableCell>
+                                <Button disabled={this.isBuyQuantityEmpty(itemSupply.item.id) || !this.canUserAffordItem(itemSupply.item.id)} onClick={() => this.handleBuyClick(itemSupply.item.id)} variant="contained" color="primary"> Buy</Button></CustomTableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -160,4 +163,4 @@ SellOrderList.propTypes = {
 };
 
 
-export default connect(({itemSupplies, buyQuantity, price, quantityExceeded, user}) => ({itemSupplies, buyQuantity, price, quantityExceeded, user}))(withStyles(styles)(SellOrderList));
+export default connect(({itemSupplies, buyQuantity, price, quantityExceeded, user, money}) => ({itemSupplies, buyQuantity, price, quantityExceeded, user, money}))(withStyles(styles)(SellOrderList));
