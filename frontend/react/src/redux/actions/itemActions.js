@@ -33,16 +33,16 @@ export const fetchRandomItemsRequestedAction = () => ({
     payload: {}
 });
 
-export const RANDOM_ITEMS_SUCCEEDED = "RANDOM_ITEMS_SUCCEEDED";
-export const randomItemsSucceeded = (items) => {
+export const FETCH_RANDOM_ITEMS_SUCCEEDED = "FETCH_RANDOM_ITEMS_SUCCEEDED";
+export const fetchRandomItemsSucceededAction = (items) => {
     return {
-        type: RANDOM_ITEMS_SUCCEEDED,
+        type: FETCH_RANDOM_ITEMS_SUCCEEDED,
         payload: items,
     }
 };
 
 export const BUY_ITEMS_SUCCEEDED = "BUY_ITEMS_SUCCEEDED";
-export const buyItemsSucceeded = (buyItems) => {
+export const buyItemsSucceededAction = (buyItems) => {
     return {
         type: BUY_ITEMS_SUCCEEDED,
         payload: buyItems,

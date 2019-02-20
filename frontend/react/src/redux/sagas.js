@@ -16,11 +16,11 @@ import {
 import {
     addItemToSellOrderSucceeded,
     averageItemPriceSucceeded,
-    buyItemsSucceeded,
+    buyItemsSucceededAction,
     deleteSellOrderAction,
     deleteSellOrderSucceeded,
     itemSupplySucceededAction,
-    randomItemsSucceeded,
+    fetchRandomItemsSucceededAction,
     sellOrderSucceeded,
     USER_MONEY_REQUESTED,
     USER_SELL_ORDERS_REQUESTED,
@@ -120,7 +120,7 @@ export function* addToSellOrder(action) {
 export function* randomItems(action) {
     try{
         const data = yield call(downloadRandomItems);
-        yield put(randomItemsSucceeded(data));
+        yield put(fetchRandomItemsSucceededAction(data));
     }
     catch(error) {
         yield put({type: 'RANDOM_ITEM_FAILED', error})

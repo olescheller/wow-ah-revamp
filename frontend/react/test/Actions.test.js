@@ -57,7 +57,7 @@ describe('itemActions', () => {
             type: itemActions.FETCH_ITEM_SUPPLY_SUCCEEDED,
             payload: {itemSupplies: [1, 2, 3], amount: 3}
         };
-        expect(itemActions.itemSupplySucceededAction([1,2,3], 3)).toEqual(expectedAction)
+        expect(itemActions.itemSupplySucceededAction([1, 2, 3], 3)).toEqual(expectedAction)
     })
 });
 
@@ -78,7 +78,7 @@ describe('itemActions', () => {
             type: itemActions.BUY_ITEMS_REQUESTED,
             payload: {userName: "John-Doe", itemId: 42, amount: 2, total: 11, perItem: 22}
         };
-        expect(itemActions.buyItemsRequestedAction("John-Doe", 42, 2, 11,22 )).toEqual(expectedAction)
+        expect(itemActions.buyItemsRequestedAction("John-Doe", 42, 2, 11, 22)).toEqual(expectedAction)
     })
 });
 
@@ -89,5 +89,25 @@ describe('itemActions', () => {
             payload: {}
         };
         expect(itemActions.fetchRandomItemsRequestedAction()).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to notify of succeeded random item fetch', () => {
+        const expectedAction = {
+            type: itemActions.FETCH_RANDOM_ITEMS_SUCCEEDED,
+            payload: [1, 2, 3]
+        };
+        expect(itemActions.fetchRandomItemsSucceededAction([1, 2, 3])).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to notify of succeeded buying of items', () => {
+        const expectedAction = {
+            type: itemActions.BUY_ITEMS_SUCCEEDED,
+            payload: {Foo: "Bar"}
+        };
+        expect(itemActions.buyItemsSucceededAction({Foo: "Bar"})).toEqual(expectedAction)
     })
 });

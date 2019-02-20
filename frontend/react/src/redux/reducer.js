@@ -11,7 +11,7 @@ import {
     SEARCH_VALUE_CHANGED,
     BUY_ITEM_SUCCEEDED,
     BUY_ITEMS_SUCCEEDED,
-    RANDOM_ITEMS_SUCCEEDED,
+    FETCH_RANDOM_ITEMS_SUCCEEDED,
     SELL_ORDER_SUCCEEDED,
     DELETE_SELL_ORDER,
     ADD_TO_SELLORDER_SUCCEEDED,
@@ -100,7 +100,7 @@ export default (state = initState, action) => {
             };
 
         // Saga action type of fetching random items to put into the user inventory
-        case RANDOM_ITEMS_SUCCEEDED: {
+        case FETCH_RANDOM_ITEMS_SUCCEEDED: {
             return {...state, inventoryItems: action.payload};
         }
 
