@@ -8,7 +8,12 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import {connect} from "react-redux";
-import {buyItemsRequestedAction, buyQuantityChangedAction, queryAverageItemPriceAction} from "../redux/actions/itemActions";
+import {
+    buyItemsRequestedAction,
+    buyQuantityChangedAction,
+    itemBoughtSubscriptionAction,
+    queryAverageItemPriceAction
+} from "../redux/actions/itemActions";
 import './itemsupply.css'
 import { withStyles } from '@material-ui/core/styles';
 import Paper from "@material-ui/core/Paper";
@@ -83,7 +88,7 @@ class SellOrderList extends React.Component {
         };
 
         dispatchReceipt = (receipt) => {
-            this.props.dispatch({type: "BUY_SUBSCRIPTION", payload: {receipt}})
+            this.props.dispatch(itemBoughtSubscriptionAction(receipt));
         }
 
 

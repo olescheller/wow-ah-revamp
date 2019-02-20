@@ -17,8 +17,8 @@ import {
     ADD_TO_SELLORDER_SUCCEEDED,
     DELETE_SELL_ORDER_SUCCEEDED,
     USER_MONEY_REQUEST_SUCCEEDED,
-    ITEM_SUPPLY_CHANGED, SOLD_ALERT,
-    USER_SELL_ORDERS_REQUEST_SUCCEEDED
+    ITEM_SUPPLY_CHANGED, ITEM_SOLD_ALERT,
+    USER_SELL_ORDERS_REQUEST_SUCCEEDED, ITEM_BOUGHT_SUBSCRIPTION
 } from "./actions/itemActions";
 
 const initState = {
@@ -234,12 +234,12 @@ export default (state = initState, action) => {
                 return supply
             });
             return {...state, itemSupplies: updatedItemSupplies}
-        case SOLD_ALERT:
+        case ITEM_SOLD_ALERT:
             return {...state, soldAlert: action.payload.alert, alert: true}
         case REMOVE_ALERT:
             return {...state, alert: false}
 
-        case 'BUY_SUBSCRIPTION':
+        case ITEM_BOUGHT_SUBSCRIPTION:
         {
             const receipt = action.payload.receipt;
             let itemSupplies = [...state.itemSupplies];

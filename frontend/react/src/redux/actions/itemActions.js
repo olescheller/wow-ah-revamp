@@ -150,10 +150,18 @@ export const userSellOrdersRequestSucceededAction = (sellOrders) => {
     }
 };
 
-export const SOLD_ALERT = "SOLD_ALERT";
+export const ITEM_SOLD_ALERT = "ITEM_SOLD_ALERT";
 export const soldAlertAction = (alert) => {
     return {
-        type: SOLD_ALERT,
+        type: ITEM_SOLD_ALERT,
         payload: {alert}
+    }
+}
+
+export const ITEM_BOUGHT_SUBSCRIPTION = "ITEM_BOUGHT_SUBSCRIPTION";
+export const itemBoughtSubscriptionAction = (receipt) => {
+    return {
+        type: ITEM_BOUGHT_SUBSCRIPTION,
+        payload: {receipt}
     }
 }
