@@ -14,7 +14,7 @@ import {
     ADD_TO_SELLORDER_SUCCEEDED,
     DELETE_SELL_ORDER_SUCCEEDED,
     USER_MONEY_REQUEST_SUCCEEDED,
-    ITEM_SUPPLY_CHANGED
+    ITEM_SUPPLY_CHANGED, USER_SELL_ORDERS_REQUEST_SUCCEEDED
 } from "./actions/itemActions";
 
 const initState = {
@@ -38,8 +38,12 @@ export default (state = initState, action) => {
     switch (action.type) {
         case SELECT_CATEGORY:
             return {...state, selectedCategory: action.payload};
+
+        // The search value is changed in the search box
         case SEARCH_VALUE_CHANGED:
-            return {...state, searchTerm: action.payload.term}; // missing: category (combine main & subcategory)
+            return {...state, searchTerm: action.payload.term};
+
+        // A mapping of itemIDs to buy quantity for each of the input fields of item supplies
         case BUY_QUANTITY_CHANGED:
             let tempBuyQuantity = {...state.buyQuantity};
             tempBuyQuantity[action.payload.itemId] = parseInt(action.payload.amount);
@@ -53,6 +57,8 @@ export default (state = initState, action) => {
                 return {...state, buyQuantity: tempBuyQuantity, price: tmpPrice};
             }
             return {...state, buyQuantity: tempBuyQuantity, quantityExceeded: tmpQuantityExceeded};
+
+        // A list of itemIDs whose entered amount is higher than the amount available in the item supply
         case QUANTITY_EXCEEDED:
             tempBuyQuantity = {...state.buyQuantity};
             tempBuyQuantity[action.payload.itemId] = parseInt(action.payload.amount);
@@ -61,10 +67,14 @@ export default (state = initState, action) => {
             tmpQuantityExceeded = [...state.quantityExceeded];
             tmpQuantityExceeded.push(action.payload.itemId);
             return {...state, price: tmpPrice, buyQuantity: tempBuyQuantity, quantityExceeded: tmpQuantityExceeded};
+
+        // Saga action type of fetching the average and total item price of an item supply after entering an amount
         case AVERAGE_ITEM_PRICE_SUCCEEDED:
             const tempPrice = {...state.price};
             tempPrice[action.payload.itemId] = {perUnit: action.payload.perUnit, total: action.payload.total};
             return {...state, price: tempPrice};
+
+        // Saga action type of fetching a list of item supplies.
         case FETCH_ITEM_SUPPLY_SUCCEEDED:
             let amount = 0;
             let showInfoBox = false;
@@ -85,6 +95,7 @@ export default (state = initState, action) => {
                 buyQuantity: {}
             };
 
+        // Saga action type of fetching random items to put into the user inventory
         case RANDOM_ITEMS_SUCCEEDED: {
             return {...state, inventoryItems: action.payload};
         }
@@ -108,6 +119,10 @@ export default (state = initState, action) => {
                 inventoryItems: newInventory
             }
         }
+
+        // Saga action type of fetching the user's active sell orders
+        case USER_SELL_ORDERS_REQUEST_SUCCEEDED:
+            return {...state, activeSellOrders: [...action.payload.sellOrders]};
 
         case  ADD_TO_SELLORDER_SUCCEEDED: {
             let newInventory = [...state.inventoryItems]
@@ -135,6 +150,7 @@ export default (state = initState, action) => {
             return {...state, activeSellOrders: newActiveSellOrders, inventoryItems: newInventory}
         }
 
+        // Saga action of deleting a sell order
         case DELETE_SELL_ORDER_SUCCEEDED: {
             const sellOrderRemoved = state.activeSellOrders.filter(sellOrder => sellOrder.item.id !== action.payload.item.id);
             const inventoryAdded = [...state.inventoryItems];
@@ -151,6 +167,8 @@ export default (state = initState, action) => {
             }
             return {...state, activeSellOrders: sellOrderRemoved, inventoryItems: inventoryAdded}
         }
+
+        //
         case BUY_ITEMS_SUCCEEDED:
             let oldBuyQuantity = {...state.buyQuantity};
             delete oldBuyQuantity[action.payload.item.id];
@@ -168,15 +186,14 @@ export default (state = initState, action) => {
             }
             if (toStack) {
                 updatedInventory.map((inv) => {
-                    if(inv.item.name === action.payload.item.name) {
+                    if (inv.item.name === action.payload.item.name) {
                         inv.quantity += action.payload.amountBought;
                         return inv;
                     }
                     return inv;
                 });
-            }
-            else {
-                if(count + action.payload.amountBought <= 20) {
+            } else {
+                if (count + action.payload.amountBought <= 20) {
                     updatedInventory.push({item: action.payload.item, quantity: action.payload.amountBought})
                 }
             }
@@ -185,8 +202,8 @@ export default (state = initState, action) => {
             let newItemSupplies = state.itemSupplies;
 
             for (let i in state.itemSupplies) {
-                if (state.itemSupplies[i].item.id === action.payload.item.id){
-                    if(action.payload.amount === 0) {
+                if (state.itemSupplies[i].item.id === action.payload.item.id) {
+                    if (action.payload.amount === 0) {
                         newItemSupplies.splice(i, 1);
                     }
                 }
@@ -198,7 +215,7 @@ export default (state = initState, action) => {
                 money: action.payload.money,
                 inventoryItems: updatedInventory,
                 buyQuantity: {...oldBuyQuantity}
-            }
+            };
         case SET_LOADING:
             return {...state, isLoading: action.payload};
         case SET_INFO_BOX:

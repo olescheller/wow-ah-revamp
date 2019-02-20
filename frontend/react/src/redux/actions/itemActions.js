@@ -123,7 +123,7 @@ export const itemSupplyChangedAction = (itemId, quantity) => {
 }
 
 export const USER_MONEY_REQUESTED = "USER_MONEY_REQUESTED";
-export const userMoneyAction = (userName, realmName) => {
+export const userMoneyRequestedAction = (userName, realmName) => {
     return {
         type: USER_MONEY_REQUESTED,
         payload: {userName, realmName}
@@ -131,9 +131,25 @@ export const userMoneyAction = (userName, realmName) => {
 }
 
 export const USER_MONEY_REQUEST_SUCCEEDED = "USER_MONEY_REQUEST_SUCCEEDED";
-export const userMoneySucceededAction = ({name, money}) => {
+export const userMoneyRequestSucceededAction = ({name, money}) => {
     return {
         type: USER_MONEY_REQUEST_SUCCEEDED,
         payload: {name, money}
+    }
+}
+
+export const USER_SELL_ORDERS_REQUESTED = "USER_SELL_ORDERS_REQUESTED";
+export const userSellOrdersRequestedAction = (userName, realmName) => {
+    return {
+        type: USER_SELL_ORDERS_REQUESTED,
+        payload: {userName, realmName}
+    }
+}
+
+export const USER_SELL_ORDERS_REQUEST_SUCCEEDED = "USER_SELL_ORDERS_REQUEST_SUCCEEDED";
+export const userSellOrdersRequestSucceededAction = (sellOrders) => {
+    return {
+        type: USER_SELL_ORDERS_REQUEST_SUCCEEDED,
+        payload: {sellOrders}
     }
 }
