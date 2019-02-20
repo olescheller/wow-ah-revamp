@@ -19,7 +19,7 @@ class DetailsCard extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {currentPrice: 0, amount: 1};
+        this.state = {currentPrice: '', amount: 1};
     }
 
     renderPrice = () => {
@@ -58,7 +58,7 @@ class DetailsCard extends React.Component {
             const sellOrder = {itemId: item.id, price: this.state.currentPrice, quantity: this.state.amount, seller_name: seller_name.toString(), seller_realm: seller_realm.toString()}
             this.props.dispatch(createSellOrder(sellOrder));
         }
-        this.setState({currentPrice: 0, amount:  1})
+        this.setState({currentPrice: '', amount:  1})
     };
 
     render() {
@@ -108,7 +108,7 @@ class DetailsCard extends React.Component {
                             <LessIcon />
                             10%
                         </Button>
-                        <Button onClick={() => this.calcPrice(0)}  size="small" color="secondary">
+                        <Button onClick={() => this.calcPrice(0)}  size="small" color="primary">
                             <MinPriceIcon />
                             Min
                         </Button>
@@ -116,7 +116,7 @@ class DetailsCard extends React.Component {
                             <MoreIcon />
                             10%
                         </Button>
-                        <Button onClick={() => this.sellItem(this.props.inventoryItem.item)} id='sellButton' variant="contained" color="secondary"> Sell</Button>
+                        <Button disabled={!parseInt(this.state.currentPrice)} onClick={() => this.sellItem(this.props.inventoryItem.item)} id='sellButton' variant="contained" color="secondary"> Sell</Button>
                     </span>
                     <CardContent className="content">
 
