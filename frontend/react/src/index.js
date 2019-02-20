@@ -11,7 +11,11 @@ import { ApolloProvider } from 'react-apollo';
 import rootSaga from './redux/sagas'
 import theme from './theme/materialTheme'
 import reducer from './redux/reducer'
-import {randomItemsRequested, userMoneyAction} from "./redux/actions/itemActions";
+import {
+    fetchRandomItemsRequestedAction,
+    userMoneyRequestedAction,
+    userSellOrdersRequestedAction
+} from "./redux/actions/itemActions";
 import ApolloClient from "apollo-client";
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { WebSocketLink } from 'apollo-link-ws';
@@ -51,8 +55,22 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const sagaMiddleware = createSagaMiddleware();
 const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk, sagaMiddleware)));
 sagaMiddleware.run(rootSaga);
-store.dispatch(randomItemsRequested());
-store.dispatch(userMoneyAction("Elandura", "Silvermoon"));
+
+// region async data initialization
+
+const initialUserName = "Elandura";
+const initialRealmName = "Silvermoon";
+
+// Fetch random items and place them into the user inventory
+store.dispatch(fetchRandomItemsRequestedAction());
+
+// Fetch user name and their gold
+store.dispatch(userMoneyRequestedAction(initialUserName, initialRealmName));
+
+// Fetch user's active sell orders
+store.dispatch(userSellOrdersRequestedAction(initialUserName, initialRealmName));
+
+// endregion
 
 ReactDOM.render(
     <ApolloProvider client={client}>

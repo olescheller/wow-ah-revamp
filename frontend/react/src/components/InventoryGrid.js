@@ -5,7 +5,7 @@ import {Badge, Paper, Tooltip, Typography} from "@material-ui/core";
 import Grid from '@material-ui/core/Grid';
 import './inventoryGrid.css'
 import DetailsCard from "./DetailsCard";
-import {queryAverageItemPriceAction, randomItemsRequested} from "../redux/actions/itemActions";
+import {queryAverageItemPriceAction, fetchRandomItemsRequestedAction} from "../redux/actions/itemActions";
 import InfoBox from "./InfoBox";
 import {setInfoBox} from "../redux/actions/actions";
 

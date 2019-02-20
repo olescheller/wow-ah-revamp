@@ -4,15 +4,27 @@ import {
     downloadItemsSupplyByPartialName,
     fetchAmountOfItemSupplies,
     downloadAverageItemPrice,
-    makePurchase, downloadRandomItems, createSellOrder, addItemToSellOrder, removeSellOrder, getUserMoney
+    makePurchase,
+    downloadRandomItems,
+    createSellOrder,
+    addItemToSellOrder,
+    removeSellOrder,
+    getUserMoney,
+    getUserSellOrder
 } from "../api/graphql_api";
 
 import {
     addItemToSellOrderSucceeded,
     averageItemPriceSucceeded,
-    buyItemsSucceeded, deleteSellOrderAction, deleteSellOrderSucceeded,
+    buyItemsSucceeded,
+    deleteSellOrderAction,
+    deleteSellOrderSucceeded,
     itemSupplySucceededAction,
-    randomItemsSucceeded, sellOrderSucceeded, USER_MONEY_REQUESTED, userMoneySucceededAction
+    randomItemsSucceeded,
+    sellOrderSucceeded,
+    USER_MONEY_REQUESTED,
+    USER_SELL_ORDERS_REQUESTED,
+    userMoneyRequestSucceededAction, userSellOrdersRequestSucceededAction
 } from "./actions/itemActions";
 import {setLoading} from "./actions/actions";
 
@@ -46,12 +58,25 @@ function* watchRemoveSellOrder () {
 function* watchGetUserMoney () {
     yield takeEvery(USER_MONEY_REQUESTED, updateUserMoney);
 }
+function* watchGetUserSellOrders () {
+    yield takeEvery(USER_SELL_ORDERS_REQUESTED, updateUserSellOrders);
+}
+
+export function* updateUserSellOrders(action) {
+    const {userName , realmName} = action.payload;
+    try{
+        const data = yield call(getUserSellOrder, userName, realmName);
+        yield put(userSellOrdersRequestSucceededAction(data))
+    } catch (e) {
+
+    }
+}
 
 export function* updateUserMoney(action) {
     const {userName , realmName} = action.payload;
     try{
         const data = yield call(getUserMoney, userName, realmName);
-        yield put(userMoneySucceededAction(data))
+        yield put(userMoneyRequestSucceededAction(data))
     } catch (e) {
 
     }
@@ -152,5 +177,6 @@ export default function* rootSaga() {
         watchAddItemToSellOrder(),
         watchRemoveSellOrder(),
         watchGetUserMoney(),
+        watchGetUserSellOrders(),
     ])
 }

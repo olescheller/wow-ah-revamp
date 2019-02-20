@@ -107,4 +107,29 @@ export async function getUserMoney(userName, realmName) {
             resolve(response.data.data.user)
         })
     })
+}export async function getUserSellOrder(userName, realmName) {
+    return new Promise((resolve, reject) => {
+        const qry = `
+              {
+                sell_order(userName: \"${userName}\", realmName: \"${realmName}\" ) 
+                {
+                    item{
+                      name
+                      icon
+                      id
+                      item_class {
+                         name
+                      }
+                      item_sub_class {
+                        name
+                      }
+                    }
+                    quantity
+                    price
+                 }
+             }`;
+        axios.post("http://localhost:4000/", {"query": qry}).then(response => {
+            resolve(response.data.data.sell_order)
+        })
+    })
 }

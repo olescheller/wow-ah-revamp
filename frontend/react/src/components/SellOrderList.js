@@ -8,7 +8,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import {connect} from "react-redux";
-import {buyItemAction, buyQuantityChangedAction, queryAverageItemPriceAction} from "../redux/actions/itemActions";
+import {buyItemsRequestedAction, buyQuantityChangedAction, queryAverageItemPriceAction} from "../redux/actions/itemActions";
 import './itemsupply.css'
 import { withStyles } from '@material-ui/core/styles';
 import Paper from "@material-ui/core/Paper";
@@ -47,7 +47,7 @@ class SellOrderList extends React.Component {
     handleBuyClick = (itemId) => {
         const {perUnit, total} = this.props.price[itemId];
         const amount = this.props.buyQuantity[itemId];
-        this.props.dispatch(buyItemAction(this.props.user, itemId, amount, total, perUnit))
+        this.props.dispatch(buyItemsRequestedAction(this.props.user, itemId, amount, total, perUnit))
     };
 
     getInputField = (itemSupply) => {

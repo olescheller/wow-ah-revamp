@@ -1,4 +1,3 @@
-
 export const SEARCH_VALUE_CHANGED = "SEARCH_VALUE_CHANGED";
 export const searchValueChangedAction = (itemNameTerm) => ({
     type: SEARCH_VALUE_CHANGED,
@@ -22,14 +21,14 @@ export const buyQuantityChangedAction = (itemId, amount) => ({
 });
 
 export const BUY_ITEMS_REQUESTED = "BUY_ITEMS_REQUESTED";
-export const buyItemAction = (userName, itemId, amount, total, perItem) => ({
+export const buyItemsRequestedAction = (userName, itemId, amount, total, perItem) => ({
     type: BUY_ITEMS_REQUESTED,
     payload:  {userName, itemId, amount, total, perItem},
 });
 
 
 export const FETCH_RANDOM_ITEMS_REQUESTED = "FETCH_RANDOM_ITEMS_REQUESTED";
-export const randomItemsRequested = () => ({
+export const fetchRandomItemsRequestedAction = () => ({
   type:  FETCH_RANDOM_ITEMS_REQUESTED,
     payload: {}
 });
@@ -40,7 +39,7 @@ export const randomItemsSucceeded = (items) => {
         type: RANDOM_ITEMS_SUCCEEDED,
         payload: items,
     }
-}
+};
 
 export const BUY_ITEMS_SUCCEEDED = "BUY_ITEMS_SUCCEEDED";
 export const buyItemsSucceeded = (buyItems) => {
@@ -48,7 +47,7 @@ export const buyItemsSucceeded = (buyItems) => {
         type: BUY_ITEMS_SUCCEEDED,
         payload: buyItems,
     };
-}
+};
 
 export const CREATE_SELL_ORDER = "CREATE_SELL_ORDER";
 export const createSellOrder = (sellOrder) => {
@@ -56,7 +55,7 @@ export const createSellOrder = (sellOrder) => {
         type: CREATE_SELL_ORDER,
         payload: sellOrder,
     }
-}
+};
 
 export const SELL_ORDER_SUCCEEDED = "SELL_ORDER_SUCCEEDED";
 export const sellOrderSucceeded = (sellOrder) => {
@@ -64,7 +63,7 @@ export const sellOrderSucceeded = (sellOrder) => {
         type: SELL_ORDER_SUCCEEDED,
         payload: sellOrder
     };
-}
+};
 
 
 export const ADD_TO_SELLORDER_REQUESTED = 'ADD_TO_SELLORDER_REQUESTED';
@@ -73,8 +72,7 @@ export const addItemToSellOrderRequested = (sellOrder) => {
         type: ADD_TO_SELLORDER_REQUESTED,
         payload: sellOrder,
     }
-}
-
+};
 
 export const ADD_TO_SELLORDER_SUCCEEDED = 'ADD_TO_SELLORDER_SUCCEEDED';
 export const addItemToSellOrderSucceeded = (sellOrder) => {
@@ -82,8 +80,7 @@ export const addItemToSellOrderSucceeded = (sellOrder) => {
         type: ADD_TO_SELLORDER_SUCCEEDED,
         payload: sellOrder,
     }
-}
-
+};
 
 export const AVERAGE_ITEM_PRICE_REQUESTED = "AVERAGE_ITEM_PRICE_REQUESTED";
 export const queryAverageItemPriceAction = (amount, itemId) => ({
@@ -103,7 +100,7 @@ export const deleteSellOrderAction = (sellOrder) => {
         type: REMOVE_SELLORDER_REQUESTED,
         payload: sellOrder,
     }
-}
+};
 
 export const DELETE_SELL_ORDER_SUCCEEDED = "DELETE_SELL_ORDER_SUCCEEDED";
 export const deleteSellOrderSucceeded = (sellOrder) => {
@@ -122,20 +119,36 @@ export const itemSupplyChangedAction = (itemId, quantity) => {
 }
 
 export const USER_MONEY_REQUESTED = "USER_MONEY_REQUESTED";
-export const userMoneyAction = (userName, realmName) => {
+export const userMoneyRequestedAction = (userName, realmName) => {
     return {
         type: USER_MONEY_REQUESTED,
         payload: {userName, realmName}
     }
-}
+};
 
 export const USER_MONEY_REQUEST_SUCCEEDED = "USER_MONEY_REQUEST_SUCCEEDED";
-export const userMoneySucceededAction = ({name, money}) => {
+export const userMoneyRequestSucceededAction = ({name, money}) => {
     return {
         type: USER_MONEY_REQUEST_SUCCEEDED,
         payload: {name, money}
     }
-}
+};
+
+export const USER_SELL_ORDERS_REQUESTED = "USER_SELL_ORDERS_REQUESTED";
+export const userSellOrdersRequestedAction = (userName, realmName) => {
+    return {
+        type: USER_SELL_ORDERS_REQUESTED,
+        payload: {userName, realmName}
+    }
+};
+
+export const USER_SELL_ORDERS_REQUEST_SUCCEEDED = "USER_SELL_ORDERS_REQUEST_SUCCEEDED";
+export const userSellOrdersRequestSucceededAction = (sellOrders) => {
+    return {
+        type: USER_SELL_ORDERS_REQUEST_SUCCEEDED,
+        payload: {sellOrders}
+    }
+};
 
 export const SOLD_ALERT = "SOLD_ALERT";
 export const soldAlertAction = (alert) => {
