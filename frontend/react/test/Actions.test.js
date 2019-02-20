@@ -20,3 +20,13 @@ describe('actions', () => {
         expect(actions.setLoading(true)).toEqual(expectedAction)
     })
 });
+
+describe('actions', () => {
+    it('should create an action to set the visibility of an info box', () => {
+        const expectedAction = {
+            type: actions.SET_INFO_BOX,
+            payload: true
+        };
+        expect(actions.setInfoBox(true)).toEqual(expectedAction)
+    })
+});
