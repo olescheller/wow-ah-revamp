@@ -29,7 +29,7 @@ class InventoryGrid extends React.Component {
     renderDetails = () => {
         if(this.state.selectedItem) {
             this.props.dispatch(fetchAverageItemPriceRequestedAction(1, this.state.selectedItem.item.id));
-            return <DetailsCard/>
+            return <DetailsCard inventoryItem={this.state.selectedItem}/>
         }
     }
 
