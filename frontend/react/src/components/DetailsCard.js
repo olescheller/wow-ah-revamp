@@ -19,8 +19,6 @@ class DetailsCard extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log("this.props.inventoryItem")
-        console.log(this.props.inventoryItem)
     }
 
     renderPrice = () => {
@@ -39,10 +37,6 @@ class DetailsCard extends React.Component {
                 (direction > 0) ? this.props.price[this.props.detailItem.item.id].perUnit * 1.1 :
                     this.props.price[this.props.detailItem.item.id].perUnit;
             this.props.dispatch(changeDetailItem({price: Math.floor(newPrice)}));
-            // this.setState({currentPrice: newPrice})
-        } else {
-            // this.setState({currentPrice: 0})
-
         }
     };
 
@@ -58,8 +52,6 @@ class DetailsCard extends React.Component {
                 seller_realm: seller_realm.toString()
             };
             this.props.dispatch(addItemToSellOrderRequestedAction(sellOrder));
-            //this.props.dispatch(setInfoBox(true));
-            // setTimeout(() => this.props.dispatch(setInfoBox(false)), 3000);
         } else if (this.props.detailItem.quantity > 0 && this.props.inventoryItem.quantity >= this.props.detailItem.quantity) {
             const sellOrder = {
                 itemId: item.id,
@@ -70,7 +62,6 @@ class DetailsCard extends React.Component {
             };
             this.props.dispatch(createSellOrderRequestedAction(sellOrder));
         }
-        // this.setState({currentPrice: '', amount:  ''})
     };
 
     render() {
