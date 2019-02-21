@@ -1,0 +1,1 @@
+export const inventorySize = 24;

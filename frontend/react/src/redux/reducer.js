@@ -18,8 +18,9 @@ import {
     DELETE_SELLORDER_SUCCEEDED,
     FETCH_USER_MONEY_SUCCEEDED,
     ITEM_SUPPLY_CHANGED, ITEM_SOLD_ALERT,
-    FETCH_USER_SELLORDERS_SUCCEEDED, ITEM_BOUGHT_SUBSCRIPTION
+    FETCH_USER_SELLORDERS_SUCCEEDED, ITEM_BOUGHT_SUBSCRIPTION, SET_SELLING_DETAILS, CHANGE_DETAIL_ITEM
 } from "./actions/itemActions";
+import {inventorySize} from "../config/config";
 
 const initState = {
     user: "",
@@ -30,6 +31,7 @@ const initState = {
     itemSupplies: [],
     buyQuantity: {},
     price: {},
+    detailItem: null,
     isLoading: false,
     showInfoBox: false,
     amountOfItemSupplies: 0,
@@ -42,7 +44,11 @@ const initState = {
 
 export default (state = initState, action) => {
     switch (action.type) {
-
+        // Set the details of the currently selected item on the selling page
+        case SET_SELLING_DETAILS:
+            return {...state, detailItem: action.payload};
+        case CHANGE_DETAIL_ITEM:
+            return {...state, detailItem: {...state.detailItem, ...{...action.payload}}};
         // The search value is changed in the search box
         case SEARCH_VALUE_CHANGED:
             return {...state, searchTerm: action.payload.term};
@@ -197,7 +203,7 @@ export default (state = initState, action) => {
                     return inv;
                 });
             } else {
-                if (count  <= 20) {
+                if (count  <= inventorySize) {
                     updatedInventory.push({item: action.payload.item, quantity: action.payload.amountBought})
                 }
             }

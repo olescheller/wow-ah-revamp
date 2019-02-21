@@ -3,7 +3,7 @@ import React from 'react';
 import {Button, Card, CardContent, CardMedia, IconButton, Input, TextField, Typography} from "@material-ui/core";
 import {
     addItemToSellOrderRequestedAction,
-    addItemToSellOrderSucceeded,
+    addItemToSellOrderSucceeded, changeDetailItem,
     createSellOrderRequestedAction,
     fetchAverageItemPriceRequestedAction
 } from "../redux/actions/itemActions";
@@ -19,61 +19,65 @@ class DetailsCard extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {currentPrice: '', amount: 1};
     }
 
     renderPrice = () => {
-        if(this.props.price[this.props.inventoryItem.item.id] && this.props.price[this.props.inventoryItem.item.id].perUnit ) {
-            return(<div>Current min price: <MoneyView  displayClass="coins-inline" className="price" money={this.props.price[this.props.inventoryItem.item.id].perUnit}/></div>);
-        }
-        else {
-            return(<div> Be the first seller of {this.props.inventoryItem.item.name} </div>);
+        if (this.props.price[this.props.detailItem.item.id] && this.props.price[this.props.detailItem.item.id].perUnit) {
+            return (<div>Current min price: <MoneyView displayClass="coins-inline" className="price"
+                                                       money={this.props.price[this.props.detailItem.item.id].perUnit}/>
+            </div>);
+        } else {
+            return (<div> Be the first seller of {this.props.detailItem.item.name} </div>);
         }
     };
 
     calcPrice = (direction) => {
-        if(this.props.price[this.props.inventoryItem.item.id]) {
-            const newPrice = direction < 0 ? this.props.price[this.props.inventoryItem.item.id].perUnit * 0.9 :
-                (direction > 0) ? this.props.price[this.props.inventoryItem.item.id].perUnit * 1.1 :
-                    this.props.price[this.props.inventoryItem.item.id].perUnit;
-            this.setState({currentPrice: newPrice})
-        }
-        else {
-            this.setState({currentPrice: 0})
-
+        if (this.props.price[this.props.detailItem.item.id]) {
+            const newPrice = direction < 0 ? this.props.price[this.props.detailItem.item.id].perUnit * 0.9 :
+                (direction > 0) ? this.props.price[this.props.detailItem.item.id].perUnit * 1.1 :
+                    this.props.price[this.props.detailItem.item.id].perUnit;
+            this.props.dispatch(changeDetailItem({price: Math.floor(newPrice)}));
         }
     };
 
     sellItem = (item) => {
         const [seller_name, seller_realm] = this.props.user.split("-");
-        if(this.props.activeSellOrders.reduce((acc, curr) => {
+        if (this.props.activeSellOrders.reduce((acc, curr) => {
             return acc || curr.item.id === item.id
         }, false)) {
-            const sellOrder = {itemId: item.id, quantity: this.state.amount, seller_name: seller_name.toString(), seller_realm: seller_realm.toString()}
+            const sellOrder = {
+                itemId: item.id,
+                quantity: this.props.detailItem.quantity,
+                seller_name: seller_name.toString(),
+                seller_realm: seller_realm.toString()
+            };
             this.props.dispatch(addItemToSellOrderRequestedAction(sellOrder));
-            //this.props.dispatch(setInfoBox(true));
-           // setTimeout(() => this.props.dispatch(setInfoBox(false)), 3000);
-        }
-        else if(this.state.amount > 0 && this.state.amount <= this.props.inventoryItem.quantity){
-            const sellOrder = {itemId: item.id, price: this.state.currentPrice, quantity: this.state.amount, seller_name: seller_name.toString(), seller_realm: seller_realm.toString()}
+        } else if (this.props.detailItem.quantity > 0 && this.props.inventoryItem.quantity >= this.props.detailItem.quantity) {
+            const sellOrder = {
+                itemId: item.id,
+                price: this.props.detailItem.price,
+                quantity: this.props.detailItem.quantity,
+                seller_name: seller_name.toString(),
+                seller_realm: seller_realm.toString()
+            };
             this.props.dispatch(createSellOrderRequestedAction(sellOrder));
         }
-        this.setState({currentPrice: '', amount:  1})
     };
 
     render() {
-        return(
+        return (
             <Card className="card">
-                <div className="details">
-                    <CardContent className="content">
+                <div className="details" style={{padding:"10px"}}>
+                    <CardContent className="content"
+                    >
                         <Typography component="h5" variant="h5">
-                            {this.props.inventoryItem.item.name}
+                            {this.props.detailItem.item.name}
                         </Typography>
                         <Typography variant="subtitle1" color="textSecondary">
-                            Category: {this.props.inventoryItem.item.item_class.name}
+                            Category: {this.props.detailItem.item.item_class.name}
                         </Typography>
                         <Typography variant="subtitle1" color="textSecondary">
-                        Sub-Category: {this.props.inventoryItem.item.item_sub_class.name}
+                            Sub-Category: {this.props.detailItem.item.item_sub_class.name}
                         </Typography>
 
                         <Typography variant="subtitle1" color="textSecondary">
@@ -86,54 +90,60 @@ class DetailsCard extends React.Component {
                             label="Value in Copper"
                             type="number"
                             variant="outlined"
-
-                            value={this.state.currentPrice}
-                            onChange={(e) => this.setState({currentPrice: e.target.value})}
+                            value={this.props.detailItem.price}
+                            onChange={(e) => this.props.dispatch(changeDetailItem({price: e.target.value}))}
                             className='priceInput'
-                            margin="normal"
+                            style={{margin: "10px"}}
                         />
                          <TextField
-                             label="Amoount"
+                             label="Amount"
                              type="number"
                              variant="outlined"
-                             value={this.state.amount}
-                             onChange={(e) => this.setState({amount: e.target.value})}
+                             value={this.props.detailItem.quantity}
+                             onChange={(e) => this.props.dispatch(changeDetailItem({quantity: e.target.value}))}
+                             style={{margin: "10px"}}
                              className='amountInput'
-                             InputLabelProps={{
-                                 shrink: true,
-                             }}
-                             margin="normal"
                          />
-                        <Button onClick={() => this.calcPrice(-1)} size="small" color="primary">
-                            <LessIcon />
+                                             </span>
+                    <span>
+                    <Button onClick={() => this.calcPrice(-1)} size="small" color="primary">
+                            <LessIcon/>
                             10%
                         </Button>
-                        <Button onClick={() => this.calcPrice(0)}  size="small" color="primary">
-                            <MinPriceIcon />
+                        <Button onClick={() => this.calcPrice(0)} size="small" color="primary">
+                            <MinPriceIcon/>
                             Min
                         </Button>
-                        <Button onClick={() => this.calcPrice(1)}  size="small" color="primary">
-                            <MoreIcon />
+                        <Button onClick={() => this.calcPrice(1)} size="small" color="primary">
+                            <MoreIcon/>
                             10%
                         </Button>
-                        <Button disabled={!parseInt(this.state.currentPrice)} onClick={() => this.sellItem(this.props.inventoryItem.item)} id='sellButton' variant="contained" color="secondary"> Sell</Button>
+                        <Button disabled={!parseInt(this.props.detailItem.price)}
+                                onClick={() => this.sellItem(this.props.detailItem.item)} id='sellButton'
+                                variant="contained" color="secondary"> Sell</Button>
                     </span>
                     <CardContent className="content">
 
                         <Typography variant="subtitle1" color="textSecondary">
-                    <MoneyView  displayClass="coins-inline" className="price" money={this.state.currentPrice}/>
+                            <MoneyView displayClass="coins-inline" className="price"
+                                       money={this.props.detailItem.price}/>
                         </Typography>
                     </CardContent>
 
                 </div>
                 <CardMedia
                     className='icon'
-                    image={`https://s3.eu-central-1.amazonaws.com/wow-icons/icons/${this.props.inventoryItem.item.icon}.jpg`}
-                    title={this.props.inventoryItem.item.name}
+                    image={`https://s3.eu-central-1.amazonaws.com/wow-icons/icons/${this.props.detailItem.item.icon}.jpg`}
+                    title={this.props.detailItem.item.name}
                 />
             </Card>
         )
     }
 }
 
-export default connect(({price, activeSellOrders, user}) => ({price, activeSellOrders, user})) (DetailsCard);
+export default connect(({price, activeSellOrders, user, detailItem}) => ({
+    price,
+    activeSellOrders,
+    user,
+    detailItem
+}))(DetailsCard);
