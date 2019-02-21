@@ -182,7 +182,9 @@ export default (state = initState, action) => {
             for (let inv of updatedInventory) {
                 if (!items.has(inv.item.name)) {
                     count++;
-                    if (inv.item.name === action.payload.item.name) toStack = true;
+                    if (inv.item.name === action.payload.item.name) {
+                        toStack = true;
+                    }
                     items.add(inv.item.name);
                 }
             }
@@ -195,7 +197,7 @@ export default (state = initState, action) => {
                     return inv;
                 });
             } else {
-                if (count + action.payload.amountBought <= 20) {
+                if (count  <= 20) {
                     updatedInventory.push({item: action.payload.item, quantity: action.payload.amountBought})
                 }
             }
