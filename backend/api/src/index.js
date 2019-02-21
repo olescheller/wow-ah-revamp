@@ -60,9 +60,11 @@ type Subscription {
 }
 
 type SellOrderAlert {
+    buyerName: String!
     sellerName: String!
     itemName: String!
     amount: Int!
+    money: Int!
 }
 
 type InventoryItem {
@@ -77,13 +79,13 @@ type SellOrder {
 }
 
 type Receipt {
+  buyer: String
   item: Item!
   amount: Int
   amountBought: Int
   price: Int
   min_price: Float
   money: Float
-  sold: [SellOrderAlert]
 }
 
 type ItemSupply{

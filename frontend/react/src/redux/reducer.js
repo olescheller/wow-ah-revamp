@@ -236,6 +236,8 @@ export default (state = initState, action) => {
             });
             return {...state, itemSupplies: updatedItemSupplies}
         case ITEM_SOLD_ALERT:{
+            // increase money:
+            const money = action.payload.alert.money;
             const activeSellOrders = [...state.activeSellOrders];
             const updatedSellOrders = activeSellOrders.filter(sellOrder => {
                 return (sellOrder.item.name !== action.payload.alert.itemName) ||
@@ -247,7 +249,7 @@ export default (state = initState, action) => {
                 }
                 return sellOrder;
             });
-            return {...state, activeSellOrders: updatedSellOrders, soldAlert: action.payload.alert, alert: true}
+            return {...state, money: money, activeSellOrders: updatedSellOrders, soldAlert: action.payload.alert, alert: true}
         }
         case REMOVE_ALERT:
             return {...state, alert: false}

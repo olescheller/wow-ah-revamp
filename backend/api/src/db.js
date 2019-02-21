@@ -179,6 +179,7 @@ function getItemClassById(db, classId, subClassId) {
             if (err) reject(err);
             if (!itemClass) {
                 resolve(null)
+                return;
             }
             const itemSubClass = itemClass.subclasses.filter(i => i.id === subClassId)[0];
             if (!itemSubClass) {
@@ -407,64 +408,105 @@ function buyItems(converter, db, userName, itemId, amount, givenTotal, givenPerU
                 let buyFullSellOrders = [];
                 let buyPartSellOrders = [];
                 const sold = [];
+                let buyerMoney = null;
                 //lock db
                 while (amountLeft > 0 && i < sellOrders.length) {
                     if (sellOrders[i].quantity <= amountLeft) {
                         // Case buy whole sell order
-                        buyFullSellOrders.push({id: sellOrders[i]._id});
-                        total += sellOrders[i].price * sellOrders[i].quantity;
+                        const price = sellOrders[i].price * sellOrders[i].quantity;
+                        buyFullSellOrders.push({id: sellOrders[i]._id, amount: sellOrders[i].quantity, price: price, seller: sellOrders[i].seller_full});
+                        total += price;
                         amountLeft = amountLeft - sellOrders[i].quantity;
-                        sold.push({
-                            sellerName: sellOrders[i].seller_full,
-                            itemName: item.name,
-                            amount: sellOrders[i].quantity
-                        });
                     } else {
                         // Case buy parts of sell order
-                        buyPartSellOrders.push({id: sellOrders[i]._id, left: sellOrders[i].quantity - amountLeft});
-                        sold.push({sellerName: sellOrders[i].seller_full, itemName: item.name, amount: amountLeft});
-                        total += sellOrders[i].price * amountLeft;
+                        const price = sellOrders[i].price * amountLeft;
+                        buyPartSellOrders.push({id: sellOrders[i]._id, amount: amountLeft, left: sellOrders[i].quantity - amountLeft, price: price,  seller: sellOrders[i].seller_full});
+                        total +=  price;
                         amountLeft = 0;
                     }
                     i++;
                 }
                 let perUnit = (total / amount);
+                console.log({total})
                 //compare price
                 if (perUnit === givenPerUnit && total === givenTotal) {
-                    //decrease money
+                    //decrease buyers money
                     const Users = db.collection('users');
-                    Users.findOne({name: userName}, (err, user) => {
-                        if (err) reject('user not found');
-                        const money = user.money - total;
-                        if (money < 0) {
-                            reject("user has not enough money");
-                            return;
-                        }
                         //buy fullSellorders
                         for (sellOrder of buyFullSellOrders) {
                             SellOrders.deleteOne({_id: sellOrder.id});
+                            // increase sellers money
+                            Users.findOne({name: sellOrder.seller}, (err, seller) => {
+                                if(err) reject('seller not found');
+                                let seller_money;
+                                if(userName === sellOrder.seller) {
+                                    seller_money = seller.money;
+                                    buyerMoney = seller_money;
+                                }
+                                else {
+                                    seller_money = seller.money + sellOrder.price;
+                                }
+                                Users.updateOne({name: sellOrder.seller}, {$set: {money: seller_money}})
+
+                                sold.push({
+                                    sellerName: sellOrder.seller,
+                                    buyerName: userName,
+                                    itemName: item.name,
+                                    amount: sellOrder.amount,
+                                    money: seller_money,
+                                });
+                            })
                         }
                         //buy partSellorders
                         for (sellOrder of buyPartSellOrders) {
                             SellOrders.updateOne({_id: sellOrder.id}, {$set: {quantity: sellOrder.left}});
+                            // increase sellers money
+                            Users.findOne({name: sellOrder.seller}, (err, seller) => {
+                                if(err) reject('seller not found');
+                                let seller_money;
+                                if(userName === sellOrder.seller) {
+                                    seller_money = seller.money;
+                                    buyerMoney = seller_money;
+                                }
+                                else {
+                                    seller_money = seller.money + sellOrder.price;;
+                                }
+                                Users.updateOne({name: sellOrder.seller}, {$set: {money: seller_money}})
+
+                                sold.push({
+                                    sellerName: sellOrder.seller,
+                                    buyerName: userName,
+                                    itemName: item.name,
+                                    amount: sellOrder.amount,
+                                    money: seller_money});
+                            })
                         }
-                        Users.updateOne({name: userName}, {$set: {money: money}});
+                    Users.findOne({name: userName}, (err, user) => {
+                        if (err) reject('user not found');
+                        buyerMoney = buyerMoney ? buyerMoney : user.money - total;
+                        if (buyerMoney < 0) {
+                            reject("user has not enough money");
+                            return;
+                        }
+                        Users.updateOne({name: userName}, {$set: {money: buyerMoney}});
+                    });
+
                         SellOrders.find({item_id: itemId}).sort({price: 1}).toArray((err, sellOrders) => {
                             if (err) reject(err);
                             const newMinPrice = sellOrders.length > 0 ? sellOrders[0].price : null;
                             const newQuantity = quantity - amount;
                             //publish to subscription
+                            console.log({sold})
                             resolve({
                                 item: item,
                                 amount: newQuantity,
                                 amountBought: amount,
                                 price: total,
                                 min_price: newMinPrice,
-                                money: money,
+                                money: buyerMoney,
                                 sold: sold,
                             });
-                        })
-                    });
+                        });
                 } else {
                     reject("The price has changed during the operation");
                     return;

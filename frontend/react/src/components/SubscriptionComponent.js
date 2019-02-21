@@ -34,8 +34,10 @@ const SELL_ORDER_ALERT_SUBSCRIPTION = gql`
   subscription onSellOrderAlert($sellerName: String!) {
     sellOrderAlert(sellerName: $sellerName) {
       sellerName
+      buyerName
       itemName
       amount
+      money
     }
   }
 `;
@@ -66,6 +68,7 @@ export const SellOrderAlertSubscription = (sellerName, callback) => {
             variables={{sellerName}}
             shouldResubscribe={true}
             onSubscriptionData={(data) => {
+                console.log(data)
                 const alerts = data.subscriptionData.data.sellOrderAlert.filter(alert => alert.sellerName === sellerName);
                 callback(...alerts);
             }}
