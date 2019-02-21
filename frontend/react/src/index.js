@@ -23,6 +23,9 @@ import {split} from 'apollo-link';
 import {HttpLink} from 'apollo-link-http';
 import {getMainDefinition} from 'apollo-utilities';
 import {ec2_url} from "./config/config";
+import {Router} from "react-router-dom";
+import history from './config/history'
+
 
 let server = "";
 
@@ -89,9 +92,9 @@ ReactDOM.render(
         <Provider store={store}>
             <MuiThemeProvider theme={theme}>
                 <ApolloProvider client={client}>
-                    <BrowserRouter>
+                    <Router history={history}>
                         <App/>
-                    </BrowserRouter>
+                    </Router>
                 </ApolloProvider>
             </MuiThemeProvider>
         </Provider></ApolloProvider>, document.getElementById('root'));

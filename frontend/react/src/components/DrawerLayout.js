@@ -39,7 +39,7 @@ import SettingsPage from "./SettingsPage";
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import CustomizedSnackbar from "./SnackBar";
 import {closeAlertAction} from "../redux/actions/actions";
-
+import history from '../config/history'
 
 const drawerWidth = 240;
 
@@ -183,6 +183,7 @@ class DrawerLayout extends React.Component {
         if (e.key === 'Enter') {
             window.scrollTo(0, 0);
             const searchValue = e.target.value;
+            history.push('/buy')
             this.props.dispatch(itemSupplyRequestAction(searchValue))
         }
     };
