@@ -31,7 +31,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import {fade} from '@material-ui/core/styles/colorManipulator';
 import Button from "@material-ui/core/Button";
 import {connect} from "react-redux";
-import {itemSupplyRequestAction, searchValueChangedAction, soldAlertAction} from "../redux/actions/itemActions";
+import {itemSupplyRequestAction, searchValueChangedAction, itemSoldAlertAction} from "../redux/actions/itemActions";
 import MoneyView from "./MoneyView";
 import {SellOrderAlertSubscription} from "./SubscriptionComponent";
 import Paper from "@material-ui/core/Paper";
@@ -188,7 +188,7 @@ class DrawerLayout extends React.Component {
     };
 
     dispatchSubscriptionData = (alert) => {
-        this.props.dispatch(soldAlertAction(alert));
+        this.props.dispatch(itemSoldAlertAction(alert));
         setTimeout(() => this.props.dispatch(closeAlertAction()), 5000);
     }
 

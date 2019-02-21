@@ -13,8 +13,8 @@ import theme from './theme/materialTheme'
 import reducer from './redux/reducer'
 import {
     fetchRandomItemsRequestedAction,
-    userMoneyRequestedAction,
-    userSellOrdersRequestedAction
+    fetchUserMoneyRequestedAction,
+    fetchUserSellOrdersRequestedAction
 } from "./redux/actions/itemActions";
 import ApolloClient from "apollo-client";
 import { InMemoryCache } from 'apollo-cache-inmemory';
@@ -65,10 +65,10 @@ const initialRealmName = "Silvermoon";
 store.dispatch(fetchRandomItemsRequestedAction());
 
 // Fetch user name and their gold
-store.dispatch(userMoneyRequestedAction(initialUserName, initialRealmName));
+store.dispatch(fetchUserMoneyRequestedAction(initialUserName, initialRealmName));
 
 // Fetch user's active sell orders
-store.dispatch(userSellOrdersRequestedAction(initialUserName, initialRealmName));
+store.dispatch(fetchUserSellOrdersRequestedAction(initialUserName, initialRealmName));
 
 // endregion
 

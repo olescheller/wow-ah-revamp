@@ -16,9 +16,9 @@ import {
     DELETE_SELL_ORDER,
     ADD_ITEM_TO_SELLORDER_SUCCEEDED,
     DELETE_SELLORDER_SUCCEEDED,
-    USER_MONEY_REQUEST_SUCCEEDED,
+    FETCH_USER_MONEY_SUCCEEDED,
     ITEM_SUPPLY_CHANGED, ITEM_SOLD_ALERT,
-    USER_SELL_ORDERS_REQUEST_SUCCEEDED, ITEM_BOUGHT_SUBSCRIPTION
+    FETCH_USER_SELLORDERS_SUCCEEDED, ITEM_BOUGHT_SUBSCRIPTION
 } from "./actions/itemActions";
 
 const initState = {
@@ -125,7 +125,7 @@ export default (state = initState, action) => {
         }
 
         // Saga action type of fetching the user's active sell orders
-        case USER_SELL_ORDERS_REQUEST_SUCCEEDED:
+        case FETCH_USER_SELLORDERS_SUCCEEDED:
             return {...state, activeSellOrders: [...action.payload.sellOrders]};
 
         case  ADD_ITEM_TO_SELLORDER_SUCCEEDED: {
@@ -223,7 +223,7 @@ export default (state = initState, action) => {
             return {...state, isLoading: action.payload};
         case SET_INFO_BOX:
             return {...state, showInfoBox: action.payload};
-        case USER_MONEY_REQUEST_SUCCEEDED:
+        case FETCH_USER_MONEY_SUCCEEDED:
             return {...state, money: action.payload.money, user: action.payload.name};
 
         case ITEM_SUPPLY_CHANGED:

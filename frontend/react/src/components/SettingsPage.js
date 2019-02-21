@@ -6,14 +6,14 @@ import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
 import connect from "react-redux/es/connect/connect";
-import {userMoneyRequestedAction, userSellOrdersRequestedAction} from "../redux/actions/itemActions";
+import {fetchUserMoneyRequestedAction, fetchUserSellOrdersRequestedAction} from "../redux/actions/itemActions";
 
 
 class SettingsPage extends React.Component {
 
     handleSwitchUser = (userName, realmName) => () => {
-        this.props.dispatch(userMoneyRequestedAction(userName,realmName));
-        this.props.dispatch(userSellOrdersRequestedAction(userName,realmName));
+        this.props.dispatch(fetchUserMoneyRequestedAction(userName,realmName));
+        this.props.dispatch(fetchUserSellOrdersRequestedAction(userName,realmName));
     };
 
     render() {

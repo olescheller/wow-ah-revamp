@@ -191,3 +191,66 @@ describe('itemActions', () => {
         expect(itemActions.deleteSellOrderSucceededAction( {Foo:"Bar"})).toEqual(expectedAction)
     })
 });
+
+describe('itemActions', () => {
+    it('should create an action to request to fetch user money', () => {
+        const expectedAction = {
+            type: itemActions.FETCH_USER_MONEY_REQUESTED,
+            payload: {userName:"John", realmName:"Doe"}
+        };
+        expect(itemActions.fetchUserMoneyRequestedAction( "John", "Doe")).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to fetch user money', () => {
+        const expectedAction = {
+            type: itemActions.FETCH_USER_MONEY_SUCCEEDED,
+            payload: {name:"John-Doe", money: 1337}
+        };
+        expect(itemActions.fetchUserMoneySucceededAction( {name:"John-Doe", money:1337})).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to request to fetch user sell orders', () => {
+        const expectedAction = {
+            type: itemActions.FETCH_USER_SELLORDERS_REQUESTED,
+            payload: {userName:"Foo", realmName:"Bar"}
+        };
+        expect(itemActions.fetchUserSellOrdersRequestedAction( "Foo", "Bar")).toEqual(expectedAction)
+    })
+});
+
+
+describe('itemActions', () => {
+    it('should create an action to fetch user sell orders', () => {
+        const expectedAction = {
+            type: itemActions.FETCH_USER_SELLORDERS_SUCCEEDED,
+            payload: {sellOrders:[1,2,3]}
+        };
+        expect(itemActions.fetchUserSellOrdersSucceededAction( [1,2,3])).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to notify of a sold item', () => {
+        const expectedAction = {
+            type: itemActions.ITEM_SOLD_ALERT,
+            payload: {alert: {Foo:42}}
+        };
+        expect(itemActions.itemSoldAlertAction( {Foo:42})).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to notify of a bought item', () => {
+        const expectedAction = {
+            type: itemActions.ITEM_BOUGHT_SUBSCRIPTION,
+            payload: {receipt: {Foo:42}}
+        };
+        expect(itemActions.itemBoughtSubscriptionAction( {Foo:42})).toEqual(expectedAction)
+    })
+});
+
+

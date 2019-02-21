@@ -119,40 +119,40 @@ export const itemSupplyChangedAction = (itemId, quantity) => {
     }
 }
 
-export const USER_MONEY_REQUESTED = "USER_MONEY_REQUESTED";
-export const userMoneyRequestedAction = (userName, realmName) => {
+export const FETCH_USER_MONEY_REQUESTED = "FETCH_USER_MONEY_REQUESTED";
+export const fetchUserMoneyRequestedAction = (userName, realmName) => {
     return {
-        type: USER_MONEY_REQUESTED,
+        type: FETCH_USER_MONEY_REQUESTED,
         payload: {userName, realmName}
     }
 };
 
-export const USER_MONEY_REQUEST_SUCCEEDED = "USER_MONEY_REQUEST_SUCCEEDED";
-export const userMoneyRequestSucceededAction = ({name, money}) => {
+export const FETCH_USER_MONEY_SUCCEEDED = "FETCH_USER_MONEY_SUCCEEDED";
+export const fetchUserMoneySucceededAction = ({name, money}) => {
     return {
-        type: USER_MONEY_REQUEST_SUCCEEDED,
+        type: FETCH_USER_MONEY_SUCCEEDED,
         payload: {name, money}
     }
 };
 
-export const USER_SELL_ORDERS_REQUESTED = "USER_SELL_ORDERS_REQUESTED";
-export const userSellOrdersRequestedAction = (userName, realmName) => {
+export const FETCH_USER_SELLORDERS_REQUESTED = "FETCH_USER_SELLORDERS_REQUESTED";
+export const fetchUserSellOrdersRequestedAction = (userName, realmName) => {
     return {
-        type: USER_SELL_ORDERS_REQUESTED,
+        type: FETCH_USER_SELLORDERS_REQUESTED,
         payload: {userName, realmName}
     }
 };
 
-export const USER_SELL_ORDERS_REQUEST_SUCCEEDED = "USER_SELL_ORDERS_REQUEST_SUCCEEDED";
-export const userSellOrdersRequestSucceededAction = (sellOrders) => {
+export const FETCH_USER_SELLORDERS_SUCCEEDED = "FETCH_USER_SELLORDERS_SUCCEEDED";
+export const fetchUserSellOrdersSucceededAction = (sellOrders) => {
     return {
-        type: USER_SELL_ORDERS_REQUEST_SUCCEEDED,
+        type: FETCH_USER_SELLORDERS_SUCCEEDED,
         payload: {sellOrders}
     }
 };
 
 export const ITEM_SOLD_ALERT = "ITEM_SOLD_ALERT";
-export const soldAlertAction = (alert) => {
+export const itemSoldAlertAction = (alert) => {
     return {
         type: ITEM_SOLD_ALERT,
         payload: {alert}
