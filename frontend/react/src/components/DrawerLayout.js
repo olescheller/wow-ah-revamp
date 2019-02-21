@@ -237,14 +237,15 @@ class DrawerLayout extends React.Component {
 
                         <div className={classes.grow}/>
                         <AccountCircle style={{marginRight: "5px"}}/>
-                            <Typography color={"inherit"}
-                                        variant={"h6"} style={{marginRight: "25px"}}>{"" + this.props.user || "Loading user ..."}</Typography>
+                        <Typography color={"inherit"}
+                                    variant={"h6"}
+                                    style={{marginRight: "25px"}}>{"" + this.props.user || "Loading user ..."}</Typography>
 
 
-                                <MonetizationOnIcon style={{marginRight: "5px"}}/>
-                                <Typography color={"inherit"} variant={"h6"}>
-                                    <MoneyView displayClass="coins-block" label="" money={this.props.money}/>
-                                </Typography>
+                        <MonetizationOnIcon style={{marginRight: "5px"}}/>
+                        <Typography color={"inherit"} variant={"h6"}>
+                            <MoneyView displayClass="coins-block" label="" money={this.props.money}/>
+                        </Typography>
 
                     </Toolbar>
                 </AppBar>
@@ -270,11 +271,11 @@ class DrawerLayout extends React.Component {
                     <Divider/>
                     <List>
                         <ListItem button key="Buy" component={Link} to={'buy'}>
-                            <ListItemIcon> <ShoppingIcon/> </ListItemIcon>
+                            <ListItemIcon><ShoppingIcon/></ListItemIcon>
                             <ListItemText primary="Buy"/>
                         </ListItem>
                         <ListItem button key="Sell" component={Link} to={'sell'}>
-                            <ListItemIcon> <AttachMoneyIcon/> </ListItemIcon>
+                            <ListItemIcon><AttachMoneyIcon/></ListItemIcon>
                             <ListItemText primary="Sell"/>
                         </ListItem>
                     </List>

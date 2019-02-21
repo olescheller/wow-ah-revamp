@@ -1,3 +1,15 @@
+export const SET_SELLING_DETAILS = "SET_SELLING_DETAILS";
+export const setSellingDetails = (item) => ({
+    type: SET_SELLING_DETAILS,
+    payload: item
+});
+
+export const CHANGE_DETAIL_ITEM = "CHANGE_DETAIL_ITEM";
+export const changeDetailItem = (changes) => ({
+    type: CHANGE_DETAIL_ITEM,
+    payload: changes
+});
+
 export const SEARCH_VALUE_CHANGED = "SEARCH_VALUE_CHANGED";
 export const searchValueChangedAction = (itemNameTerm) => ({
     type: SEARCH_VALUE_CHANGED,

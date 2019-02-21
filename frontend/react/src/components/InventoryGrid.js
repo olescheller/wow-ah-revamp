@@ -5,9 +5,14 @@ import {Badge, Paper, Tooltip, Typography} from "@material-ui/core";
 import Grid from '@material-ui/core/Grid';
 import './inventoryGrid.css'
 import DetailsCard from "./DetailsCard";
-import {fetchAverageItemPriceRequestedAction, fetchRandomItemsRequestedAction} from "../redux/actions/itemActions";
+import {
+    fetchAverageItemPriceRequestedAction,
+    fetchRandomItemsRequestedAction,
+    setSellingDetails
+} from "../redux/actions/itemActions";
 import InfoBox from "./InfoBox";
 import {setInfoBox} from "../redux/actions/actions";
+import {inventorySize} from "../config/config";
 
 class InventoryGrid extends React.Component {
 
@@ -23,9 +28,8 @@ class InventoryGrid extends React.Component {
 
     renderDetails = () => {
         if(this.state.selectedItem) {
-            console.log(this.state.selectedItem)
             this.props.dispatch(fetchAverageItemPriceRequestedAction(1, this.state.selectedItem.item.id));
-            return <DetailsCard inventoryItem={this.state.selectedItem}/>
+            return <DetailsCard/>
         }
     }
 
@@ -43,6 +47,7 @@ class InventoryGrid extends React.Component {
 
     showDetails = (item) => {
         this.props.dispatch(fetchAverageItemPriceRequestedAction(1, item.item.id));
+        this.props.dispatch(setSellingDetails({...item, price: ''}));
         this.setState({selectedItem: item})
     }
 
@@ -50,9 +55,8 @@ class InventoryGrid extends React.Component {
         const result = [];
         const arr = [...this.props.inventoryItems];
         const len = arr.length;
-        console.log(len)
-        const empty = len === 0 ? 20 : (len >= 20) ? 0 : 20 - len;
-        for(let i = 0; i < 20; i ++) {
+        const empty = len === 0 ? inventorySize : (len >= inventorySize) ? 0 : inventorySize - len;
+        for(let i = 0; i < inventorySize; i ++) {
             if(arr[i]) {
                 result.push(
                     <Tooltip key={arr[i].item.name} disableFocusListener disableTouchListener title={arr[i].item.name}>
