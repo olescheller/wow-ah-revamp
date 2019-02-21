@@ -1,5 +1,14 @@
 import axios from 'axios'
 import gql from 'graphql-tag';
+import {ec2_url} from "../config/config";
+
+let server="";
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+     server = 'localhost';
+    // dev code
+} else {
+     server = ec2_url;
+}
 
 export const CHANGE_ITEM_SUPPLY_SUBSCRIPTION = gql`
     subscription receipt($itemId: Int!) {
@@ -15,7 +24,7 @@ export async function makePurchase(userName, itemId, amount, total, perUnit) {
     return new Promise((resolve, reject) => {
         const mutation = `mutation {buyItems(userName: "${userName}", itemId: ${itemId},amount: ${amount}, total: ${total}, perUnit: ${perUnit}) 
         {money, amount, amountBought, item{id, name, item_class{ name }, item_sub_class{name}, icon},price}}`;
-        axios.post("http://localhost:4000/", {"query": mutation, operationName: null, variables: {}}).then(response => {
+        axios.post(`http://${server}:4000/`, {"query": mutation, operationName: null, variables: {}}).then(response => {
             resolve(response.data.data.buyItems);
         })
     })
@@ -25,7 +34,7 @@ export async function createSellOrder(itemId, price, quantity,  seller_name, sel
     return new Promise((resolve, reject) => {
         const mutation = `mutation {createSellOrder(itemId: ${itemId},  seller_name: "${seller_name}", seller_realm: "${seller_realm}", price: ${price}, quantity: ${quantity}) {
         item {id, name, item_class {name}, icon,  item_sub_class{name}}, price, quantity} }`;
-        axios.post("http://localhost:4000/", {"query": mutation, operationName: null, variables: {}}).then(response => {
+        axios.post(`http://${server}:4000/`, {"query": mutation, operationName: null, variables: {}}).then(response => {
             resolve(response.data.data.createSellOrder);
         })
     });
@@ -34,7 +43,7 @@ export async function createSellOrder(itemId, price, quantity,  seller_name, sel
 export async function removeSellOrder(itemId, seller_name, seller_realm) {
     return new Promise((resolve, reject) => {
         const mutation = `mutation {removeSellOrder(itemId: ${itemId},  seller_name: "${seller_name}", seller_realm: "${seller_realm}")}`;
-        axios.post("http://localhost:4000/", {"query": mutation, operationName: null, variables: {}}).then(response => {
+        axios.post(`http://${server}:4000/`, {"query": mutation, operationName: null, variables: {}}).then(response => {
             resolve(response.data.data.removeSellOrder);
         })
     });
@@ -44,7 +53,7 @@ export async function removeSellOrder(itemId, seller_name, seller_realm) {
 export async function downloadRandomItems() {
     return new Promise((resolve, reject) => {
         const qry = `{randomItems{quantity, item {id, name, icon, item_class{name},item_sub_class{name}}}}`;
-        axios.post("http://localhost:4000/", {"query": qry}).then(response => {
+        axios.post(`http://${server}:4000/`, {"query": qry}).then(response => {
             resolve(response.data.data.randomItems);
         })
     })
@@ -54,7 +63,7 @@ export async function downloadRandomItems() {
 export async function downloadAverageItemPrice(itemId, amount) {
     return new Promise((resolve, reject) => {
         const qry = `{items_price(itemId: ${itemId}, amount: ${amount}) {perUnit, total}}`;
-        axios.post("http://localhost:4000/", {"query": qry}).then(response => {
+        axios.post(`http://${server}:4000/`, {"query": qry}).then(response => {
 
             resolve(response.data.data.items_price);
         })
@@ -64,7 +73,7 @@ export async function downloadAverageItemPrice(itemId, amount) {
 export async function fetchAmountOfItemSupplies(partialName) {
     return new Promise((resolve, reject) => {
         const qry = `{items_count(partialItemName: \"${partialName}\")}`;
-        axios.post("http://localhost:4000/", {"query": qry}).then(response => {
+        axios.post(`http://${server}:4000/`, {"query": qry}).then(response => {
 
             resolve(response.data.data.items_count);
         })
@@ -75,7 +84,7 @@ export async function downloadItemsSupplyByPartialName(partialName) {
 
     return new Promise((resolve, reject) => {
         const qry = `{items_supply(partialItemName: \"${partialName}\") { item {id name icon}, min_price quantity}}`;
-        axios.post("http://localhost:4000/", {"query": qry}).then(response => {
+        axios.post(`http://${server}:4000/`, {"query": qry}).then(response => {
 
             resolve(response.data.data.items_supply.filter(item => item!==null))
         })
@@ -91,7 +100,7 @@ export async function getUserMoney(userName, realmName) {
                 }
               }
             `;
-        axios.post("http://localhost:4000/", {"query": qry}).then(response => {
+        axios.post(`http://${server}:4000/`, {"query": qry}).then(response => {
             resolve(response.data.data.user)
         })
     })
@@ -116,7 +125,7 @@ export async function getUserMoney(userName, realmName) {
                     price
                  }
              }`;
-        axios.post("http://localhost:4000/", {"query": qry}).then(response => {
+        axios.post(`http://${server}:4000/`, {"query": qry}).then(response => {
             resolve(response.data.data.sell_order)
         })
     })
