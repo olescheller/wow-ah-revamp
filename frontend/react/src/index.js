@@ -7,7 +7,7 @@ import {Provider} from 'react-redux'
 import thunk from 'redux-thunk'
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 import createSagaMiddleware from 'redux-saga';
-import { ApolloProvider } from 'react-apollo';
+import {ApolloProvider} from 'react-apollo';
 import rootSaga from './redux/sagas'
 import theme from './theme/materialTheme'
 import reducer from './redux/reducer'
@@ -17,13 +17,21 @@ import {
     fetchUserSellOrdersRequestedAction
 } from "./redux/actions/itemActions";
 import ApolloClient from "apollo-client";
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { WebSocketLink } from 'apollo-link-ws';
-import { split } from 'apollo-link';
-import { HttpLink } from 'apollo-link-http';
-import { getMainDefinition } from 'apollo-utilities';
+import {InMemoryCache} from 'apollo-cache-inmemory';
+import {WebSocketLink} from 'apollo-link-ws';
+import {split} from 'apollo-link';
+import {HttpLink} from 'apollo-link-http';
+import {getMainDefinition} from 'apollo-utilities';
 
-const server =  process.env.server || 'localhost';
+let server = "";
+
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    server = 'localhost';
+    // dev code
+} else {
+    server = 'http://ec2-35-156-213-231.eu-central-1.compute.amazonaws.com';
+}
+console.log(server);
 
 const wsLink = new WebSocketLink({
     uri: `ws://${server}:4000/`,
@@ -40,8 +48,8 @@ const httpLink = new HttpLink({
 
 const link = split(
     // split based on operation type
-    ({ query }) => {
-        const { kind, operation } = getMainDefinition(query);
+    ({query}) => {
+        const {kind, operation} = getMainDefinition(query);
         return kind === 'OperationDefinition' && operation === 'subscription';
     },
     wsLink,
@@ -77,12 +85,12 @@ store.dispatch(fetchUserSellOrdersRequestedAction(initialUserName, initialRealmN
 ReactDOM.render(
     <ApolloProvider client={client}>
 
-    <Provider store={store}>
-        <MuiThemeProvider theme={theme}>
-            <ApolloProvider client={client}>
-            <BrowserRouter>
-                <App/>
-            </BrowserRouter>
-            </ApolloProvider>
-        </MuiThemeProvider>
-    </Provider></ApolloProvider>, document.getElementById('root'));
+        <Provider store={store}>
+            <MuiThemeProvider theme={theme}>
+                <ApolloProvider client={client}>
+                    <BrowserRouter>
+                        <App/>
+                    </BrowserRouter>
+                </ApolloProvider>
+            </MuiThemeProvider>
+        </Provider></ApolloProvider>, document.getElementById('root'));
