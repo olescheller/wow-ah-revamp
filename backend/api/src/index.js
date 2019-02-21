@@ -177,20 +177,28 @@ type User {
             buyItems: async (_, {userName, itemId, amount, total, perUnit}) => {
                 //publish to pubsub
                 const receipt = await buyItems(converter, db, userName, itemId, amount, total, perUnit);
-                pubsub.publish("BUY_SUBSCRIPTION", {receipt});
+                pubsub.publish("CHANGE_ITEM_SUPPLY_SUBSCRIPTION", {receipt});
                 const sellOrderAlert = receipt.sold;
                 pubsub.publish('SELL_ORDER_SUBSCRIPTION', {sellOrderAlert});
                 return receipt;
             },
             createSellOrder: async (_, {itemId, seller_name, seller_realm, quantity, price}) => {
-                console.log(seller_name)
-                return await createSellOrder(converter, db, itemId, seller_name, seller_realm, quantity, price)
+                const sellOrder = await createSellOrder(converter, db, itemId, seller_name, seller_realm, quantity, price);
+                const itemSupply = await getItemSupplyByName(db, sellOrder.item.name);
+                const receipt = {item: sellOrder.item, amount: itemSupply.quantity , min_price: itemSupply.min_price}
+                pubsub.publish('CHANGE_ITEM_SUPPLY_SUBSCRIPTION', {receipt});
+                return sellOrder;
             },
             addItemToSellOrder: async (_, {itemId, seller_name, seller_realm, quantity}) => {
                 return await addItemsToSellOrder(converter, db, itemId, seller_name, seller_realm, quantity)
             },
             removeSellOrder: async (_, {itemId, seller_name, seller_realm}) => {
-                return await removeSellOrder(converter, db, itemId, seller_name, seller_realm);
+                const removed = await removeSellOrder(converter, db, itemId, seller_name, seller_realm);
+                const item = await getItemById(converter, db, itemId);
+                const itemSupply = await getItemSupplyByName(db, item.name);
+                const receipt = itemSupply ? {item: item, amount: itemSupply.quantity, min_price: itemSupply.min_price} : {item: item, amount: 0, min_price: null}
+                pubsub.publish('CHANGE_ITEM_SUPPLY_SUBSCRIPTION', {receipt});
+                return removed;
             }
         },
 
@@ -202,7 +210,7 @@ type User {
             },
             receipt: {
                 subscribe: withFilter(() => {
-                    return pubsub.asyncIterator('BUY_SUBSCRIPTION')
+                    return pubsub.asyncIterator('CHANGE_ITEM_SUPPLY_SUBSCRIPTION')
                 }, (payload, variables) => {
                     return payload.receipt.item.id === variables.itemId;
                 })
