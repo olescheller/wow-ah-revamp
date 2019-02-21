@@ -77,7 +77,6 @@ class InventoryGrid extends React.Component {
         const { classes } = this.props;
         return (
             <div>
-                <InfoBox type="alreadyActiveSellOrder" infoClass="info warning"/>
                 <Paper className='paper' elevation={1}>
                     <Typography variant="h5" component="h3">
                         My Inventory
