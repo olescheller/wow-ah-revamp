@@ -22,6 +22,7 @@ import {WebSocketLink} from 'apollo-link-ws';
 import {split} from 'apollo-link';
 import {HttpLink} from 'apollo-link-http';
 import {getMainDefinition} from 'apollo-utilities';
+import {ec2_url} from "./config/config";
 
 let server = "";
 
@@ -29,7 +30,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     server = 'localhost';
     // dev code
 } else {
-    server = 'ec2-35-156-213-231.eu-central-1.compute.amazonaws.com';
+    server = ec2_url;
 }
 console.log(server);
 
