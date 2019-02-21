@@ -6,7 +6,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
      server = 'localhost';
     // dev code
 } else {
-     server = 'http://ec2-35-156-213-231.eu-central-1.compute.amazonaws.com';
+     server = 'ec2-35-156-213-231.eu-central-1.compute.amazonaws.com';
 }
 
 export const CHANGE_ITEM_SUPPLY_SUBSCRIPTION = gql`
