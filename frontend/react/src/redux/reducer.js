@@ -175,7 +175,6 @@ export default (state = initState, action) => {
         case BUY_ITEMS_SUCCEEDED:
             let oldBuyQuantity = {...state.buyQuantity};
             delete oldBuyQuantity[action.payload.item.id];
-            //TODO: add to inventory
             const updatedInventory = [...state.inventoryItems];
             const items = new Set();
             let count = 0;

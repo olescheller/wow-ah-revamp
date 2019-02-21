@@ -1,7 +1,7 @@
 import axios from 'axios'
 import gql from 'graphql-tag';
 
-export const BUY_SUBSCRIPTION = gql`
+export const CHANGE_ITEM_SUPPLY_SUBSCRIPTION = gql`
     subscription receipt($itemId: Int!) {
         receipt(itemId: $itemId) {
             itemId

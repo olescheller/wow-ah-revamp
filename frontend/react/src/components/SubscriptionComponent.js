@@ -24,9 +24,7 @@ const RECEIPT_SUBSCRIPTION = gql`
             name
             id
          }
-        price
         min_price
-        money
         amount
     }
   }
