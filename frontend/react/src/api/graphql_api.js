@@ -25,6 +25,7 @@ export async function makePurchase(userName, itemId, amount, total, perUnit) {
         const mutation = `mutation {buyItems(userName: "${userName}", itemId: ${itemId},amount: ${amount}, total: ${total}, perUnit: ${perUnit}) 
         {money, amount, amountBought, item{id, name, item_class{ name }, item_sub_class{name}, icon},price}}`;
         axios.post(`http://${server}:4000/`, {"query": mutation, operationName: null, variables: {}}).then(response => {
+            console.log(response.data.data.buyItems)
             resolve(response.data.data.buyItems);
         })
     })
