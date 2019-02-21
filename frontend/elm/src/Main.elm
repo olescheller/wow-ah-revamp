@@ -16,9 +16,10 @@ main =
 -- MODEL
 
 
+
 type alias Model =
-  { name : String
-  , password : String
+  { userName : String
+  , searchTerm : String
   , passwordAgain : String
   }
 
@@ -33,23 +34,15 @@ init =
 
 
 type Msg
-  = Name String
-  | Password String
-  | PasswordAgain String
+  = SEARCH_TERM_CHANGED String
+
 
 
 update : Msg -> Model -> Model
 update msg model =
   case msg of
-    Name name ->
-      { model | name = name }
-
-    Password password ->
-      { model | password = password }
-
-    PasswordAgain password ->
-      { model | passwordAgain = password }
-
+    SEARCH_TERM_CHANGED val ->
+      { model | searchTerm = val }
 
 
 -- VIEW
@@ -57,60 +50,4 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-  div []
-    [ viewInput "text" "Name" model.name Name
-    , viewInput "password" "Password" model.password Password
-    , viewInput "password" "Re-enter Password" model.passwordAgain PasswordAgain
-    , viewValidation model
-    , nameValidation model
-    ]
-
-
-viewInput : String -> String -> String -> (String -> msg) -> Html msg
-viewInput t p v toMsg =
-  input [ type_ t, placeholder p, value v, onInput toMsg ] []
-
-
-viewValidation : Model -> Html msg
-viewValidation model =
-  if String.length model.password < 3 then
-      div [ style "color" "red" ] [ text "Password too short" ]
-  else if not (anyUpperInString model.password) then
-      div [ style "color" "red" ] [ text "Password has no UpperCase !!" ]
-   else if not (anyLowerCaseInString model.password) then
-      div [ style "color" "red" ] [ text "Password has no lowercase !!" ]
-  else if not (anyNumberInString model.password) then
-      div [ style "color" "red" ] [ text "Password has no numbers!!" ]
-  else if model.password == model.passwordAgain then
-    div [ style "color" "green" ] [ text "OK" ]
-  else
-    div [ style "color" "red" ] [ text "Passwords do not match!" ]
-
-
-anyUpperInString : String -> Bool
-anyUpperInString str =
-    String.any Char.isUpper str
-
-anyLowerCaseInString : String -> Bool
-anyLowerCaseInString str =
-    String.any Char.isLower str
-
-
-conversionOfCharToIntSuccessful :  Char -> Bool
-conversionOfCharToIntSuccessful char =
-    case String.toInt (String.fromChar char) of
-        Just number ->
-            True
-        Nothing ->
-            False
-
-anyNumberInString : String -> Bool
-anyNumberInString string =
-    String.any conversionOfCharToIntSuccessful string
-
-nameValidation : Model -> Html msg
-nameValidation model =
-    if String.length model.name < 8 then
-        div [][ text "Name is not long enough.." ]
-    else
-        div [hidden True][ text "Hidden" ]
+  div [][]
