@@ -14,7 +14,6 @@ import {
     FETCH_RANDOM_ITEMS_SUCCEEDED,
     CREATE_SELL_ORDER_SUCCEEDED,
     DELETE_SELL_ORDER,
-    ADD_ITEM_TO_SELLORDER_SUCCEEDED,
     DELETE_SELLORDER_SUCCEEDED,
     FETCH_USER_MONEY_SUCCEEDED,
     ITEM_SUPPLY_CHANGED, ITEM_SOLD_ALERT,
@@ -134,47 +133,28 @@ export default (state = initState, action) => {
         case FETCH_USER_SELLORDERS_SUCCEEDED:
             return {...state, activeSellOrders: [...action.payload.sellOrders]};
 
-        case  ADD_ITEM_TO_SELLORDER_SUCCEEDED: {
-            let newInventory = [...state.inventoryItems]
-                .filter((item) => {
-                    return !(item.item.id === action.payload.item.id && item.quantity === action.payload.quantity)
-                })
-                .map(item => {
-                    const quantity = item.quantity;
-                    if (item.item.id === action.payload.item.id) {
-                        return {
-                            ...item,
-                            quantity: quantity - action.payload.quantity
-                        }
-                    }
-                    return item;
-                });
-            let newActiveSellOrders = [...state.activeSellOrders]
-                .map((sellOrder) => {
-                    if (sellOrder.item.id === action.payload.item.id) {
-                        const quantity = sellOrder.quantity;
-                        return {...sellOrder, quantity: quantity + action.payload.quantity};
-                    }
-                    return sellOrder;
-                });
-            return {...state, activeSellOrders: newActiveSellOrders, inventoryItems: newInventory}
-        }
-
         // Saga action of deleting a sell order
         case DELETE_SELLORDER_SUCCEEDED: {
-            const sellOrderRemoved = state.activeSellOrders.filter(sellOrder => sellOrder.item.id !== action.payload.item.id);
+            const sellOrdersRemoved =  state.activeSellOrders.filter(sellOrder => sellOrder.item.id === action.payload.item.id);
+            const newSellOrders = state.activeSellOrders.filter(sellOrder => sellOrder.item.id !== action.payload.item.id);
             const inventoryAdded = [...state.inventoryItems];
             let wasAdded = false;
             for (let inventory of inventoryAdded) {
                 if (inventory.item.id === action.payload.item.id) {
-                    inventory.quantity += action.payload.quantity;
+                    for(let sellOrder of sellOrdersRemoved) {
+                        inventory.quantity += sellOrder.quantity;
+                    }
                     wasAdded = true;
                 }
             }
             if (!wasAdded) {
-                inventoryAdded.push(action.payload);
+                let quantity = 0;
+                for (let sellOrder of sellOrdersRemoved) {
+                    quantity += sellOrder.quantity;
+                }
+                inventoryAdded.push({...action.payload, quantity: quantity});
             }
-            return {...state, activeSellOrders: sellOrderRemoved, inventoryItems: inventoryAdded}
+            return {...state, activeSellOrders: newSellOrders, inventoryItems: inventoryAdded}
         }
 
         //

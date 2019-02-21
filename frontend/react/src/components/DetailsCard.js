@@ -2,7 +2,6 @@ import './inventoryGrid.css'
 import React from 'react';
 import {Button, Card, CardContent, CardMedia, IconButton, Input, TextField, Typography} from "@material-ui/core";
 import {
-    addItemToSellOrderRequestedAction,
     addItemToSellOrderSucceeded, changeDetailItem,
     createSellOrderRequestedAction,
     fetchAverageItemPriceRequestedAction
@@ -42,17 +41,7 @@ class DetailsCard extends React.Component {
 
     sellItem = (item) => {
         const [seller_name, seller_realm] = this.props.user.split("-");
-        if (this.props.activeSellOrders.reduce((acc, curr) => {
-            return acc || curr.item.id === item.id
-        }, false)) {
-            const sellOrder = {
-                itemId: item.id,
-                quantity: this.props.detailItem.quantity,
-                seller_name: seller_name.toString(),
-                seller_realm: seller_realm.toString()
-            };
-            this.props.dispatch(addItemToSellOrderRequestedAction(sellOrder));
-        } else if (this.props.detailItem.quantity > 0 && this.props.inventoryItem.quantity >= this.props.detailItem.quantity) {
+        if (this.props.detailItem.quantity > 0 && this.props.inventoryItem.quantity >= this.props.detailItem.quantity) {
             const sellOrder = {
                 itemId: item.id,
                 price: this.props.detailItem.price,

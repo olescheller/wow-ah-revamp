@@ -7,7 +7,6 @@ import {
     makePurchase,
     downloadRandomItems,
     createSellOrder,
-    addItemToSellOrder,
     removeSellOrder,
     getUserMoney,
     getUserSellOrder
@@ -46,10 +45,6 @@ function* watchFetchRandomItems () {
 
 function* watchCreateSellOrder () {
     yield takeEvery('CREATE_SELL_ORDER_REQUESTED', sellOrder);
-}
-
-function* watchAddItemToSellOrder () {
-    yield takeEvery('ADD_ITEM_TO_SELLORDER_REQUESTED', addToSellOrder);
 }
 
 function* watchRemoveSellOrder () {
@@ -94,6 +89,7 @@ export function* sellOrder(action) {
 }
 
 export function* _removeSellOrder(action) {
+    console.log(action.payload)
     const {item, quantity, seller_name, seller_realm} = action.payload;
     try{
         const data = yield call(removeSellOrder, item.id, seller_name, seller_realm);
@@ -104,18 +100,6 @@ export function* _removeSellOrder(action) {
     }
 }
 
-
-export function* addToSellOrder(action) {
-    const {itemId, quantity, seller_name, seller_realm} = action.payload;
-    try{
-        const data = yield call(addItemToSellOrder, itemId, quantity, seller_name, seller_realm);
-        yield put(addItemToSellOrderSucceeded(data));
-    }
-    catch(error) {
-        yield put({type: "ADD_ITEM_TO_SELLORDER_FAILED", error})
-
-    }
-}
 
 export function* randomItems(action) {
     try{
@@ -174,7 +158,6 @@ export default function* rootSaga() {
         watchBuyItems(),
         watchFetchRandomItems(),
         watchCreateSellOrder(),
-        watchAddItemToSellOrder(),
         watchRemoveSellOrder(),
         watchGetUserMoney(),
         watchGetUserSellOrders(),

@@ -509,7 +509,7 @@ function removeSellOrder(converter, db, itemId, seller_name, seller_realm) {
         // Get item name
         let item = await getItemById(converter, db, itemId);
         const SellOrders = db.collection('sellorders');
-        await SellOrders.deleteOne({item_id: itemId, seller: seller_name, seller_realm: seller_realm});
+        await SellOrders.deleteMany({item_id: itemId, seller: seller_name, seller_realm: seller_realm});
         resolve(true);
     });
 }

@@ -78,23 +78,6 @@ export const createSellOrderSucceededAction = (sellOrder) => {
     };
 };
 
-
-export const ADD_ITEM_TO_SELLORDER_REQUESTED = 'ADD_ITEM_TO_SELLORDER_REQUESTED';
-export const addItemToSellOrderRequestedAction = (sellOrder) => {
-    return {
-        type: ADD_ITEM_TO_SELLORDER_REQUESTED,
-        payload: sellOrder,
-    }
-};
-
-export const ADD_ITEM_TO_SELLORDER_SUCCEEDED = 'ADD_ITEM_TO_SELLORDER_SUCCEEDED';
-export const addItemToSellOrderSucceeded = (sellOrder) => {
-    return {
-        type: ADD_ITEM_TO_SELLORDER_SUCCEEDED,
-        payload: sellOrder,
-    }
-};
-
 export const FETCH_AVERAGE_ITEM_PRICE_REQUESTED = "FETCH_AVERAGE_ITEM_PRICE_REQUESTED";
 export const fetchAverageItemPriceRequestedAction = (amount, itemId) => ({
     type: FETCH_AVERAGE_ITEM_PRICE_REQUESTED,

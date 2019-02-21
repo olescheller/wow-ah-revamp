@@ -132,25 +132,7 @@ describe('itemActions', () => {
     })
 });
 
-describe('itemActions', () => {
-    it('should create an action to request to add an item to an existing sell order', () => {
-        const expectedAction = {
-            type: itemActions.ADD_ITEM_TO_SELLORDER_REQUESTED,
-            payload: {Foo: "Bar"}
-        };
-        expect(itemActions.addItemToSellOrderRequestedAction({Foo: "Bar"})).toEqual(expectedAction)
-    })
-});
 
-describe('itemActions', () => {
-    it('should create an action to add an item to an existing sell order', () => {
-        const expectedAction = {
-            type: itemActions.ADD_ITEM_TO_SELLORDER_SUCCEEDED,
-            payload: {Foo: "Bar"}
-        };
-        expect(itemActions.addItemToSellOrderSucceeded({Foo: "Bar"})).toEqual(expectedAction)
-    })
-});
 
 describe('itemActions', () => {
     it('should create an action to request the average item price of an item for a certain amount', () => {
