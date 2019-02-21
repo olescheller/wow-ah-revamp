@@ -11,7 +11,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableHead from "@material-ui/core/TableHead";
 import Button from "@material-ui/core/Button";
 import MoneyView from "./MoneyView";
-import {deleteSellOrderAction} from "../redux/actions/itemActions";
+import {deleteSellOrderRequestedAction} from "../redux/actions/itemActions";
 import InfoBox from "./InfoBox";
 
 
@@ -41,7 +41,7 @@ class ActiveSellOrders extends React.Component {
     deleteSellOrder = (sellOrder) => {
         const [seller_name, seller_realm] = this.props.user.split('-');
         sellOrder = {...sellOrder, seller_name, seller_realm}
-        this.props.dispatch(deleteSellOrderAction(sellOrder));
+        this.props.dispatch(deleteSellOrderRequestedAction(sellOrder));
     }
 
     render(){

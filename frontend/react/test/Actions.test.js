@@ -111,3 +111,83 @@ describe('itemActions', () => {
         expect(itemActions.buyItemsSucceededAction({Foo: "Bar"})).toEqual(expectedAction)
     })
 });
+
+describe('itemActions', () => {
+    it('should create an action to request the creation of sell order', () => {
+        const expectedAction = {
+            type: itemActions.CREATE_SELL_ORDER_REQUESTED,
+            payload: {Foo: "Bar"}
+        };
+        expect(itemActions.createSellOrderRequestedAction({Foo: "Bar"})).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to create sell order', () => {
+        const expectedAction = {
+            type: itemActions.CREATE_SELL_ORDER_SUCCEEDED,
+            payload: {Foo: "Bar"}
+        };
+        expect(itemActions.createSellOrderSucceededAction({Foo: "Bar"})).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to request to add an item to an existing sell order', () => {
+        const expectedAction = {
+            type: itemActions.ADD_ITEM_TO_SELLORDER_REQUESTED,
+            payload: {Foo: "Bar"}
+        };
+        expect(itemActions.addItemToSellOrderRequestedAction({Foo: "Bar"})).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to add an item to an existing sell order', () => {
+        const expectedAction = {
+            type: itemActions.ADD_ITEM_TO_SELLORDER_SUCCEEDED,
+            payload: {Foo: "Bar"}
+        };
+        expect(itemActions.addItemToSellOrderSucceeded({Foo: "Bar"})).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to request the average item price of an item for a certain amount', () => {
+        const expectedAction = {
+            type: itemActions.FETCH_AVERAGE_ITEM_PRICE_REQUESTED,
+            payload: {amount: 42, itemId: 1337}
+        };
+        expect(itemActions.fetchAverageItemPriceRequestedAction(42,1337)).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to notify of succeeded fetching of average item price', () => {
+        const expectedAction = {
+            type: itemActions.FETCH_AVERAGE_ITEM_PRICE_SUCCEEDED,
+            payload: {itemId: 1337, perUnit: 22, total: 66}
+        };
+        expect(itemActions.fetchAverageItemPriceSucceededAction(1337, 22, 66)).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to request to delete an sell order', () => {
+        const expectedAction = {
+            type: itemActions.DELETE_SELLORDER_REQUESTED,
+            payload: {Foo:"Bar"}
+        };
+        expect(itemActions.deleteSellOrderRequestedAction( {Foo:"Bar"})).toEqual(expectedAction)
+    })
+});
+
+describe('itemActions', () => {
+    it('should create an action to delete an sell order', () => {
+        const expectedAction = {
+            type: itemActions.DELETE_SELLORDER_SUCCEEDED,
+            payload: {Foo:"Bar"}
+        };
+        expect(itemActions.deleteSellOrderSucceededAction( {Foo:"Bar"})).toEqual(expectedAction)
+    })
+});

@@ -3,6 +3,7 @@ export const searchValueChangedAction = (itemNameTerm) => ({
     type: SEARCH_VALUE_CHANGED,
     payload: {term: itemNameTerm}
 });
+
 export const FETCH_ITEM_SUPPLY_REQUESTED = "FETCH_ITEM_SUPPLY_REQUESTED";
 export const itemSupplyRequestAction = (itemNameTerm, itemCategory) => ({
     type: FETCH_ITEM_SUPPLY_REQUESTED,
@@ -23,13 +24,13 @@ export const buyQuantityChangedAction = (itemId, amount) => ({
 export const BUY_ITEMS_REQUESTED = "BUY_ITEMS_REQUESTED";
 export const buyItemsRequestedAction = (userName, itemId, amount, total, perItem) => ({
     type: BUY_ITEMS_REQUESTED,
-    payload:  {userName, itemId, amount, total, perItem},
+    payload: {userName, itemId, amount, total, perItem},
 });
 
 
 export const FETCH_RANDOM_ITEMS_REQUESTED = "FETCH_RANDOM_ITEMS_REQUESTED";
 export const fetchRandomItemsRequestedAction = () => ({
-  type:  FETCH_RANDOM_ITEMS_REQUESTED,
+    type: FETCH_RANDOM_ITEMS_REQUESTED,
     payload: {}
 });
 
@@ -49,63 +50,63 @@ export const buyItemsSucceededAction = (buyItems) => {
     };
 };
 
-export const CREATE_SELL_ORDER = "CREATE_SELL_ORDER";
-export const createSellOrder = (sellOrder) => {
+export const CREATE_SELL_ORDER_REQUESTED = "CREATE_SELL_ORDER_REQUESTED";
+export const createSellOrderRequestedAction = (sellOrder) => {
     return {
-        type: CREATE_SELL_ORDER,
+        type: CREATE_SELL_ORDER_REQUESTED,
         payload: sellOrder,
     }
 };
 
-export const SELL_ORDER_SUCCEEDED = "SELL_ORDER_SUCCEEDED";
-export const sellOrderSucceeded = (sellOrder) => {
+export const CREATE_SELL_ORDER_SUCCEEDED = "CREATE_SELL_ORDER_SUCCEEDED";
+export const createSellOrderSucceededAction = (sellOrder) => {
     return {
-        type: SELL_ORDER_SUCCEEDED,
+        type: CREATE_SELL_ORDER_SUCCEEDED,
         payload: sellOrder
     };
 };
 
 
-export const ADD_TO_SELLORDER_REQUESTED = 'ADD_TO_SELLORDER_REQUESTED';
-export const addItemToSellOrderRequested = (sellOrder) => {
+export const ADD_ITEM_TO_SELLORDER_REQUESTED = 'ADD_ITEM_TO_SELLORDER_REQUESTED';
+export const addItemToSellOrderRequestedAction = (sellOrder) => {
     return {
-        type: ADD_TO_SELLORDER_REQUESTED,
+        type: ADD_ITEM_TO_SELLORDER_REQUESTED,
         payload: sellOrder,
     }
 };
 
-export const ADD_TO_SELLORDER_SUCCEEDED = 'ADD_TO_SELLORDER_SUCCEEDED';
+export const ADD_ITEM_TO_SELLORDER_SUCCEEDED = 'ADD_ITEM_TO_SELLORDER_SUCCEEDED';
 export const addItemToSellOrderSucceeded = (sellOrder) => {
     return {
-        type: ADD_TO_SELLORDER_SUCCEEDED,
+        type: ADD_ITEM_TO_SELLORDER_SUCCEEDED,
         payload: sellOrder,
     }
 };
 
-export const AVERAGE_ITEM_PRICE_REQUESTED = "AVERAGE_ITEM_PRICE_REQUESTED";
-export const queryAverageItemPriceAction = (amount, itemId) => ({
-    type: AVERAGE_ITEM_PRICE_REQUESTED,
+export const FETCH_AVERAGE_ITEM_PRICE_REQUESTED = "FETCH_AVERAGE_ITEM_PRICE_REQUESTED";
+export const fetchAverageItemPriceRequestedAction = (amount, itemId) => ({
+    type: FETCH_AVERAGE_ITEM_PRICE_REQUESTED,
     payload: {amount, itemId}
 });
 
-export const AVERAGE_ITEM_PRICE_SUCCEEDED = "AVERAGE_ITEM_PRICE_SUCCEEDED";
-export const averageItemPriceSucceeded = (itemId, perUnit, total) => ({
-    type: AVERAGE_ITEM_PRICE_SUCCEEDED,
+export const FETCH_AVERAGE_ITEM_PRICE_SUCCEEDED = "FETCH_AVERAGE_ITEM_PRICE_SUCCEEDED";
+export const fetchAverageItemPriceSucceededAction = (itemId, perUnit, total) => ({
+    type: FETCH_AVERAGE_ITEM_PRICE_SUCCEEDED,
     payload: {itemId, perUnit, total}
 });
 
-export const REMOVE_SELLORDER_REQUESTED = "REMOVE_SELLORDER_REQUESTED";
-export const deleteSellOrderAction = (sellOrder) => {
+export const DELETE_SELLORDER_REQUESTED = "DELETE_SELLORDER_REQUESTED";
+export const deleteSellOrderRequestedAction = (sellOrder) => {
     return {
-        type: REMOVE_SELLORDER_REQUESTED,
+        type: DELETE_SELLORDER_REQUESTED,
         payload: sellOrder,
     }
 };
 
-export const DELETE_SELL_ORDER_SUCCEEDED = "DELETE_SELL_ORDER_SUCCEEDED";
-export const deleteSellOrderSucceeded = (sellOrder) => {
+export const DELETE_SELLORDER_SUCCEEDED = "DELETE_SELLORDER_SUCCEEDED";
+export const deleteSellOrderSucceededAction = (sellOrder) => {
     return {
-        type: DELETE_SELL_ORDER_SUCCEEDED,
+        type: DELETE_SELLORDER_SUCCEEDED,
         payload: sellOrder,
     }
 };

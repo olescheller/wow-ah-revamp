@@ -15,13 +15,13 @@ import {
 
 import {
     addItemToSellOrderSucceeded,
-    averageItemPriceSucceeded,
+    fetchAverageItemPriceSucceededAction,
     buyItemsSucceededAction,
-    deleteSellOrderAction,
-    deleteSellOrderSucceeded,
+    deleteSellOrderRequestedAction,
+    deleteSellOrderSucceededAction,
     itemSupplySucceededAction,
     fetchRandomItemsSucceededAction,
-    sellOrderSucceeded,
+    createSellOrderSucceededAction,
     USER_MONEY_REQUESTED,
     USER_SELL_ORDERS_REQUESTED,
     userMoneyRequestSucceededAction, userSellOrdersRequestSucceededAction
@@ -33,7 +33,7 @@ function* watchFetchItemSupply() {
 }
 
 function* watchAverageItemPrice() {
-    yield takeEvery('AVERAGE_ITEM_PRICE_REQUESTED', fetchAverageItemPrice);
+    yield takeEvery('FETCH_AVERAGE_ITEM_PRICE_REQUESTED', fetchAverageItemPrice);
 }
 
 function* watchBuyItems() {
@@ -45,15 +45,15 @@ function* watchFetchRandomItems () {
 }
 
 function* watchCreateSellOrder () {
-    yield takeEvery('CREATE_SELL_ORDER', sellOrder);
+    yield takeEvery('CREATE_SELL_ORDER_REQUESTED', sellOrder);
 }
 
 function* watchAddItemToSellOrder () {
-    yield takeEvery('ADD_TO_SELLORDER_REQUESTED', addToSellOrder);
+    yield takeEvery('ADD_ITEM_TO_SELLORDER_REQUESTED', addToSellOrder);
 }
 
 function* watchRemoveSellOrder () {
-    yield takeEvery('REMOVE_SELLORDER_REQUESTED', _removeSellOrder);
+    yield takeEvery('DELETE_SELLORDER_REQUESTED', _removeSellOrder);
 }
 function* watchGetUserMoney () {
     yield takeEvery(USER_MONEY_REQUESTED, updateUserMoney);
@@ -86,7 +86,7 @@ export function* sellOrder(action) {
     const {itemId, price, quantity, seller_name, seller_realm} = action.payload;
     try{
         const data = yield call(createSellOrder, itemId, price, quantity, seller_name, seller_realm );
-        yield put(sellOrderSucceeded(data))
+        yield put(createSellOrderSucceededAction(data))
     }
     catch(error){
         yield put({type: "SELL_ORDER_FAILED", error})
@@ -97,7 +97,7 @@ export function* _removeSellOrder(action) {
     const {item, quantity, seller_name, seller_realm} = action.payload;
     try{
         const data = yield call(removeSellOrder, item.id, seller_name, seller_realm);
-        yield put(deleteSellOrderSucceeded({item, quantity}))
+        yield put(deleteSellOrderSucceededAction({item, quantity}))
     }
     catch(error){
         yield put({type: "DELETE_SELL_ORDER_FAILED", error})
@@ -143,9 +143,9 @@ export function* fetchAverageItemPrice(action) {
     try {
         const data = yield call(downloadAverageItemPrice, action.payload.itemId, amount);
         if(!data) {
-            yield put(averageItemPriceSucceeded(action.payload.itemId, null, null));
+            yield put(fetchAverageItemPriceSucceededAction(action.payload.itemId, null, null));
         }
-        yield put(averageItemPriceSucceeded(action.payload.itemId, data.perUnit, data.total));
+        yield put(fetchAverageItemPriceSucceededAction(action.payload.itemId, data.perUnit, data.total));
     } catch (error) {
         yield put({type: "AVERAGE_ITEM_PRICE_FAILED", error})
     }

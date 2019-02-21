@@ -6,16 +6,16 @@ import {
 } from "./actions/actions";
 import {
     BUY_QUANTITY_CHANGED,
-    AVERAGE_ITEM_PRICE_SUCCEEDED,
+    FETCH_AVERAGE_ITEM_PRICE_SUCCEEDED,
     FETCH_ITEM_SUPPLY_SUCCEEDED,
     SEARCH_VALUE_CHANGED,
     BUY_ITEM_SUCCEEDED,
     BUY_ITEMS_SUCCEEDED,
     FETCH_RANDOM_ITEMS_SUCCEEDED,
-    SELL_ORDER_SUCCEEDED,
+    CREATE_SELL_ORDER_SUCCEEDED,
     DELETE_SELL_ORDER,
-    ADD_TO_SELLORDER_SUCCEEDED,
-    DELETE_SELL_ORDER_SUCCEEDED,
+    ADD_ITEM_TO_SELLORDER_SUCCEEDED,
+    DELETE_SELLORDER_SUCCEEDED,
     USER_MONEY_REQUEST_SUCCEEDED,
     ITEM_SUPPLY_CHANGED, ITEM_SOLD_ALERT,
     USER_SELL_ORDERS_REQUEST_SUCCEEDED, ITEM_BOUGHT_SUBSCRIPTION
@@ -73,7 +73,7 @@ export default (state = initState, action) => {
             return {...state, price: tmpPrice, buyQuantity: tempBuyQuantity, quantityExceeded: tmpQuantityExceeded};
 
         // Saga action type of fetching the average and total item price of an item supply after entering an amount
-        case AVERAGE_ITEM_PRICE_SUCCEEDED:
+        case FETCH_AVERAGE_ITEM_PRICE_SUCCEEDED:
             const tempPrice = {...state.price};
             tempPrice[action.payload.itemId] = {perUnit: action.payload.perUnit, total: action.payload.total};
             return {...state, price: tempPrice};
@@ -104,7 +104,7 @@ export default (state = initState, action) => {
             return {...state, inventoryItems: action.payload};
         }
 
-        case SELL_ORDER_SUCCEEDED: {
+        case CREATE_SELL_ORDER_SUCCEEDED: {
             let newInventory = [...state.inventoryItems]
                 .filter((item) => {
                     return !(item.item.id === action.payload.item.id && item.quantity === action.payload.quantity)
@@ -128,7 +128,7 @@ export default (state = initState, action) => {
         case USER_SELL_ORDERS_REQUEST_SUCCEEDED:
             return {...state, activeSellOrders: [...action.payload.sellOrders]};
 
-        case  ADD_TO_SELLORDER_SUCCEEDED: {
+        case  ADD_ITEM_TO_SELLORDER_SUCCEEDED: {
             let newInventory = [...state.inventoryItems]
                 .filter((item) => {
                     return !(item.item.id === action.payload.item.id && item.quantity === action.payload.quantity)
@@ -155,7 +155,7 @@ export default (state = initState, action) => {
         }
 
         // Saga action of deleting a sell order
-        case DELETE_SELL_ORDER_SUCCEEDED: {
+        case DELETE_SELLORDER_SUCCEEDED: {
             const sellOrderRemoved = state.activeSellOrders.filter(sellOrder => sellOrder.item.id !== action.payload.item.id);
             const inventoryAdded = [...state.inventoryItems];
             let wasAdded = false;

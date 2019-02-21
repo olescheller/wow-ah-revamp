@@ -5,7 +5,7 @@ import {Badge, Paper, Tooltip, Typography} from "@material-ui/core";
 import Grid from '@material-ui/core/Grid';
 import './inventoryGrid.css'
 import DetailsCard from "./DetailsCard";
-import {queryAverageItemPriceAction, fetchRandomItemsRequestedAction} from "../redux/actions/itemActions";
+import {fetchAverageItemPriceRequestedAction, fetchRandomItemsRequestedAction} from "../redux/actions/itemActions";
 import InfoBox from "./InfoBox";
 import {setInfoBox} from "../redux/actions/actions";
 
@@ -24,7 +24,7 @@ class InventoryGrid extends React.Component {
     renderDetails = () => {
         if(this.state.selectedItem) {
             console.log(this.state.selectedItem)
-            this.props.dispatch(queryAverageItemPriceAction(1, this.state.selectedItem.item.id));
+            this.props.dispatch(fetchAverageItemPriceRequestedAction(1, this.state.selectedItem.item.id));
             return <DetailsCard inventoryItem={this.state.selectedItem}/>
         }
     }
@@ -42,7 +42,7 @@ class InventoryGrid extends React.Component {
 
 
     showDetails = (item) => {
-        this.props.dispatch(queryAverageItemPriceAction(1, item.item.id));
+        this.props.dispatch(fetchAverageItemPriceRequestedAction(1, item.item.id));
         this.setState({selectedItem: item})
     }
 

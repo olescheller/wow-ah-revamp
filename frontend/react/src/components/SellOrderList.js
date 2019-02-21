@@ -12,7 +12,7 @@ import {
     buyItemsRequestedAction,
     buyQuantityChangedAction,
     itemBoughtSubscriptionAction,
-    queryAverageItemPriceAction
+    fetchAverageItemPriceRequestedAction
 } from "../redux/actions/itemActions";
 import './itemsupply.css'
 import { withStyles } from '@material-ui/core/styles';
@@ -80,7 +80,7 @@ class SellOrderList extends React.Component {
         }
         else {
             this.props.dispatch(buyQuantityChangedAction(itemSupply.item.id, buyQty));
-            this.props.dispatch(queryAverageItemPriceAction(buyQty, itemSupply.item.id));
+            this.props.dispatch(fetchAverageItemPriceRequestedAction(buyQty, itemSupply.item.id));
             }
         };
 
