@@ -60,11 +60,11 @@ type Subscription {
 }
 
 type SellOrderAlert {
-    buyerName: String!
     sellerName: String!
+    buyerName: String!
     itemName: String!
     amount: Int!
-    money: Int!
+    money: Float!
 }
 
 type InventoryItem {
@@ -181,6 +181,7 @@ type User {
                 const receipt = await buyItems(converter, db, userName, itemId, amount, total, perUnit);
                 pubsub.publish("CHANGE_ITEM_SUPPLY_SUBSCRIPTION", {receipt});
                 const sellOrderAlert = receipt.sold;
+                console.log(sellOrderAlert)
                 pubsub.publish('SELL_ORDER_SUBSCRIPTION', {sellOrderAlert});
                 return receipt;
             },
@@ -219,7 +220,9 @@ type User {
             },
             sellOrderAlert: {
                 subscribe: withFilter(() => { return pubsub.asyncIterator('SELL_ORDER_SUBSCRIPTION')}, (payload, variables) => {
+                    console.log({payload}, {variables})
                     const check = payload.sellOrderAlert.filter(alert => alert.sellerName === variables.sellerName);
+                    console.log({check})
                     return check.length > 0;
                 })
             }

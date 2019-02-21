@@ -50,6 +50,7 @@ export const ReceiptSubscription = (itemSupply, type, callback) => {
         variables={{itemId}}
         shouldResubscribe={true}
         onSubscriptionData={(data) => {
+            console.log({data})
             const receipt = data.subscriptionData.data.receipt;
             callback(receipt);
         }}
@@ -62,6 +63,7 @@ export const ReceiptSubscription = (itemSupply, type, callback) => {
 
 
 export const SellOrderAlertSubscription = (sellerName, callback) => {
+    console.log({sellerName})
     return (
         <Subscription
             subscription={SELL_ORDER_ALERT_SUBSCRIPTION}

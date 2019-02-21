@@ -387,6 +387,7 @@ function getItemsPrice(db, itemId, amount) {
 
 function buyItems(converter, db, userName, itemId, amount, givenTotal, givenPerUnit) {
     return new Promise(async (resolve, reject) => {
+        let buyerMoney = 0;
         const item = await getItemById(converter, db, itemId)
         const SellOrders = db.collection('sellorders');
         SellOrders.find({item_id: itemId}).sort({price: 1}).toArray((err, sellOrders) => {
@@ -408,7 +409,6 @@ function buyItems(converter, db, userName, itemId, amount, givenTotal, givenPerU
                 let buyFullSellOrders = [];
                 let buyPartSellOrders = [];
                 const sold = [];
-                let buyerMoney = null;
                 //lock db
                 while (amountLeft > 0 && i < sellOrders.length) {
                     if (sellOrders[i].quantity <= amountLeft) {
@@ -431,14 +431,19 @@ function buyItems(converter, db, userName, itemId, amount, givenTotal, givenPerU
                 if (perUnit === givenPerUnit && total === givenTotal) {
                     const Users = db.collection('users');
                         //buy fullSellorders
-                        for (sellOrder of buyFullSellOrders) {
+                        for (let sellOrder of buyFullSellOrders) {
                             SellOrders.deleteOne({_id: sellOrder.id});
                             // increase sellers money
                             Users.findOne({name: sellOrder.seller}, (err, seller) => {
                                 if(err) reject('seller not found');
-                                //calculate new money values for seller  -> if seller is buyer, don't change values
-                                let seller_money = userName === sellOrder.seller ? seller.money : seller.money + sellOrder.price;
-                                buyerMoney = userName === sellOrder.seller ?  seller_money : null;
+                                let seller_money;
+                                if(userName === sellOrder.seller) {
+                                    seller_money = seller.money;
+                                    buyerMoney = seller_money;
+                                }
+                                else {
+                                    seller_money = seller.money + sellOrder.price;;
+                                }
                                 Users.updateOne({name: sellOrder.seller}, {$set: {money: seller_money}})
 
                                 sold.push({
@@ -451,14 +456,19 @@ function buyItems(converter, db, userName, itemId, amount, givenTotal, givenPerU
                             })
                         }
                         //buy partSellorders
-                        for (sellOrder of buyPartSellOrders) {
+                        for (let sellOrder of buyPartSellOrders) {
                             SellOrders.updateOne({_id: sellOrder.id}, {$set: {quantity: sellOrder.left}});
                             // increase sellers money
                             Users.findOne({name: sellOrder.seller}, (err, seller) => {
                                 if(err) reject('seller not found');
-                                //calculate new money values for seller  -> if seller is buyer, don't change values
-                                let seller_money = userName === sellOrder.seller ? seller.money : seller.money + sellOrder.price;
-                                buyerMoney = userName === sellOrder.seller ?  seller_money : null;
+                                let seller_money;
+                                if(userName === sellOrder.seller) {
+                                    seller_money = seller.money;
+                                    buyerMoney = seller_money;
+                                }
+                                else {
+                                    seller_money = seller.money + sellOrder.price;
+                                }
                                 Users.updateOne({name: sellOrder.seller}, {$set: {money: seller_money}})
 
                                 sold.push({
@@ -477,14 +487,12 @@ function buyItems(converter, db, userName, itemId, amount, givenTotal, givenPerU
                             return;
                         }
                         Users.updateOne({name: userName}, {$set: {money: buyerMoney}});
-                    });
+
 
                         SellOrders.find({item_id: itemId}).sort({price: 1}).toArray((err, sellOrders) => {
                             if (err) reject(err);
                             const newMinPrice = sellOrders.length > 0 ? sellOrders[0].price : null;
                             const newQuantity = quantity - amount;
-                            //publish to subscription
-                            console.log({sold})
                             resolve({
                                 item: item,
                                 amount: newQuantity,
@@ -495,6 +503,9 @@ function buyItems(converter, db, userName, itemId, amount, givenTotal, givenPerU
                                 sold: sold,
                             });
                         });
+
+                    });
+
                 } else {
                     reject("The price has changed during the operation");
                     return;
