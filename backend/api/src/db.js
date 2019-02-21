@@ -427,10 +427,8 @@ function buyItems(converter, db, userName, itemId, amount, givenTotal, givenPerU
                     i++;
                 }
                 let perUnit = (total / amount);
-                console.log({total})
                 //compare price
                 if (perUnit === givenPerUnit && total === givenTotal) {
-                    //decrease buyers money
                     const Users = db.collection('users');
                         //buy fullSellorders
                         for (sellOrder of buyFullSellOrders) {
@@ -438,14 +436,9 @@ function buyItems(converter, db, userName, itemId, amount, givenTotal, givenPerU
                             // increase sellers money
                             Users.findOne({name: sellOrder.seller}, (err, seller) => {
                                 if(err) reject('seller not found');
-                                let seller_money;
-                                if(userName === sellOrder.seller) {
-                                    seller_money = seller.money;
-                                    buyerMoney = seller_money;
-                                }
-                                else {
-                                    seller_money = seller.money + sellOrder.price;
-                                }
+                                //calculate new money values for seller  -> if seller is buyer, don't change values
+                                let seller_money = userName === sellOrder.seller ? seller.money : seller.money + sellOrder.price;
+                                buyerMoney = userName === sellOrder.seller ?  seller_money : null;
                                 Users.updateOne({name: sellOrder.seller}, {$set: {money: seller_money}})
 
                                 sold.push({
@@ -463,14 +456,9 @@ function buyItems(converter, db, userName, itemId, amount, givenTotal, givenPerU
                             // increase sellers money
                             Users.findOne({name: sellOrder.seller}, (err, seller) => {
                                 if(err) reject('seller not found');
-                                let seller_money;
-                                if(userName === sellOrder.seller) {
-                                    seller_money = seller.money;
-                                    buyerMoney = seller_money;
-                                }
-                                else {
-                                    seller_money = seller.money + sellOrder.price;;
-                                }
+                                //calculate new money values for seller  -> if seller is buyer, don't change values
+                                let seller_money = userName === sellOrder.seller ? seller.money : seller.money + sellOrder.price;
+                                buyerMoney = userName === sellOrder.seller ?  seller_money : null;
                                 Users.updateOne({name: sellOrder.seller}, {$set: {money: seller_money}})
 
                                 sold.push({
