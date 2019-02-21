@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
+    "concurrently": "^4.1.0"
   },
   "scripts": {
     "installgraphql": "npm i --prefix=backend/api/",
@@ -13,14 +13,15 @@
     "installAll": "npm run installgraphql && npm run installreact",
     "graphql": "nodemon --watch backend/api/src backend/api/src/index.js",
     "gql": "nodemon --watch backend/api/src backend/api/src/index.js",
-    "gp": "node backend/api/src/index.js",
     "mongo": "mongod --dbpath=db",
     "react": "npm start --prefix frontend/react",
-    "rp": "npm run build --prefix frontend/react; serve -s frontend/react/build",
     "reactw": "pushd .\\frontend\\react && npm start",
     "ireactw": "pushd .\\frontend\\react && npm install",
     "igraphqlw": "pushd .\\backend\\api && npm install",
-    "gqlw": "nodemon --watch backend\\api\\src backend\\api\\src\\index.js"
+    "gqlw": "nodemon --watch backend\\api\\src backend\\api\\src\\index.js",
+    "gp": "node backend/api/src/index.js",
+    "rp": "npm run build --prefix frontend/react; serve -s frontend/react/build",
+    "p": "concurrently --kill-others \"npm run gp\" \"npm run rp\""
   },
   "repository": {
     "type": "git",
