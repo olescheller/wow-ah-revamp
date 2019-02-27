@@ -6,56 +6,70 @@ import Html
 import Html.Attributes as Attr
 import Html.Events as Evt exposing (onClick)
 import Page.Buy as Buy exposing (..)
-
+import List exposing (..)
+import Maybe exposing (Maybe(..))
+import Http
+import String exposing (..)
+import Json.Decode exposing (list, string)
 
 type alias Model =
-    { color1 : Color
-    , color2 : Color
+    { items : List Item
     , route: Route
     }
 
+type alias Item =
+    {name: String,
+    amount: Int
+    }
+
+item: String -> Int -> Item
+item n a = {name= n, amount= a}
 
 initialModel : Model
 initialModel =
-    { color1 = Color.rgb 50 200 100
-    , color2 = Color.rgb 0 0 0
-    , route = HOME
+    { items = [(item "wool" 1), (item "linen" 3), (item "steel" 2)]
+    , route = SELL
     }
 
 
-type Route = HOME | COLOR
+type Route = SELL | BUY
 
 type Msg
-    = UpdateColor1 Color
-    | UpdateColor2 Color
-    | SelectedRoute Route
+    = SelectedRoute Route |
+    GotItemSupplies (Result Http.Error (List String))
 
 
-update : Msg -> Model -> Model
+
+update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
-        UpdateColor1 newColor1 ->
-            { model | color1 = newColor1 }
-
-        UpdateColor2 newColor2 ->
-            { model | color2 = newColor2 }
-
         SelectedRoute newRoute ->
-            {model | route = newRoute}
+            ({model | route = newRoute}, Cmd.none)
+        GotItemSupplies Result ->
+            (model, getItemSupplies)
+
+
+getItemSupplies : Cmd Msg
+getItemSupplies =
+    let qry =  "{items_supply(partialItemName:" ++ "\"wool\")" ++ "{ item {id name icon}, min_price quantity}}"
+
+    in
+        Http.post
+            { url = "http://localhost:4000/"
+            , body = Http.stringBody "text/plain" qry
+            , expect = Http.expectJson GotItemSupplies (list string)
+            }
 
 
 renderPage: Model -> Html.Html Msg
 renderPage model =
    case model.route of
-   HOME ->
+   SELL ->
         Html.div[][Html.text "home"]
-   COLOR ->
+   BUY ->
             Html.div[] [
-                Html.h1 [ Attr.style "color" (toColorCss model.color1) ] [ Html.text "Title 1" ]
-               , Buy.colorPicker model.color1 UpdateColor1
-               , Html.hr [] []
-               , Html.h1 [ Attr.style "color" (toColorCss model.color2) ] [ Html.text "Title 2" ]
-               , Buy.colorPicker model.color2 UpdateColor2
+                Html.h1 [ Attr.style "color" "green" ] [ Html.text "Item supplies" ]
+               , Buy.buyList model.items
                ]
 
 
@@ -64,11 +78,12 @@ view model =
     Html.div []
         [
          Html.div[] [
-            Html.button[onClick (SelectedRoute COLOR)][
-                Html.text "COLOR PICKER"
+            Html.button[onClick (SelectedRoute BUY)][
+                Html.text "BUY"
             ],
-            Html.button[onClick (SelectedRoute HOME)] [
-                Html.text "HOME"
+
+            Html.button[onClick (SelectedRoute SELL)] [
+                Html.text "SELL"
             ]
          ]
          ,
