@@ -132,6 +132,7 @@ type User {
     const resolvers = {
         Query: {
             item: async (_, {id}) => {
+                console.log({id})
                 return await getItemById(converter, db, id);
             },
             item_class: async (_, {id}) => {

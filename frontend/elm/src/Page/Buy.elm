@@ -5,20 +5,16 @@ import Html
 import Html.Attributes as Attr
 import Html.Events as Evt
 import List exposing (..)
+import State exposing (..)
 import Maybe exposing (Maybe(..))
 
-type alias Item =
-    {name: String,
-    amount: Int
-    }
-   
 
 
-renderItem : Item -> Html.Html msg
+renderItem : FakeItem -> Html.Html msg
 renderItem item =
   Html.li [] [ Html.text <|  (String.fromInt item.amount) ++ ("#" ++ item.name) ]
 
-renderItems : List Item -> Html.Html msg
+renderItems : List FakeItem -> Html.Html msg
 renderItems items =
   let
     supplyItems = List.map renderItem items
@@ -26,7 +22,7 @@ renderItems items =
     Html.ul [] supplyItems
 
 
-buyList: List Item -> Html.Html msg
+buyList: List FakeItem -> Html.Html msg
 buyList items = Html.div[][
                renderItems items
             ]

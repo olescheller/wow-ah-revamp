@@ -1,6 +1,5 @@
 module State exposing (..)
 
-
 type Route = SELL | BUY
 
 
@@ -9,13 +8,16 @@ type alias UiState =
     route: Route
     }
 
-type alias Item =
+type alias FakeItem =
     {name: String,
     amount: Int
     }
 
+type alias Item = { name : String }
+
+
 type alias DataState =
-    { items : List Item }
+      Item
 
 type alias State =
     {
