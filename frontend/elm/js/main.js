@@ -4643,9 +4643,20 @@ function _Browser_load(url)
 var author$project$App$initialDataState = {name: 'default'};
 var author$project$State$SELL = {$: 'SELL'};
 var author$project$App$initialUiState = {route: author$project$State$SELL};
-var author$project$App$GotResponse = function (a) {
+var author$project$Action$GotResponse = function (a) {
 	return {$: 'GotResponse', a: a};
 };
+var dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument = F2(
+	function (a, b) {
+		return {$: 'Argument', a: a, b: b};
+	});
+var dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required = F3(
+	function (fieldName, raw, encode) {
+		return A2(
+			dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument,
+			fieldName,
+			encode(raw));
+	});
 var Skinney$murmur3$Murmur3$HashData = F4(
 	function (shift, seed, hash, charsProcessed) {
 		return {charsProcessed: charsProcessed, hash: hash, seed: seed, shift: shift};
@@ -5413,73 +5424,6 @@ var dillonkearns$elm_graphql$Graphql$Document$Field$hashedAliasName = function (
 		dillonkearns$elm_graphql$Graphql$RawField$name(field),
 		dillonkearns$elm_graphql$Graphql$Document$Field$alias(field));
 };
-var dillonkearns$elm_graphql$Graphql$RawField$Leaf = F2(
-	function (a, b) {
-		return {$: 'Leaf', a: a, b: b};
-	});
-var dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$leaf = F2(
-	function (details, args) {
-		return A2(dillonkearns$elm_graphql$Graphql$RawField$Leaf, details, args);
-	});
-var dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet = F2(
-	function (a, b) {
-		return {$: 'SelectionSet', a: a, b: b};
-	});
-var elm$json$Json$Decode$field = _Json_decodeField;
-var dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField = F4(
-	function (typeString, fieldName, args, decoder) {
-		var newLeaf = A2(
-			dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$leaf,
-			{fieldName: fieldName, typeString: typeString},
-			args);
-		return A2(
-			dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
-			_List_fromArray(
-				[newLeaf]),
-			A2(
-				elm$json$Json$Decode$field,
-				dillonkearns$elm_graphql$Graphql$Document$Field$hashedAliasName(newLeaf),
-				decoder));
-	});
-var elm$json$Json$Decode$string = _Json_decodeString;
-var author$project$Gqllib$Object$Item$name = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'String', 'name', _List_Nil, elm$json$Json$Decode$string);
-var author$project$State$Item = function (name) {
-	return {name: name};
-};
-var elm$json$Json$Decode$succeed = _Json_succeed;
-var dillonkearns$elm_graphql$Graphql$SelectionSet$succeed = function (constructor) {
-	return A2(
-		dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
-		_List_Nil,
-		elm$json$Json$Decode$succeed(constructor));
-};
-var elm$json$Json$Decode$map2 = _Json_map2;
-var dillonkearns$elm_graphql$Graphql$SelectionSet$with = F2(
-	function (_n0, _n1) {
-		var selectionFields1 = _n0.a;
-		var selectionDecoder1 = _n0.b;
-		var selectionFields2 = _n1.a;
-		var selectionDecoder2 = _n1.b;
-		return A2(
-			dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
-			_Utils_ap(selectionFields1, selectionFields2),
-			A3(elm$json$Json$Decode$map2, elm$core$Basics$apR, selectionDecoder1, selectionDecoder2));
-	});
-var author$project$App$item = A2(
-	dillonkearns$elm_graphql$Graphql$SelectionSet$with,
-	author$project$Gqllib$Object$Item$name,
-	dillonkearns$elm_graphql$Graphql$SelectionSet$succeed(author$project$State$Item));
-var dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument = F2(
-	function (a, b) {
-		return {$: 'Argument', a: a, b: b};
-	});
-var dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required = F3(
-	function (fieldName, raw, encode) {
-		return A2(
-			dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument,
-			fieldName,
-			encode(raw));
-	});
 var dillonkearns$elm_graphql$Graphql$RawField$Composite = F3(
 	function (a, b, c) {
 		return {$: 'Composite', a: a, b: b, c: c};
@@ -5488,6 +5432,11 @@ var dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$composite = F3(
 	function (fieldName, args, fields) {
 		return A3(dillonkearns$elm_graphql$Graphql$RawField$Composite, fieldName, args, fields);
 	});
+var dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet = F2(
+	function (a, b) {
+		return {$: 'SelectionSet', a: a, b: b};
+	});
+var elm$json$Json$Decode$field = _Json_decodeField;
 var dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField = F4(
 	function (fieldName, args, _n0, decoderTransform) {
 		var fields = _n0.a;
@@ -5538,10 +5487,61 @@ var author$project$Gqllib$Query$item = F2(
 			object_,
 			A2(elm$core$Basics$composeR, elm$core$Basics$identity, elm$json$Json$Decode$nullable));
 	});
-var author$project$App$query = A2(
+var dillonkearns$elm_graphql$Graphql$RawField$Leaf = F2(
+	function (a, b) {
+		return {$: 'Leaf', a: a, b: b};
+	});
+var dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$leaf = F2(
+	function (details, args) {
+		return A2(dillonkearns$elm_graphql$Graphql$RawField$Leaf, details, args);
+	});
+var dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField = F4(
+	function (typeString, fieldName, args, decoder) {
+		var newLeaf = A2(
+			dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$leaf,
+			{fieldName: fieldName, typeString: typeString},
+			args);
+		return A2(
+			dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
+			_List_fromArray(
+				[newLeaf]),
+			A2(
+				elm$json$Json$Decode$field,
+				dillonkearns$elm_graphql$Graphql$Document$Field$hashedAliasName(newLeaf),
+				decoder));
+	});
+var elm$json$Json$Decode$string = _Json_decodeString;
+var author$project$Gqllib$Object$Item$name = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'String', 'name', _List_Nil, elm$json$Json$Decode$string);
+var author$project$State$Item = function (name) {
+	return {name: name};
+};
+var elm$json$Json$Decode$succeed = _Json_succeed;
+var dillonkearns$elm_graphql$Graphql$SelectionSet$succeed = function (constructor) {
+	return A2(
+		dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
+		_List_Nil,
+		elm$json$Json$Decode$succeed(constructor));
+};
+var elm$json$Json$Decode$map2 = _Json_map2;
+var dillonkearns$elm_graphql$Graphql$SelectionSet$with = F2(
+	function (_n0, _n1) {
+		var selectionFields1 = _n0.a;
+		var selectionDecoder1 = _n0.b;
+		var selectionFields2 = _n1.a;
+		var selectionDecoder2 = _n1.b;
+		return A2(
+			dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
+			_Utils_ap(selectionFields1, selectionFields2),
+			A3(elm$json$Json$Decode$map2, elm$core$Basics$apR, selectionDecoder1, selectionDecoder2));
+	});
+var author$project$Queries$item = A2(
+	dillonkearns$elm_graphql$Graphql$SelectionSet$with,
+	author$project$Gqllib$Object$Item$name,
+	dillonkearns$elm_graphql$Graphql$SelectionSet$succeed(author$project$State$Item));
+var author$project$Queries$query = A2(
 	author$project$Gqllib$Query$item,
 	{id: 25},
-	author$project$App$item);
+	author$project$Queries$item);
 var dillonkearns$elm_graphql$Graphql$Http$GraphqlError = F2(
 	function (a, b) {
 		return {$: 'GraphqlError', a: a, b: b};
@@ -6993,14 +6993,14 @@ var dillonkearns$elm_graphql$Graphql$Http$send = F2(
 		return (request.withCredentials ? elm$http$Http$riskyRequest : elm$http$Http$request)(
 			A2(dillonkearns$elm_graphql$Graphql$Http$toHttpRequestRecord, resultToMessage, fullRequest));
 	});
-var author$project$App$makeRequest = A2(
+var author$project$Queries$makeRequest = A2(
 	dillonkearns$elm_graphql$Graphql$Http$send,
-	A2(elm$core$Basics$composeR, dillonkearns$elm_graphql$Graphql$Http$discardParsedErrorData, author$project$App$GotResponse),
-	A2(dillonkearns$elm_graphql$Graphql$Http$queryRequest, 'http://localhost:4000/', author$project$App$query));
+	A2(elm$core$Basics$composeR, dillonkearns$elm_graphql$Graphql$Http$discardParsedErrorData, author$project$Action$GotResponse),
+	A2(dillonkearns$elm_graphql$Graphql$Http$queryRequest, 'http://localhost:4000/', author$project$Queries$query));
 var author$project$App$initialModel = function (a) {
 	return _Utils_Tuple2(
 		{data: author$project$App$initialDataState, ui: author$project$App$initialUiState},
-		author$project$App$makeRequest);
+		author$project$Queries$makeRequest);
 };
 var elm$core$Platform$Sub$batch = _Platform_batch;
 var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
@@ -7037,7 +7037,7 @@ var author$project$App$update = F2(
 			}
 		}
 	});
-var author$project$App$SelectedRoute = function (a) {
+var author$project$Action$SelectedRoute = function (a) {
 	return {$: 'SelectedRoute', a: a};
 };
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
@@ -7110,7 +7110,7 @@ var author$project$App$view = function (model) {
 						_List_fromArray(
 							[
 								elm$html$Html$Events$onClick(
-								author$project$App$SelectedRoute(author$project$State$BUY))
+								author$project$Action$SelectedRoute(author$project$State$BUY))
 							]),
 						_List_fromArray(
 							[
@@ -7121,7 +7121,7 @@ var author$project$App$view = function (model) {
 						_List_fromArray(
 							[
 								elm$html$Html$Events$onClick(
-								author$project$App$SelectedRoute(author$project$State$SELL))
+								author$project$Action$SelectedRoute(author$project$State$SELL))
 							]),
 						_List_fromArray(
 							[
