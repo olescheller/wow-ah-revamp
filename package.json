@@ -21,7 +21,8 @@
     "gqlw": "nodemon --watch backend\\api\\src backend\\api\\src\\index.js",
     "gp": "node backend/api/src/index.js",
     "rp": "npm run build --prefix frontend/react; serve -s frontend/react/build",
-    "p": "concurrently --kill-others \"npm run gp\" \"npm run rp\""
+    "p": "concurrently --kill-others \"npm run gp\" \"npm run rp\"",
+    "test": "pushd frontent/react; npm run test; popd"
   },
   "repository": {
     "type": "git",

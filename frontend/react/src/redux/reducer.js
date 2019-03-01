@@ -21,7 +21,7 @@ import {
 } from "./actions/itemActions";
 import {inventorySize} from "../config/config";
 
-const initState = {
+export const initState = {
     user: "",
     money: 0,
     selectedCategory: NaN,
@@ -43,11 +43,15 @@ const initState = {
 
 export default (state = initState, action) => {
     switch (action.type) {
+
         // Set the details of the currently selected item on the selling page
         case SET_SELLING_DETAILS:
             return {...state, detailItem: action.payload};
+
+        // Change the item that is currently selected as a the detail item
         case CHANGE_DETAIL_ITEM:
             return {...state, detailItem: {...state.detailItem, ...{...action.payload}}};
+
         // The search value is changed in the search box
         case SEARCH_VALUE_CHANGED:
             return {...state, searchTerm: action.payload.term};
@@ -56,12 +60,12 @@ export default (state = initState, action) => {
         case BUY_QUANTITY_CHANGED:
             let tempBuyQuantity = {...state.buyQuantity};
             tempBuyQuantity[action.payload.itemId] = parseInt(action.payload.amount);
-            let tmpQuantityExceeded = [...state.quantityExceeded]
+            let tmpQuantityExceeded = [...state.quantityExceeded];
             if (tmpQuantityExceeded.indexOf(action.payload.itemId) !== -1) {
                 tmpQuantityExceeded = tmpQuantityExceeded.filter(i => i !== action.payload.itemId);
             }
             if (action.payload.amount === '') {
-                let tmpPrice = {...state.price}
+                let tmpPrice = {...state.price};
                 tmpPrice[action.payload.itemId] = {perUnit: 0, total: 0};
                 return {...state, buyQuantity: tempBuyQuantity, price: tmpPrice};
             }

@@ -1,5 +1,6 @@
 import * as actions from '../src/redux/actions/actions'
 import * as itemActions from '../src/redux/actions/itemActions'
+import expect from 'expect'
 
 describe('actions', () => {
     it('should create an action to notify of exceeded quantity of an item', () => {
