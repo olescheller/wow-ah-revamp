@@ -6,31 +6,33 @@ import Html
 import Html.Events as Evt exposing (onClick)
 import Page.Buy as Buy exposing (..)
 import Maybe exposing (..)
-import State exposing(State, FakeItem, Route(..), UiState, DataState, Item)
+import State exposing(State, FakeItem, Route(..), UiState, ItemSupply, DataState, Item)
 import String exposing (..)
-import Graphql.SelectionSet as SelectionSet exposing (SelectionSet, with)
-import Gqllib.Object.Item as Item
-import Gqllib.Object
-import Graphql.Operation exposing (RootQuery)
-import Gqllib.Query as Query
-import Graphql.Http
-import Queries exposing (makeRequest)
+import Queries exposing (makeRequest, itemQuery, itemSupplyQuery)
 
 fakeItem: String -> Int -> FakeItem
 fakeItem n a = {name= n, amount= a}
 
 initialUiState: UiState
 initialUiState = {route = SELL}
+initialItem: Item
+initialItem = {
+       name = "default",
+       id = "0",
+       icon = Just "none"}
+initialItemSupplies = Maybe.Just [Nothing]
 initialDataState: DataState
 initialDataState = {
-    name = "default"}
+    item = initialItem,
+    itemSupplies = initialItemSupplies
+    }
 
 initialModel: Int -> (State, Cmd Msg)
 initialModel a = ({
                 ui = initialUiState,
                 data = initialDataState
                 },
-                makeRequest)
+                makeRequest itemSupplyQuery GotItemSupplyResponse)
 
 
 update : Msg -> State -> (State, Cmd Msg)
@@ -38,9 +40,22 @@ update msg model =
     case msg of
         SelectedRoute newRoute ->
             ({model | ui = {route = newRoute}}, Cmd.none)
-        GotResponse response ->
+        GotItemResponse response ->
             case response of
-                Ok value -> ({model | data = (withDefault initialDataState value)}, Cmd.none)
+                Ok value -> ({model | data =
+                    {item = (withDefault initialItem value),
+                    itemSupplies = initialItemSupplies}}
+                    , Cmd.none)
+                Err value -> (model, Cmd.none)
+        GotItemSupplyResponse response ->
+            case response of
+                Ok value ->
+                    let
+                        oldData = model.data
+                        newData = {oldData | itemSupplies = value}
+                    in
+                    ({model | data = newData}, Cmd.none)
+
                 Err value -> (model, Cmd.none)
 
 
@@ -51,12 +66,13 @@ renderPage model =
    SELL ->
         Html.div[][Html.text "home"]
    BUY ->   Html.div[][
-                Html.text  model.data.name
+                Html.text  model.data.item.name
+                ,
+                 Html.div[] [
+                    Html.h1 [] [ Html.text "Item supplies" ]
+                   , Buy.buyList model.data.itemSupplies
+                   ]
                ]
-            --Html.div[] [
-              --  Html.h1 [ Attr.style "color" "green" ] [ Html.text "Item supplies" ]
-              -- , Buy.buyList model.data.items
-              -- ]
 
 
 view : State -> Html.Html Msg

@@ -13,11 +13,23 @@ type alias FakeItem =
     amount: Int
     }
 
-type alias Item = { name : String }
+type alias Item = {
+    name : String,
+    id: String,
+    icon: Maybe String
+    }
 
+type alias ItemSupply = {
+    id : Float,
+    item: Item,
+    quantity: Float,
+    min_price: Float
+    }
 
-type alias DataState =
-      Item
+type alias DataState = {
+      item: Item,
+      itemSupplies: Maybe (List (Maybe ItemSupply))
+      }
 
 type alias State =
     {

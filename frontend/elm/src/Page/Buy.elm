@@ -10,11 +10,15 @@ import Maybe exposing (Maybe(..))
 
 
 
-renderItem : FakeItem -> Html.Html msg
-renderItem item =
-  Html.li [] [ Html.text <|  (String.fromInt item.amount) ++ ("#" ++ item.name) ]
+renderItem : Maybe ItemSupply -> Html.Html msg
+renderItem supply =
+    case supply of
+        Nothing -> Html.li [][]
+        Just val ->
+              Html.li [] [ Html.text <| val.item.name
+              ++ ("#" ++ (String.fromFloat val.quantity)) ]
 
-renderItems : List FakeItem -> Html.Html msg
+renderItems : List (Maybe ItemSupply) -> Html.Html msg
 renderItems items =
   let
     supplyItems = List.map renderItem items
@@ -22,7 +26,7 @@ renderItems items =
     Html.ul [] supplyItems
 
 
-buyList: List FakeItem -> Html.Html msg
+buyList: Maybe (List (Maybe ItemSupply)) -> Html.Html msg
 buyList items = Html.div[][
-               renderItems items
+               renderItems (Maybe.withDefault [Nothing] items)
             ]

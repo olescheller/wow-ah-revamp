@@ -80,271 +80,6 @@ function A9(fun, a, b, c, d, e, f, g, h, i) {
 console.warn('Compiled in DEV mode. Follow the advice at https://elm-lang.org/0.19.0/optimize for better performance and smaller assets.');
 
 
-var _List_Nil_UNUSED = { $: 0 };
-var _List_Nil = { $: '[]' };
-
-function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
-function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
-
-
-var _List_cons = F2(_List_Cons);
-
-function _List_fromArray(arr)
-{
-	var out = _List_Nil;
-	for (var i = arr.length; i--; )
-	{
-		out = _List_Cons(arr[i], out);
-	}
-	return out;
-}
-
-function _List_toArray(xs)
-{
-	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		out.push(xs.a);
-	}
-	return out;
-}
-
-var _List_map2 = F3(function(f, xs, ys)
-{
-	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
-	{
-		arr.push(A2(f, xs.a, ys.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map3 = F4(function(f, xs, ys, zs)
-{
-	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A3(f, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map4 = F5(function(f, ws, xs, ys, zs)
-{
-	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
-{
-	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_sortBy = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		return _Utils_cmp(f(a), f(b));
-	}));
-});
-
-var _List_sortWith = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		var ord = A2(f, a, b);
-		return ord === elm$core$Basics$EQ ? 0 : ord === elm$core$Basics$LT ? -1 : 1;
-	}));
-});
-
-
-
-// EQUALITY
-
-function _Utils_eq(x, y)
-{
-	for (
-		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
-		isEqual && (pair = stack.pop());
-		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
-		)
-	{}
-
-	return isEqual;
-}
-
-function _Utils_eqHelp(x, y, depth, stack)
-{
-	if (depth > 100)
-	{
-		stack.push(_Utils_Tuple2(x,y));
-		return true;
-	}
-
-	if (x === y)
-	{
-		return true;
-	}
-
-	if (typeof x !== 'object' || x === null || y === null)
-	{
-		typeof x === 'function' && _Debug_crash(5);
-		return false;
-	}
-
-	/**/
-	if (x.$ === 'Set_elm_builtin')
-	{
-		x = elm$core$Set$toList(x);
-		y = elm$core$Set$toList(y);
-	}
-	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
-	{
-		x = elm$core$Dict$toList(x);
-		y = elm$core$Dict$toList(y);
-	}
-	//*/
-
-	/**_UNUSED/
-	if (x.$ < 0)
-	{
-		x = elm$core$Dict$toList(x);
-		y = elm$core$Dict$toList(y);
-	}
-	//*/
-
-	for (var key in x)
-	{
-		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
-var _Utils_equal = F2(_Utils_eq);
-var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
-
-
-
-// COMPARISONS
-
-// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
-// the particular integer values assigned to LT, EQ, and GT.
-
-function _Utils_cmp(x, y, ord)
-{
-	if (typeof x !== 'object')
-	{
-		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
-	}
-
-	/**/
-	if (x instanceof String)
-	{
-		var a = x.valueOf();
-		var b = y.valueOf();
-		return a === b ? 0 : a < b ? -1 : 1;
-	}
-	//*/
-
-	/**_UNUSED/
-	if (typeof x.$ === 'undefined')
-	//*/
-	/**/
-	if (x.$[0] === '#')
-	//*/
-	{
-		return (ord = _Utils_cmp(x.a, y.a))
-			? ord
-			: (ord = _Utils_cmp(x.b, y.b))
-				? ord
-				: _Utils_cmp(x.c, y.c);
-	}
-
-	// traverse conses until end of a list or a mismatch
-	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
-	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
-}
-
-var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
-var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
-var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
-var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
-
-var _Utils_compare = F2(function(x, y)
-{
-	var n = _Utils_cmp(x, y);
-	return n < 0 ? elm$core$Basics$LT : n ? elm$core$Basics$GT : elm$core$Basics$EQ;
-});
-
-
-// COMMON VALUES
-
-var _Utils_Tuple0_UNUSED = 0;
-var _Utils_Tuple0 = { $: '#0' };
-
-function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
-function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
-
-function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
-function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
-
-function _Utils_chr_UNUSED(c) { return c; }
-function _Utils_chr(c) { return new String(c); }
-
-
-// RECORDS
-
-function _Utils_update(oldRecord, updatedFields)
-{
-	var newRecord = {};
-
-	for (var key in oldRecord)
-	{
-		newRecord[key] = oldRecord[key];
-	}
-
-	for (var key in updatedFields)
-	{
-		newRecord[key] = updatedFields[key];
-	}
-
-	return newRecord;
-}
-
-
-// APPEND
-
-var _Utils_append = F2(_Utils_ap);
-
-function _Utils_ap(xs, ys)
-{
-	// append Strings
-	if (typeof xs === 'string')
-	{
-		return xs + ys;
-	}
-
-	// append Lists
-	if (!xs.b)
-	{
-		return ys;
-	}
-	var root = _List_Cons(xs.a, ys);
-	xs = xs.b
-	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		curr = curr.b = _List_Cons(xs.a, ys);
-	}
-	return root;
-}
-
-
-
 var _JsArray_empty = [];
 
 function _JsArray_singleton(value)
@@ -790,6 +525,271 @@ function _Debug_regionToString(region)
 	}
 	return 'on lines ' + region.start.line + ' through ' + region.end.line;
 }
+
+
+
+// EQUALITY
+
+function _Utils_eq(x, y)
+{
+	for (
+		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
+		isEqual && (pair = stack.pop());
+		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
+		)
+	{}
+
+	return isEqual;
+}
+
+function _Utils_eqHelp(x, y, depth, stack)
+{
+	if (depth > 100)
+	{
+		stack.push(_Utils_Tuple2(x,y));
+		return true;
+	}
+
+	if (x === y)
+	{
+		return true;
+	}
+
+	if (typeof x !== 'object' || x === null || y === null)
+	{
+		typeof x === 'function' && _Debug_crash(5);
+		return false;
+	}
+
+	/**/
+	if (x.$ === 'Set_elm_builtin')
+	{
+		x = elm$core$Set$toList(x);
+		y = elm$core$Set$toList(y);
+	}
+	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
+	{
+		x = elm$core$Dict$toList(x);
+		y = elm$core$Dict$toList(y);
+	}
+	//*/
+
+	/**_UNUSED/
+	if (x.$ < 0)
+	{
+		x = elm$core$Dict$toList(x);
+		y = elm$core$Dict$toList(y);
+	}
+	//*/
+
+	for (var key in x)
+	{
+		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+var _Utils_equal = F2(_Utils_eq);
+var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
+
+
+
+// COMPARISONS
+
+// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
+// the particular integer values assigned to LT, EQ, and GT.
+
+function _Utils_cmp(x, y, ord)
+{
+	if (typeof x !== 'object')
+	{
+		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
+	}
+
+	/**/
+	if (x instanceof String)
+	{
+		var a = x.valueOf();
+		var b = y.valueOf();
+		return a === b ? 0 : a < b ? -1 : 1;
+	}
+	//*/
+
+	/**_UNUSED/
+	if (typeof x.$ === 'undefined')
+	//*/
+	/**/
+	if (x.$[0] === '#')
+	//*/
+	{
+		return (ord = _Utils_cmp(x.a, y.a))
+			? ord
+			: (ord = _Utils_cmp(x.b, y.b))
+				? ord
+				: _Utils_cmp(x.c, y.c);
+	}
+
+	// traverse conses until end of a list or a mismatch
+	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
+	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
+}
+
+var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
+var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
+var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
+var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
+
+var _Utils_compare = F2(function(x, y)
+{
+	var n = _Utils_cmp(x, y);
+	return n < 0 ? elm$core$Basics$LT : n ? elm$core$Basics$GT : elm$core$Basics$EQ;
+});
+
+
+// COMMON VALUES
+
+var _Utils_Tuple0_UNUSED = 0;
+var _Utils_Tuple0 = { $: '#0' };
+
+function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
+function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
+
+function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
+function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
+
+function _Utils_chr_UNUSED(c) { return c; }
+function _Utils_chr(c) { return new String(c); }
+
+
+// RECORDS
+
+function _Utils_update(oldRecord, updatedFields)
+{
+	var newRecord = {};
+
+	for (var key in oldRecord)
+	{
+		newRecord[key] = oldRecord[key];
+	}
+
+	for (var key in updatedFields)
+	{
+		newRecord[key] = updatedFields[key];
+	}
+
+	return newRecord;
+}
+
+
+// APPEND
+
+var _Utils_append = F2(_Utils_ap);
+
+function _Utils_ap(xs, ys)
+{
+	// append Strings
+	if (typeof xs === 'string')
+	{
+		return xs + ys;
+	}
+
+	// append Lists
+	if (!xs.b)
+	{
+		return ys;
+	}
+	var root = _List_Cons(xs.a, ys);
+	xs = xs.b
+	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		curr = curr.b = _List_Cons(xs.a, ys);
+	}
+	return root;
+}
+
+
+
+var _List_Nil_UNUSED = { $: 0 };
+var _List_Nil = { $: '[]' };
+
+function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
+function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
+
+
+var _List_cons = F2(_List_Cons);
+
+function _List_fromArray(arr)
+{
+	var out = _List_Nil;
+	for (var i = arr.length; i--; )
+	{
+		out = _List_Cons(arr[i], out);
+	}
+	return out;
+}
+
+function _List_toArray(xs)
+{
+	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		out.push(xs.a);
+	}
+	return out;
+}
+
+var _List_map2 = F3(function(f, xs, ys)
+{
+	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
+	{
+		arr.push(A2(f, xs.a, ys.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map3 = F4(function(f, xs, ys, zs)
+{
+	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A3(f, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map4 = F5(function(f, ws, xs, ys, zs)
+{
+	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
+{
+	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_sortBy = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		return _Utils_cmp(f(a), f(b));
+	}));
+});
+
+var _List_sortWith = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		var ord = A2(f, a, b);
+		return ord === elm$core$Basics$EQ ? 0 : ord === elm$core$Basics$LT ? -1 : 1;
+	}));
+});
 
 
 
@@ -4640,32 +4640,46 @@ function _Browser_load(url)
 		}
 	}));
 }
-var author$project$App$initialDataState = {name: 'default'};
-var author$project$State$SELL = {$: 'SELL'};
-var author$project$App$initialUiState = {route: author$project$State$SELL};
-var author$project$Action$GotResponse = function (a) {
-	return {$: 'GotResponse', a: a};
+var author$project$Action$GotItemSupplyResponse = function (a) {
+	return {$: 'GotItemSupplyResponse', a: a};
 };
-var dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument = F2(
-	function (a, b) {
-		return {$: 'Argument', a: a, b: b};
-	});
-var dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required = F3(
-	function (fieldName, raw, encode) {
-		return A2(
-			dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument,
-			fieldName,
-			encode(raw));
-	});
-var Skinney$murmur3$Murmur3$HashData = F4(
-	function (shift, seed, hash, charsProcessed) {
-		return {charsProcessed: charsProcessed, hash: hash, seed: seed, shift: shift};
-	});
-var Skinney$murmur3$Murmur3$c1 = 3432918353;
-var Skinney$murmur3$Murmur3$c2 = 461845907;
+var elm$core$Maybe$Just = function (a) {
+	return {$: 'Just', a: a};
+};
+var author$project$App$initialItem = {
+	icon: elm$core$Maybe$Just('none'),
+	id: '0',
+	name: 'default'
+};
+var elm$core$Maybe$Nothing = {$: 'Nothing'};
 var elm$core$Basics$EQ = {$: 'EQ'};
-var elm$core$Basics$GT = {$: 'GT'};
 var elm$core$Basics$LT = {$: 'LT'};
+var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
+var elm$core$Array$foldr = F3(
+	function (func, baseCase, _n0) {
+		var tree = _n0.c;
+		var tail = _n0.d;
+		var helper = F2(
+			function (node, acc) {
+				if (node.$ === 'SubTree') {
+					var subTree = node.a;
+					return A3(elm$core$Elm$JsArray$foldr, helper, acc, subTree);
+				} else {
+					var values = node.a;
+					return A3(elm$core$Elm$JsArray$foldr, func, acc, values);
+				}
+			});
+		return A3(
+			elm$core$Elm$JsArray$foldr,
+			helper,
+			A3(elm$core$Elm$JsArray$foldr, func, baseCase, tail),
+			tree);
+	});
+var elm$core$List$cons = _List_cons;
+var elm$core$Array$toList = function (array) {
+	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
+};
+var elm$core$Basics$GT = {$: 'GT'};
 var elm$core$Dict$foldr = F3(
 	function (func, acc, t) {
 		foldr:
@@ -4691,7 +4705,6 @@ var elm$core$Dict$foldr = F3(
 			}
 		}
 	});
-var elm$core$List$cons = _List_cons;
 var elm$core$Dict$toList = function (dict) {
 	return A3(
 		elm$core$Dict$foldr,
@@ -4719,30 +4732,29 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
-var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
-var elm$core$Array$foldr = F3(
-	function (func, baseCase, _n0) {
-		var tree = _n0.c;
-		var tail = _n0.d;
-		var helper = F2(
-			function (node, acc) {
-				if (node.$ === 'SubTree') {
-					var subTree = node.a;
-					return A3(elm$core$Elm$JsArray$foldr, helper, acc, subTree);
-				} else {
-					var values = node.a;
-					return A3(elm$core$Elm$JsArray$foldr, func, acc, values);
-				}
-			});
-		return A3(
-			elm$core$Elm$JsArray$foldr,
-			helper,
-			A3(elm$core$Elm$JsArray$foldr, func, baseCase, tail),
-			tree);
+var author$project$App$initialItemSupplies = elm$core$Maybe$Just(
+	_List_fromArray(
+		[elm$core$Maybe$Nothing]));
+var author$project$App$initialDataState = {item: author$project$App$initialItem, itemSupplies: author$project$App$initialItemSupplies};
+var author$project$State$SELL = {$: 'SELL'};
+var author$project$App$initialUiState = {route: author$project$State$SELL};
+var dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument = F2(
+	function (a, b) {
+		return {$: 'Argument', a: a, b: b};
 	});
-var elm$core$Array$toList = function (array) {
-	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
-};
+var dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required = F3(
+	function (fieldName, raw, encode) {
+		return A2(
+			dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument,
+			fieldName,
+			encode(raw));
+	});
+var Skinney$murmur3$Murmur3$HashData = F4(
+	function (shift, seed, hash, charsProcessed) {
+		return {charsProcessed: charsProcessed, hash: hash, seed: seed, shift: shift};
+	});
+var Skinney$murmur3$Murmur3$c1 = 3432918353;
+var Skinney$murmur3$Murmur3$c2 = 461845907;
 var elm$core$Basics$add = _Basics_add;
 var elm$core$Basics$mul = _Basics_mul;
 var elm$core$Bitwise$and = _Bitwise_and;
@@ -4809,10 +4821,6 @@ var Skinney$murmur3$Murmur3$hashFold = F2(
 			return {charsProcessed: data.charsProcessed + 1, hash: res, seed: data.seed, shift: data.shift + 8};
 		}
 	});
-var elm$core$Maybe$Just = function (a) {
-	return {$: 'Just', a: a};
-};
-var elm$core$Maybe$Nothing = {$: 'Nothing'};
 var elm$core$String$foldl = _String_foldl;
 var Skinney$murmur3$Murmur3$hashString = F2(
 	function (seed, str) {
@@ -5456,14 +5464,15 @@ var dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForComposi
 var dillonkearns$elm_graphql$Graphql$Internal$Encode$Json = function (a) {
 	return {$: 'Json', a: a};
 };
-var elm$json$Json$Encode$float = _Json_wrap;
-var dillonkearns$elm_graphql$Graphql$Internal$Encode$float = function (value) {
+var elm$json$Json$Encode$string = _Json_wrap;
+var dillonkearns$elm_graphql$Graphql$Internal$Encode$string = function (value) {
 	return dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
-		elm$json$Json$Encode$float(value));
+		elm$json$Json$Encode$string(value));
 };
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
+var elm$json$Json$Decode$list = _Json_decodeList;
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$null = _Json_decodeNull;
 var elm$json$Json$Decode$oneOf = _Json_oneOf;
@@ -5475,17 +5484,23 @@ var elm$json$Json$Decode$nullable = function (decoder) {
 				A2(elm$json$Json$Decode$map, elm$core$Maybe$Just, decoder)
 			]));
 };
-var author$project$Gqllib$Query$item = F2(
+var author$project$Gqllib$Query$items_supply = F2(
 	function (requiredArgs, object_) {
 		return A4(
 			dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
-			'item',
+			'items_supply',
 			_List_fromArray(
 				[
-					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'id', requiredArgs.id, dillonkearns$elm_graphql$Graphql$Internal$Encode$float)
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'partialItemName', requiredArgs.partialItemName, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
 				]),
 			object_,
-			A2(elm$core$Basics$composeR, elm$core$Basics$identity, elm$json$Json$Decode$nullable));
+			A2(
+				elm$core$Basics$composeR,
+				elm$core$Basics$identity,
+				A2(
+					elm$core$Basics$composeR,
+					elm$json$Json$Decode$nullable,
+					A2(elm$core$Basics$composeR, elm$json$Json$Decode$list, elm$json$Json$Decode$nullable))));
 	});
 var dillonkearns$elm_graphql$Graphql$RawField$Leaf = F2(
 	function (a, b) {
@@ -5510,38 +5525,79 @@ var dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField =
 				dillonkearns$elm_graphql$Graphql$Document$Field$hashedAliasName(newLeaf),
 				decoder));
 	});
+var elm$json$Json$Decode$float = _Json_decodeFloat;
+var author$project$Gqllib$Object$ItemSupply$id = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'id', _List_Nil, elm$json$Json$Decode$float);
+var author$project$Gqllib$Object$ItemSupply$item = function (object_) {
+	return A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField, 'item', _List_Nil, object_, elm$core$Basics$identity);
+};
+var author$project$Gqllib$Object$ItemSupply$min_price = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'min_price', _List_Nil, elm$json$Json$Decode$float);
+var author$project$Gqllib$Object$ItemSupply$quantity = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'quantity', _List_Nil, elm$json$Json$Decode$float);
 var elm$json$Json$Decode$string = _Json_decodeString;
+var author$project$Gqllib$Object$Item$icon = A4(
+	dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
+	'(Maybe String)',
+	'icon',
+	_List_Nil,
+	elm$json$Json$Decode$nullable(elm$json$Json$Decode$string));
+var author$project$Gqllib$Object$Item$id = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'String', 'id', _List_Nil, elm$json$Json$Decode$string);
 var author$project$Gqllib$Object$Item$name = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'String', 'name', _List_Nil, elm$json$Json$Decode$string);
-var author$project$State$Item = function (name) {
-	return {name: name};
+var author$project$State$Item = F3(
+	function (name, id, icon) {
+		return {icon: icon, id: id, name: name};
+	});
+var elm$core$List$concat = function (lists) {
+	return A3(elm$core$List$foldr, elm$core$List$append, _List_Nil, lists);
 };
-var elm$json$Json$Decode$succeed = _Json_succeed;
-var dillonkearns$elm_graphql$Graphql$SelectionSet$succeed = function (constructor) {
-	return A2(
-		dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
-		_List_Nil,
-		elm$json$Json$Decode$succeed(constructor));
-};
-var elm$json$Json$Decode$map2 = _Json_map2;
-var dillonkearns$elm_graphql$Graphql$SelectionSet$with = F2(
-	function (_n0, _n1) {
+var elm$json$Json$Decode$map3 = _Json_map3;
+var dillonkearns$elm_graphql$Graphql$SelectionSet$map3 = F4(
+	function (combine, _n0, _n1, _n2) {
 		var selectionFields1 = _n0.a;
 		var selectionDecoder1 = _n0.b;
 		var selectionFields2 = _n1.a;
 		var selectionDecoder2 = _n1.b;
+		var selectionFields3 = _n2.a;
+		var selectionDecoder3 = _n2.b;
 		return A2(
 			dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
-			_Utils_ap(selectionFields1, selectionFields2),
-			A3(elm$json$Json$Decode$map2, elm$core$Basics$apR, selectionDecoder1, selectionDecoder2));
+			elm$core$List$concat(
+				_List_fromArray(
+					[selectionFields1, selectionFields2, selectionFields3])),
+			A4(elm$json$Json$Decode$map3, combine, selectionDecoder1, selectionDecoder2, selectionDecoder3));
 	});
-var author$project$Queries$item = A2(
-	dillonkearns$elm_graphql$Graphql$SelectionSet$with,
-	author$project$Gqllib$Object$Item$name,
-	dillonkearns$elm_graphql$Graphql$SelectionSet$succeed(author$project$State$Item));
-var author$project$Queries$query = A2(
-	author$project$Gqllib$Query$item,
-	{id: 25},
-	author$project$Queries$item);
+var author$project$Queries$item = A4(dillonkearns$elm_graphql$Graphql$SelectionSet$map3, author$project$State$Item, author$project$Gqllib$Object$Item$name, author$project$Gqllib$Object$Item$id, author$project$Gqllib$Object$Item$icon);
+var author$project$State$ItemSupply = F4(
+	function (id, item, quantity, min_price) {
+		return {id: id, item: item, min_price: min_price, quantity: quantity};
+	});
+var elm$json$Json$Decode$map4 = _Json_map4;
+var dillonkearns$elm_graphql$Graphql$SelectionSet$map4 = F5(
+	function (combine, _n0, _n1, _n2, _n3) {
+		var selectionFields1 = _n0.a;
+		var selectionDecoder1 = _n0.b;
+		var selectionFields2 = _n1.a;
+		var selectionDecoder2 = _n1.b;
+		var selectionFields3 = _n2.a;
+		var selectionDecoder3 = _n2.b;
+		var selectionFields4 = _n3.a;
+		var selectionDecoder4 = _n3.b;
+		return A2(
+			dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
+			elm$core$List$concat(
+				_List_fromArray(
+					[selectionFields1, selectionFields2, selectionFields3, selectionFields4])),
+			A5(elm$json$Json$Decode$map4, combine, selectionDecoder1, selectionDecoder2, selectionDecoder3, selectionDecoder4));
+	});
+var author$project$Queries$itemSupply = A5(
+	dillonkearns$elm_graphql$Graphql$SelectionSet$map4,
+	author$project$State$ItemSupply,
+	author$project$Gqllib$Object$ItemSupply$id,
+	author$project$Gqllib$Object$ItemSupply$item(author$project$Queries$item),
+	author$project$Gqllib$Object$ItemSupply$quantity,
+	author$project$Gqllib$Object$ItemSupply$min_price);
+var author$project$Queries$itemSupplyQuery = A2(
+	author$project$Gqllib$Query$items_supply,
+	{partialItemName: 'wool'},
+	author$project$Queries$itemSupply);
 var dillonkearns$elm_graphql$Graphql$Http$GraphqlError = F2(
 	function (a, b) {
 		return {$: 'GraphqlError', a: a, b: b};
@@ -6542,6 +6598,7 @@ var dillonkearns$elm_graphql$Graphql$Http$GraphqlError$Location = F2(
 		return {column: column, line: line};
 	});
 var elm$json$Json$Decode$int = _Json_decodeInt;
+var elm$json$Json$Decode$map2 = _Json_map2;
 var dillonkearns$elm_graphql$Graphql$Http$GraphqlError$locationDecoder = A3(
 	elm$json$Json$Decode$map2,
 	dillonkearns$elm_graphql$Graphql$Http$GraphqlError$Location,
@@ -6566,8 +6623,7 @@ var elm$json$Json$Decode$dict = function (decoder) {
 		elm$core$Dict$fromList,
 		elm$json$Json$Decode$keyValuePairs(decoder));
 };
-var elm$json$Json$Decode$list = _Json_decodeList;
-var elm$json$Json$Decode$map3 = _Json_map3;
+var elm$json$Json$Decode$succeed = _Json_succeed;
 var elm$json$Json$Decode$maybe = function (decoder) {
 	return elm$json$Json$Decode$oneOf(
 		_List_fromArray(
@@ -6696,7 +6752,6 @@ var elm$json$Json$Encode$object = function (pairs) {
 			_Json_emptyObject(_Utils_Tuple0),
 			pairs));
 };
-var elm$json$Json$Encode$string = _Json_wrap;
 var dillonkearns$elm_graphql$Graphql$Http$QueryHelper$build = F4(
 	function (forceMethod, url, queryParams, queryDocument) {
 		var urlForGetRequest = A2(
@@ -6993,14 +7048,17 @@ var dillonkearns$elm_graphql$Graphql$Http$send = F2(
 		return (request.withCredentials ? elm$http$Http$riskyRequest : elm$http$Http$request)(
 			A2(dillonkearns$elm_graphql$Graphql$Http$toHttpRequestRecord, resultToMessage, fullRequest));
 	});
-var author$project$Queries$makeRequest = A2(
-	dillonkearns$elm_graphql$Graphql$Http$send,
-	A2(elm$core$Basics$composeR, dillonkearns$elm_graphql$Graphql$Http$discardParsedErrorData, author$project$Action$GotResponse),
-	A2(dillonkearns$elm_graphql$Graphql$Http$queryRequest, 'http://localhost:4000/', author$project$Queries$query));
+var author$project$Queries$makeRequest = F2(
+	function (qr, a) {
+		return A2(
+			dillonkearns$elm_graphql$Graphql$Http$send,
+			A2(elm$core$Basics$composeR, dillonkearns$elm_graphql$Graphql$Http$discardParsedErrorData, a),
+			A2(dillonkearns$elm_graphql$Graphql$Http$queryRequest, 'http://localhost:4000/', qr));
+	});
 var author$project$App$initialModel = function (a) {
 	return _Utils_Tuple2(
 		{data: author$project$App$initialDataState, ui: author$project$App$initialUiState},
-		author$project$Queries$makeRequest);
+		A2(author$project$Queries$makeRequest, author$project$Queries$itemSupplyQuery, author$project$Action$GotItemSupplyResponse));
 };
 var elm$core$Platform$Sub$batch = _Platform_batch;
 var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
@@ -7011,35 +7069,57 @@ var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var author$project$App$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'SelectedRoute') {
-			var newRoute = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{
-						ui: {route: newRoute}
-					}),
-				elm$core$Platform$Cmd$none);
-		} else {
-			var response = msg.a;
-			if (response.$ === 'Ok') {
-				var value = response.a;
+		switch (msg.$) {
+			case 'SelectedRoute':
+				var newRoute = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
-							data: A2(elm$core$Maybe$withDefault, author$project$App$initialDataState, value)
+							ui: {route: newRoute}
 						}),
 					elm$core$Platform$Cmd$none);
-			} else {
-				var value = response.a;
-				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-			}
+			case 'GotItemResponse':
+				var response = msg.a;
+				if (response.$ === 'Ok') {
+					var value = response.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								data: {
+									item: A2(elm$core$Maybe$withDefault, author$project$App$initialItem, value),
+									itemSupplies: author$project$App$initialItemSupplies
+								}
+							}),
+						elm$core$Platform$Cmd$none);
+				} else {
+					var value = response.a;
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				}
+			default:
+				var response = msg.a;
+				if (response.$ === 'Ok') {
+					var value = response.a;
+					var oldData = model.data;
+					var newData = _Utils_update(
+						oldData,
+						{itemSupplies: value});
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{data: newData}),
+						elm$core$Platform$Cmd$none);
+				} else {
+					var value = response.a;
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var author$project$Action$SelectedRoute = function (a) {
 	return {$: 'SelectedRoute', a: a};
 };
+var elm$core$String$fromFloat = _String_fromNumber;
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
 		case 'Normal':
@@ -7052,9 +7132,45 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 			return 3;
 	}
 };
-var elm$html$Html$div = _VirtualDom_node('div');
+var elm$html$Html$li = _VirtualDom_node('li');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var author$project$Page$Buy$renderItem = function (supply) {
+	if (supply.$ === 'Nothing') {
+		return A2(elm$html$Html$li, _List_Nil, _List_Nil);
+	} else {
+		var val = supply.a;
+		return A2(
+			elm$html$Html$li,
+			_List_Nil,
+			_List_fromArray(
+				[
+					elm$html$Html$text(
+					val.item.name + ('#' + elm$core$String$fromFloat(val.quantity)))
+				]));
+	}
+};
+var elm$html$Html$ul = _VirtualDom_node('ul');
+var author$project$Page$Buy$renderItems = function (items) {
+	var supplyItems = A2(elm$core$List$map, author$project$Page$Buy$renderItem, items);
+	return A2(elm$html$Html$ul, _List_Nil, supplyItems);
+};
+var elm$html$Html$div = _VirtualDom_node('div');
+var author$project$Page$Buy$buyList = function (items) {
+	return A2(
+		elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				author$project$Page$Buy$renderItems(
+				A2(
+					elm$core$Maybe$withDefault,
+					_List_fromArray(
+						[elm$core$Maybe$Nothing]),
+					items))
+			]));
+};
+var elm$html$Html$h1 = _VirtualDom_node('h1');
 var author$project$App$renderPage = function (model) {
 	var _n0 = model.ui.route;
 	if (_n0.$ === 'SELL') {
@@ -7071,7 +7187,21 @@ var author$project$App$renderPage = function (model) {
 			_List_Nil,
 			_List_fromArray(
 				[
-					elm$html$Html$text(model.data.name)
+					elm$html$Html$text(model.data.item.name),
+					A2(
+					elm$html$Html$div,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$h1,
+							_List_Nil,
+							_List_fromArray(
+								[
+									elm$html$Html$text('Item supplies')
+								])),
+							author$project$Page$Buy$buyList(model.data.itemSupplies)
+						]))
 				]));
 	}
 };
