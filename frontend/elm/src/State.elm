@@ -28,7 +28,8 @@ type alias ItemSupply = {
 
 type alias DataState = {
       item: Item,
-      itemSupplies: Maybe (List (Maybe ItemSupply))
+      itemSupplies: Maybe (List (Maybe ItemSupply)),
+      searchValue: String
       }
 
 type alias State =
