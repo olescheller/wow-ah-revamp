@@ -7,6 +7,7 @@ import Html.Attributes exposing (..)
 import Html.Events as Evt exposing (keyCode, on, onClick, onInput)
 import Json.Decode as Json
 import Maybe exposing (..)
+import Mutations exposing (buyMutation, makeMutation)
 import Page.Buy as Buy exposing (..)
 import Queries exposing (itemPriceQuery, itemQuery, itemSupplyQuery, makeRequest)
 import State exposing (DataState, FakeItem, Item, ItemSupply, Price, Route(..), State, UiState)
@@ -32,10 +33,6 @@ initialItem =
     }
 
 
-initialItemPriceMappings =
-    []
-
-
 initialItemSupplies =
     Maybe.Just [ Nothing ]
 
@@ -45,7 +42,8 @@ initialDataState =
     { item = initialItem
     , itemSupplies = initialItemSupplies
     , searchValue = ""
-    , itemPriceMappings = initialItemPriceMappings
+    , itemPriceMappings = []
+    , itemAmountMappings = []
     }
 
 
@@ -112,7 +110,23 @@ update msg model =
             ( model, makeRequest (itemSupplyQuery searchValue) GotItemSupplyResponse )
 
         EnterQuantity itemId quantity ->
-            ( model, makeRequest (itemPriceQuery (withDefault 0 (String.toFloat itemId)) (withDefault 0 (String.toInt quantity))) (GotItemPriceResponse itemId) )
+            let
+                itemAmountMapping =
+                    { itemId = itemId, amount = withDefault 0 (String.toInt quantity) }
+
+                oldData =
+                    model.data
+
+                oldItemAmountMappings =
+                    oldData.itemAmountMappings
+
+                newItemAmountMappings =
+                    itemAmountMapping :: List.filter (\i -> i.itemId /= itemId) oldItemAmountMappings
+
+                newData =
+                    { oldData | itemAmountMappings = newItemAmountMappings }
+            in
+            ( { model | data = newData }, makeRequest (itemPriceQuery (withDefault 0 (String.toFloat itemId)) (withDefault 0 (String.toInt quantity))) (GotItemPriceResponse itemId) )
 
         GotItemPriceResponse itemId response ->
             case response of
@@ -142,6 +156,17 @@ update msg model =
                             ( model, Cmd.none )
 
                 Err value ->
+                    ( model, Cmd.none )
+
+        BuyItem userName itemId amount total perUnit ->
+            ( model, makeMutation (buyMutation userName itemId amount total perUnit) GotBuyItemResponse )
+
+        GotBuyItemResponse response ->
+            case response of
+                Ok value ->
+                    ( model, Cmd.none )
+
+                Err error ->
                     ( model, Cmd.none )
 
 

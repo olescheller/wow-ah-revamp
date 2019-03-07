@@ -1,4 +1,4 @@
-module State exposing (DataState, FakeItem, Item, ItemSupply, Price, Route(..), State, UiState, getItemPriceMappings)
+module State exposing (DataState, FakeItem, Item, ItemSupply, Price, Receipt, Route(..), State, UiState, getItemAmountMappings, getItemPriceMappings)
 
 import Maybe exposing (withDefault)
 
@@ -19,6 +19,17 @@ type alias FakeItem =
     }
 
 
+type alias Receipt =
+    { buyer : Maybe String
+    , item : Item
+    , amount : Maybe Int
+    , amountBought : Maybe Int
+    , price : Maybe Int
+    , min_price : Maybe Float
+    , money : Maybe Float
+    }
+
+
 type alias Price =
     { total : Float, perUnit : Float }
 
@@ -28,6 +39,11 @@ type alias Item =
     , id : String
     , icon : Maybe String
     }
+
+
+getItemAmountMappings : String -> State -> Int
+getItemAmountMappings itemId model =
+    (withDefault { itemId = "0", amount = 0 } (List.head (List.filter (\item -> item.itemId == itemId) model.data.itemAmountMappings))).amount
 
 
 getItemPriceMappings : String -> State -> Price
@@ -49,11 +65,18 @@ type alias ItemPriceMapping =
     }
 
 
+type alias ItemAmountMapping =
+    { itemId : String
+    , amount : Int
+    }
+
+
 type alias DataState =
     { item : Item
     , itemSupplies : Maybe (List (Maybe ItemSupply))
     , searchValue : String
     , itemPriceMappings : List ItemPriceMapping
+    , itemAmountMappings : List ItemAmountMapping
     }
 
 

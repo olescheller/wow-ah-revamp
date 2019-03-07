@@ -4648,6 +4648,7 @@ var author$project$App$initialItem = {
 	id: '0',
 	name: 'default'
 };
+var elm$core$Maybe$Nothing = {$: 'Nothing'};
 var elm$core$Basics$EQ = {$: 'EQ'};
 var elm$core$Basics$LT = {$: 'LT'};
 var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
@@ -4728,12 +4729,10 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
-var author$project$App$initialItemPriceMappings = _List_Nil;
-var elm$core$Maybe$Nothing = {$: 'Nothing'};
 var author$project$App$initialItemSupplies = elm$core$Maybe$Just(
 	_List_fromArray(
 		[elm$core$Maybe$Nothing]));
-var author$project$App$initialDataState = {item: author$project$App$initialItem, itemPriceMappings: author$project$App$initialItemPriceMappings, itemSupplies: author$project$App$initialItemSupplies, searchValue: ''};
+var author$project$App$initialDataState = {item: author$project$App$initialItem, itemAmountMappings: _List_Nil, itemPriceMappings: _List_Nil, itemSupplies: author$project$App$initialItemSupplies, searchValue: ''};
 var author$project$State$SELL = {$: 'SELL'};
 var author$project$App$initialUiState = {route: author$project$State$SELL};
 var elm$core$Basics$False = {$: 'False'};
@@ -5139,6 +5138,9 @@ var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
 var author$project$App$subscriptions = function (_n0) {
 	return elm$core$Platform$Sub$none;
 };
+var author$project$Action$GotBuyItemResponse = function (a) {
+	return {$: 'GotBuyItemResponse', a: a};
+};
 var author$project$Action$GotItemPriceResponse = F2(
 	function (a, b) {
 		return {$: 'GotItemPriceResponse', a: a, b: b};
@@ -5146,9 +5148,38 @@ var author$project$Action$GotItemPriceResponse = F2(
 var author$project$Action$GotItemSupplyResponse = function (a) {
 	return {$: 'GotItemSupplyResponse', a: a};
 };
+var author$project$Gqllib$Mutation$BuyItemsOptionalArguments = function (itemId) {
+	return {itemId: itemId};
+};
+var author$project$Gqllib$Mutation$BuyItemsRequiredArguments = F4(
+	function (userName, amount, total, perUnit) {
+		return {amount: amount, perUnit: perUnit, total: total, userName: userName};
+	});
 var dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument = F2(
 	function (a, b) {
 		return {$: 'Argument', a: a, b: b};
+	});
+var dillonkearns$elm_graphql$Graphql$Internal$Encode$Json = function (a) {
+	return {$: 'Json', a: a};
+};
+var elm$json$Json$Encode$null = _Json_encodeNull;
+var dillonkearns$elm_graphql$Graphql$Internal$Encode$null = dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(elm$json$Json$Encode$null);
+var dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional = F3(
+	function (fieldName, maybeValue, toValue) {
+		switch (maybeValue.$) {
+			case 'Present':
+				var value = maybeValue.a;
+				return elm$core$Maybe$Just(
+					A2(
+						dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument,
+						fieldName,
+						toValue(value)));
+			case 'Absent':
+				return elm$core$Maybe$Nothing;
+			default:
+				return elm$core$Maybe$Just(
+					A2(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument, fieldName, dillonkearns$elm_graphql$Graphql$Internal$Encode$null));
+		}
 	});
 var dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required = F3(
 	function (fieldName, raw, encode) {
@@ -5478,9 +5509,6 @@ var dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForComposi
 					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$composite, fieldName, args, fields)),
 				decoderTransform(decoder)));
 	});
-var dillonkearns$elm_graphql$Graphql$Internal$Encode$Json = function (a) {
-	return {$: 'Json', a: a};
-};
 var elm$json$Json$Encode$float = _Json_wrap;
 var dillonkearns$elm_graphql$Graphql$Internal$Encode$float = function (value) {
 	return dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
@@ -5491,9 +5519,33 @@ var dillonkearns$elm_graphql$Graphql$Internal$Encode$int = function (value) {
 	return dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
 		elm$json$Json$Encode$int(value));
 };
+var elm$json$Json$Encode$string = _Json_wrap;
+var dillonkearns$elm_graphql$Graphql$Internal$Encode$string = function (value) {
+	return dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
+		elm$json$Json$Encode$string(value));
+};
+var dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent = {$: 'Absent'};
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
+var elm$core$List$maybeCons = F3(
+	function (f, mx, xs) {
+		var _n0 = f(mx);
+		if (_n0.$ === 'Just') {
+			var x = _n0.a;
+			return A2(elm$core$List$cons, x, xs);
+		} else {
+			return xs;
+		}
+	});
+var elm$core$List$filterMap = F2(
+	function (f, xs) {
+		return A3(
+			elm$core$List$foldr,
+			elm$core$List$maybeCons(f),
+			_List_Nil,
+			xs);
+	});
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$null = _Json_decodeNull;
 var elm$json$Json$Decode$oneOf = _Json_oneOf;
@@ -5505,16 +5557,29 @@ var elm$json$Json$Decode$nullable = function (decoder) {
 				A2(elm$json$Json$Decode$map, elm$core$Maybe$Just, decoder)
 			]));
 };
-var author$project$Gqllib$Query$items_price = F2(
-	function (requiredArgs, object_) {
-		return A4(
-			dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
-			'items_price',
+var author$project$Gqllib$Mutation$buyItems = F3(
+	function (fillInOptionals, requiredArgs, object_) {
+		var filledInOptionals = fillInOptionals(
+			{itemId: dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent});
+		var optionalArgs = A2(
+			elm$core$List$filterMap,
+			elm$core$Basics$identity,
 			_List_fromArray(
 				[
-					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'itemId', requiredArgs.itemId, dillonkearns$elm_graphql$Graphql$Internal$Encode$float),
-					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'amount', requiredArgs.amount, dillonkearns$elm_graphql$Graphql$Internal$Encode$int)
-				]),
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, 'itemId', filledInOptionals.itemId, dillonkearns$elm_graphql$Graphql$Internal$Encode$int)
+				]));
+		return A4(
+			dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
+			'buyItems',
+			_Utils_ap(
+				optionalArgs,
+				_List_fromArray(
+					[
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'userName', requiredArgs.userName, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'amount', requiredArgs.amount, dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'total', requiredArgs.total, dillonkearns$elm_graphql$Graphql$Internal$Encode$float),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'perUnit', requiredArgs.perUnit, dillonkearns$elm_graphql$Graphql$Internal$Encode$float)
+					])),
 			object_,
 			A2(elm$core$Basics$composeR, elm$core$Basics$identity, elm$json$Json$Decode$nullable));
 	});
@@ -5541,64 +5606,48 @@ var dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField =
 				dillonkearns$elm_graphql$Graphql$Document$Field$hashedAliasName(newLeaf),
 				decoder));
 	});
-var elm$json$Json$Decode$float = _Json_decodeFloat;
-var author$project$Gqllib$Object$Price$perUnit = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'perUnit', _List_Nil, elm$json$Json$Decode$float);
-var author$project$Gqllib$Object$Price$total = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'total', _List_Nil, elm$json$Json$Decode$float);
-var author$project$State$Price = F2(
-	function (total, perUnit) {
-		return {perUnit: perUnit, total: total};
-	});
-var elm$json$Json$Decode$map2 = _Json_map2;
-var dillonkearns$elm_graphql$Graphql$SelectionSet$map2 = F3(
-	function (combine, _n0, _n1) {
-		var selectionFields1 = _n0.a;
-		var selectionDecoder1 = _n0.b;
-		var selectionFields2 = _n1.a;
-		var selectionDecoder2 = _n1.b;
-		return A2(
-			dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
-			_Utils_ap(selectionFields1, selectionFields2),
-			A3(elm$json$Json$Decode$map2, combine, selectionDecoder1, selectionDecoder2));
-	});
-var author$project$Queries$itemPrice = A3(dillonkearns$elm_graphql$Graphql$SelectionSet$map2, author$project$State$Price, author$project$Gqllib$Object$Price$perUnit, author$project$Gqllib$Object$Price$total);
-var author$project$Queries$itemPriceQuery = F2(
-	function (id, amount) {
-		return A2(
-			author$project$Gqllib$Query$items_price,
-			{amount: amount, itemId: id},
-			author$project$Queries$itemPrice);
-	});
-var elm$json$Json$Encode$string = _Json_wrap;
-var dillonkearns$elm_graphql$Graphql$Internal$Encode$string = function (value) {
-	return dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
-		elm$json$Json$Encode$string(value));
-};
-var elm$json$Json$Decode$list = _Json_decodeList;
-var author$project$Gqllib$Query$items_supply = F2(
-	function (requiredArgs, object_) {
-		return A4(
-			dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
-			'items_supply',
-			_List_fromArray(
-				[
-					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'partialItemName', requiredArgs.partialItemName, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
-				]),
-			object_,
-			A2(
-				elm$core$Basics$composeR,
-				elm$core$Basics$identity,
-				A2(
-					elm$core$Basics$composeR,
-					elm$json$Json$Decode$nullable,
-					A2(elm$core$Basics$composeR, elm$json$Json$Decode$list, elm$json$Json$Decode$nullable))));
-	});
-var author$project$Gqllib$Object$ItemSupply$id = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'id', _List_Nil, elm$json$Json$Decode$float);
-var author$project$Gqllib$Object$ItemSupply$item = function (object_) {
+var elm$json$Json$Decode$int = _Json_decodeInt;
+var author$project$Gqllib$Object$Receipt$amount = A4(
+	dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
+	'(Maybe Int)',
+	'amount',
+	_List_Nil,
+	elm$json$Json$Decode$nullable(elm$json$Json$Decode$int));
+var author$project$Gqllib$Object$Receipt$amountBought = A4(
+	dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
+	'(Maybe Int)',
+	'amountBought',
+	_List_Nil,
+	elm$json$Json$Decode$nullable(elm$json$Json$Decode$int));
+var elm$json$Json$Decode$string = _Json_decodeString;
+var author$project$Gqllib$Object$Receipt$buyer = A4(
+	dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
+	'(Maybe String)',
+	'buyer',
+	_List_Nil,
+	elm$json$Json$Decode$nullable(elm$json$Json$Decode$string));
+var author$project$Gqllib$Object$Receipt$item = function (object_) {
 	return A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField, 'item', _List_Nil, object_, elm$core$Basics$identity);
 };
-var author$project$Gqllib$Object$ItemSupply$min_price = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'min_price', _List_Nil, elm$json$Json$Decode$float);
-var author$project$Gqllib$Object$ItemSupply$quantity = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'quantity', _List_Nil, elm$json$Json$Decode$float);
-var elm$json$Json$Decode$string = _Json_decodeString;
+var elm$json$Json$Decode$float = _Json_decodeFloat;
+var author$project$Gqllib$Object$Receipt$min_price = A4(
+	dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
+	'(Maybe Float)',
+	'min_price',
+	_List_Nil,
+	elm$json$Json$Decode$nullable(elm$json$Json$Decode$float));
+var author$project$Gqllib$Object$Receipt$money = A4(
+	dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
+	'(Maybe Float)',
+	'money',
+	_List_Nil,
+	elm$json$Json$Decode$nullable(elm$json$Json$Decode$float));
+var author$project$Gqllib$Object$Receipt$price = A4(
+	dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
+	'(Maybe Int)',
+	'price',
+	_List_Nil,
+	elm$json$Json$Decode$nullable(elm$json$Json$Decode$int));
 var author$project$Gqllib$Object$Item$icon = A4(
 	dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
 	'(Maybe String)',
@@ -5631,13 +5680,13 @@ var dillonkearns$elm_graphql$Graphql$SelectionSet$map3 = F4(
 			A4(elm$json$Json$Decode$map3, combine, selectionDecoder1, selectionDecoder2, selectionDecoder3));
 	});
 var author$project$Queries$item = A4(dillonkearns$elm_graphql$Graphql$SelectionSet$map3, author$project$State$Item, author$project$Gqllib$Object$Item$name, author$project$Gqllib$Object$Item$id, author$project$Gqllib$Object$Item$icon);
-var author$project$State$ItemSupply = F4(
-	function (id, item, quantity, min_price) {
-		return {id: id, item: item, min_price: min_price, quantity: quantity};
+var author$project$State$Receipt = F7(
+	function (buyer, item, amount, amountBought, price, min_price, money) {
+		return {amount: amount, amountBought: amountBought, buyer: buyer, item: item, min_price: min_price, money: money, price: price};
 	});
-var elm$json$Json$Decode$map4 = _Json_map4;
-var dillonkearns$elm_graphql$Graphql$SelectionSet$map4 = F5(
-	function (combine, _n0, _n1, _n2, _n3) {
+var elm$json$Json$Decode$map7 = _Json_map7;
+var dillonkearns$elm_graphql$Graphql$SelectionSet$map7 = F8(
+	function (combine, _n0, _n1, _n2, _n3, _n4, _n5, _n6) {
 		var selectionFields1 = _n0.a;
 		var selectionDecoder1 = _n0.b;
 		var selectionFields2 = _n1.a;
@@ -5646,26 +5695,43 @@ var dillonkearns$elm_graphql$Graphql$SelectionSet$map4 = F5(
 		var selectionDecoder3 = _n2.b;
 		var selectionFields4 = _n3.a;
 		var selectionDecoder4 = _n3.b;
+		var selectionFields5 = _n4.a;
+		var selectionDecoder5 = _n4.b;
+		var selectionFields6 = _n5.a;
+		var selectionDecoder6 = _n5.b;
+		var selectionFields7 = _n6.a;
+		var selectionDecoder7 = _n6.b;
 		return A2(
 			dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
 			elm$core$List$concat(
 				_List_fromArray(
-					[selectionFields1, selectionFields2, selectionFields3, selectionFields4])),
-			A5(elm$json$Json$Decode$map4, combine, selectionDecoder1, selectionDecoder2, selectionDecoder3, selectionDecoder4));
+					[selectionFields1, selectionFields2, selectionFields3, selectionFields4, selectionFields5, selectionFields6, selectionFields7])),
+			A8(elm$json$Json$Decode$map7, combine, selectionDecoder1, selectionDecoder2, selectionDecoder3, selectionDecoder4, selectionDecoder5, selectionDecoder6, selectionDecoder7));
 	});
-var author$project$Queries$itemSupply = A5(
-	dillonkearns$elm_graphql$Graphql$SelectionSet$map4,
-	author$project$State$ItemSupply,
-	author$project$Gqllib$Object$ItemSupply$id,
-	author$project$Gqllib$Object$ItemSupply$item(author$project$Queries$item),
-	author$project$Gqllib$Object$ItemSupply$quantity,
-	author$project$Gqllib$Object$ItemSupply$min_price);
-var author$project$Queries$itemSupplyQuery = function (searchValue) {
-	return A2(
-		author$project$Gqllib$Query$items_supply,
-		{partialItemName: searchValue},
-		author$project$Queries$itemSupply);
+var author$project$Mutations$buyItems = A8(
+	dillonkearns$elm_graphql$Graphql$SelectionSet$map7,
+	author$project$State$Receipt,
+	author$project$Gqllib$Object$Receipt$buyer,
+	author$project$Gqllib$Object$Receipt$item(author$project$Queries$item),
+	author$project$Gqllib$Object$Receipt$amount,
+	author$project$Gqllib$Object$Receipt$amountBought,
+	author$project$Gqllib$Object$Receipt$price,
+	author$project$Gqllib$Object$Receipt$min_price,
+	author$project$Gqllib$Object$Receipt$money);
+var dillonkearns$elm_graphql$Graphql$OptionalArgument$Present = function (a) {
+	return {$: 'Present', a: a};
 };
+var author$project$Mutations$buyMutation = F5(
+	function (userName, itemId, amount, total, perUnit) {
+		return A3(
+			author$project$Gqllib$Mutation$buyItems,
+			function (oi) {
+				return author$project$Gqllib$Mutation$BuyItemsOptionalArguments(
+					dillonkearns$elm_graphql$Graphql$OptionalArgument$Present(itemId));
+			},
+			A4(author$project$Gqllib$Mutation$BuyItemsRequiredArguments, userName, amount, total, perUnit),
+			author$project$Mutations$buyItems);
+	});
 var dillonkearns$elm_graphql$Graphql$Http$GraphqlError = F2(
 	function (a, b) {
 		return {$: 'GraphqlError', a: a, b: b};
@@ -5728,20 +5794,19 @@ var dillonkearns$elm_graphql$Graphql$Document$decoder = function (_n0) {
 	var decoder_ = _n0.b;
 	return A2(elm$json$Json$Decode$field, 'data', decoder_);
 };
-var dillonkearns$elm_graphql$Graphql$Http$Query = F2(
-	function (a, b) {
-		return {$: 'Query', a: a, b: b};
-	});
+var dillonkearns$elm_graphql$Graphql$Http$Mutation = function (a) {
+	return {$: 'Mutation', a: a};
+};
 var dillonkearns$elm_graphql$Graphql$Http$Request = function (a) {
 	return {$: 'Request', a: a};
 };
-var dillonkearns$elm_graphql$Graphql$Http$queryRequest = F2(
-	function (baseUrl, query) {
+var dillonkearns$elm_graphql$Graphql$Http$mutationRequest = F2(
+	function (baseUrl, mutationSelectionSet) {
 		return dillonkearns$elm_graphql$Graphql$Http$Request(
 			{
 				baseUrl: baseUrl,
-				details: A2(dillonkearns$elm_graphql$Graphql$Http$Query, elm$core$Maybe$Nothing, query),
-				expect: dillonkearns$elm_graphql$Graphql$Document$decoder(query),
+				details: dillonkearns$elm_graphql$Graphql$Http$Mutation(mutationSelectionSet),
+				expect: dillonkearns$elm_graphql$Graphql$Document$decoder(mutationSelectionSet),
 				headers: _List_Nil,
 				queryParams: _List_Nil,
 				timeout: elm$core$Maybe$Nothing,
@@ -6390,24 +6455,6 @@ var dillonkearns$elm_graphql$Graphql$Document$Indent$spaces = function (n) {
 var dillonkearns$elm_graphql$Graphql$Document$Indent$generate = function (indentationLevel) {
 	return dillonkearns$elm_graphql$Graphql$Document$Indent$spaces(indentationLevel * 2);
 };
-var elm$core$List$maybeCons = F3(
-	function (f, mx, xs) {
-		var _n0 = f(mx);
-		if (_n0.$ === 'Just') {
-			var x = _n0.a;
-			return A2(elm$core$List$cons, x, xs);
-		} else {
-			return xs;
-		}
-	});
-var elm$core$List$filterMap = F2(
-	function (f, xs) {
-		return A3(
-			elm$core$List$foldr,
-			elm$core$List$maybeCons(f),
-			_List_Nil,
-			xs);
-	});
 var dillonkearns$elm_graphql$Graphql$Document$Field$serialize = F3(
 	function (aliasName, mIndentationLevel, field) {
 		var prefix = function () {
@@ -6665,7 +6712,7 @@ var dillonkearns$elm_graphql$Graphql$Http$GraphqlError$Location = F2(
 	function (line, column) {
 		return {column: column, line: line};
 	});
-var elm$json$Json$Decode$int = _Json_decodeInt;
+var elm$json$Json$Decode$map2 = _Json_map2;
 var dillonkearns$elm_graphql$Graphql$Http$GraphqlError$locationDecoder = A3(
 	elm$json$Json$Decode$map2,
 	dillonkearns$elm_graphql$Graphql$Http$GraphqlError$Location,
@@ -6690,6 +6737,7 @@ var elm$json$Json$Decode$dict = function (decoder) {
 		elm$core$Dict$fromList,
 		elm$json$Json$Decode$keyValuePairs(decoder));
 };
+var elm$json$Json$Decode$list = _Json_decodeList;
 var elm$json$Json$Decode$succeed = _Json_succeed;
 var elm$json$Json$Decode$maybe = function (decoder) {
 	return elm$json$Json$Decode$oneOf(
@@ -7115,6 +7163,127 @@ var dillonkearns$elm_graphql$Graphql$Http$send = F2(
 		return (request.withCredentials ? elm$http$Http$riskyRequest : elm$http$Http$request)(
 			A2(dillonkearns$elm_graphql$Graphql$Http$toHttpRequestRecord, resultToMessage, fullRequest));
 	});
+var author$project$Mutations$makeMutation = F2(
+	function (mutation, message) {
+		return A2(
+			dillonkearns$elm_graphql$Graphql$Http$send,
+			A2(elm$core$Basics$composeR, dillonkearns$elm_graphql$Graphql$Http$discardParsedErrorData, message),
+			A2(dillonkearns$elm_graphql$Graphql$Http$mutationRequest, 'http://localhost:4000/', mutation));
+	});
+var author$project$Gqllib$Query$items_price = F2(
+	function (requiredArgs, object_) {
+		return A4(
+			dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
+			'items_price',
+			_List_fromArray(
+				[
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'itemId', requiredArgs.itemId, dillonkearns$elm_graphql$Graphql$Internal$Encode$float),
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'amount', requiredArgs.amount, dillonkearns$elm_graphql$Graphql$Internal$Encode$int)
+				]),
+			object_,
+			A2(elm$core$Basics$composeR, elm$core$Basics$identity, elm$json$Json$Decode$nullable));
+	});
+var author$project$Gqllib$Object$Price$perUnit = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'perUnit', _List_Nil, elm$json$Json$Decode$float);
+var author$project$Gqllib$Object$Price$total = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'total', _List_Nil, elm$json$Json$Decode$float);
+var author$project$State$Price = F2(
+	function (total, perUnit) {
+		return {perUnit: perUnit, total: total};
+	});
+var dillonkearns$elm_graphql$Graphql$SelectionSet$map2 = F3(
+	function (combine, _n0, _n1) {
+		var selectionFields1 = _n0.a;
+		var selectionDecoder1 = _n0.b;
+		var selectionFields2 = _n1.a;
+		var selectionDecoder2 = _n1.b;
+		return A2(
+			dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
+			_Utils_ap(selectionFields1, selectionFields2),
+			A3(elm$json$Json$Decode$map2, combine, selectionDecoder1, selectionDecoder2));
+	});
+var author$project$Queries$itemPrice = A3(dillonkearns$elm_graphql$Graphql$SelectionSet$map2, author$project$State$Price, author$project$Gqllib$Object$Price$perUnit, author$project$Gqllib$Object$Price$total);
+var author$project$Queries$itemPriceQuery = F2(
+	function (id, amount) {
+		return A2(
+			author$project$Gqllib$Query$items_price,
+			{amount: amount, itemId: id},
+			author$project$Queries$itemPrice);
+	});
+var author$project$Gqllib$Query$items_supply = F2(
+	function (requiredArgs, object_) {
+		return A4(
+			dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
+			'items_supply',
+			_List_fromArray(
+				[
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'partialItemName', requiredArgs.partialItemName, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
+				]),
+			object_,
+			A2(
+				elm$core$Basics$composeR,
+				elm$core$Basics$identity,
+				A2(
+					elm$core$Basics$composeR,
+					elm$json$Json$Decode$nullable,
+					A2(elm$core$Basics$composeR, elm$json$Json$Decode$list, elm$json$Json$Decode$nullable))));
+	});
+var author$project$Gqllib$Object$ItemSupply$id = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'id', _List_Nil, elm$json$Json$Decode$float);
+var author$project$Gqllib$Object$ItemSupply$item = function (object_) {
+	return A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField, 'item', _List_Nil, object_, elm$core$Basics$identity);
+};
+var author$project$Gqllib$Object$ItemSupply$min_price = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'min_price', _List_Nil, elm$json$Json$Decode$float);
+var author$project$Gqllib$Object$ItemSupply$quantity = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'quantity', _List_Nil, elm$json$Json$Decode$float);
+var author$project$State$ItemSupply = F4(
+	function (id, item, quantity, min_price) {
+		return {id: id, item: item, min_price: min_price, quantity: quantity};
+	});
+var elm$json$Json$Decode$map4 = _Json_map4;
+var dillonkearns$elm_graphql$Graphql$SelectionSet$map4 = F5(
+	function (combine, _n0, _n1, _n2, _n3) {
+		var selectionFields1 = _n0.a;
+		var selectionDecoder1 = _n0.b;
+		var selectionFields2 = _n1.a;
+		var selectionDecoder2 = _n1.b;
+		var selectionFields3 = _n2.a;
+		var selectionDecoder3 = _n2.b;
+		var selectionFields4 = _n3.a;
+		var selectionDecoder4 = _n3.b;
+		return A2(
+			dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
+			elm$core$List$concat(
+				_List_fromArray(
+					[selectionFields1, selectionFields2, selectionFields3, selectionFields4])),
+			A5(elm$json$Json$Decode$map4, combine, selectionDecoder1, selectionDecoder2, selectionDecoder3, selectionDecoder4));
+	});
+var author$project$Queries$itemSupply = A5(
+	dillonkearns$elm_graphql$Graphql$SelectionSet$map4,
+	author$project$State$ItemSupply,
+	author$project$Gqllib$Object$ItemSupply$id,
+	author$project$Gqllib$Object$ItemSupply$item(author$project$Queries$item),
+	author$project$Gqllib$Object$ItemSupply$quantity,
+	author$project$Gqllib$Object$ItemSupply$min_price);
+var author$project$Queries$itemSupplyQuery = function (searchValue) {
+	return A2(
+		author$project$Gqllib$Query$items_supply,
+		{partialItemName: searchValue},
+		author$project$Queries$itemSupply);
+};
+var dillonkearns$elm_graphql$Graphql$Http$Query = F2(
+	function (a, b) {
+		return {$: 'Query', a: a, b: b};
+	});
+var dillonkearns$elm_graphql$Graphql$Http$queryRequest = F2(
+	function (baseUrl, query) {
+		return dillonkearns$elm_graphql$Graphql$Http$Request(
+			{
+				baseUrl: baseUrl,
+				details: A2(dillonkearns$elm_graphql$Graphql$Http$Query, elm$core$Maybe$Nothing, query),
+				expect: dillonkearns$elm_graphql$Graphql$Document$decoder(query),
+				headers: _List_Nil,
+				queryParams: _List_Nil,
+				timeout: elm$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});
 var author$project$Queries$makeRequest = F2(
 	function (query, message) {
 		return A2(
@@ -7204,8 +7373,31 @@ var author$project$App$update = F2(
 			case 'EnterQuantity':
 				var itemId = msg.a;
 				var quantity = msg.b;
+				var oldData = model.data;
+				var oldItemAmountMappings = oldData.itemAmountMappings;
+				var itemAmountMapping = {
+					amount: A2(
+						elm$core$Maybe$withDefault,
+						0,
+						elm$core$String$toInt(quantity)),
+					itemId: itemId
+				};
+				var newItemAmountMappings = A2(
+					elm$core$List$cons,
+					itemAmountMapping,
+					A2(
+						elm$core$List$filter,
+						function (i) {
+							return !_Utils_eq(i.itemId, itemId);
+						},
+						oldItemAmountMappings));
+				var newData = _Utils_update(
+					oldData,
+					{itemAmountMappings: newItemAmountMappings});
 				return _Utils_Tuple2(
-					model,
+					_Utils_update(
+						model,
+						{data: newData}),
 					A2(
 						author$project$Queries$makeRequest,
 						A2(
@@ -7219,7 +7411,7 @@ var author$project$App$update = F2(
 								0,
 								elm$core$String$toInt(quantity))),
 						author$project$Action$GotItemPriceResponse(itemId)));
-			default:
+			case 'GotItemPriceResponse':
 				var itemId = msg.a;
 				var response = msg.b;
 				if (response.$ === 'Ok') {
@@ -7251,6 +7443,27 @@ var author$project$App$update = F2(
 					}
 				} else {
 					var value = response.a;
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				}
+			case 'BuyItem':
+				var userName = msg.a;
+				var itemId = msg.b;
+				var amount = msg.c;
+				var total = msg.d;
+				var perUnit = msg.e;
+				return _Utils_Tuple2(
+					model,
+					A2(
+						author$project$Mutations$makeMutation,
+						A5(author$project$Mutations$buyMutation, userName, itemId, amount, total, perUnit),
+						author$project$Action$GotBuyItemResponse));
+			default:
+				var response = msg.a;
+				if (response.$ === 'Ok') {
+					var value = response.a;
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				} else {
+					var error = response.a;
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
 		}
@@ -7372,6 +7585,10 @@ var author$project$App$onEnter = function (msg) {
 		'keydown',
 		A2(elm$json$Json$Decode$andThen, isEnter, elm$html$Html$Events$keyCode));
 };
+var author$project$Action$BuyItem = F5(
+	function (a, b, c, d, e) {
+		return {$: 'BuyItem', a: a, b: b, c: c, d: d, e: e};
+	});
 var author$project$Action$EnterQuantity = F2(
 	function (a, b) {
 		return {$: 'EnterQuantity', a: a, b: b};
@@ -7385,6 +7602,19 @@ var elm$core$List$head = function (list) {
 		return elm$core$Maybe$Nothing;
 	}
 };
+var author$project$State$getItemAmountMappings = F2(
+	function (itemId, model) {
+		return A2(
+			elm$core$Maybe$withDefault,
+			{amount: 0, itemId: '0'},
+			elm$core$List$head(
+				A2(
+					elm$core$List$filter,
+					function (item) {
+						return _Utils_eq(item.itemId, itemId);
+					},
+					model.data.itemAmountMappings))).amount;
+	});
 var author$project$State$getItemPriceMappings = F2(
 	function (itemId, model) {
 		return A2(
@@ -7403,9 +7633,16 @@ var author$project$State$getItemPriceMappings = F2(
 	});
 var elm$core$String$fromFloat = _String_fromNumber;
 var elm$html$Html$button = _VirtualDom_node('button');
+var elm$html$Html$img = _VirtualDom_node('img');
 var elm$html$Html$input = _VirtualDom_node('input');
 var elm$html$Html$td = _VirtualDom_node('td');
 var elm$html$Html$tr = _VirtualDom_node('tr');
+var elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
 var elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
@@ -7448,6 +7685,20 @@ var author$project$Page$Buy$renderItem = F2(
 				_List_Nil,
 				_List_fromArray(
 					[
+						A2(
+						elm$html$Html$td,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$img,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$src(
+										'https://s3.eu-central-1.amazonaws.com/wow-icons/icons/' + (A2(elm$core$Maybe$withDefault, 'inv_misc_questionmark', val.item.icon) + '.jpg'))
+									]),
+								_List_Nil)
+							])),
 						A2(
 						elm$html$Html$td,
 						_List_Nil,
@@ -7504,7 +7755,18 @@ var author$project$Page$Buy$renderItem = F2(
 								elm$html$Html$button,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$class('col s2 waves-effect waves-light btn #ffd600 yellow accent-4 black-text text-darken-2')
+										elm$html$Html$Attributes$class('col s2 waves-effect waves-light btn #ffd600 yellow accent-4 black-text text-darken-2'),
+										elm$html$Html$Events$onClick(
+										A5(
+											author$project$Action$BuyItem,
+											'Elandura-Silvermoon',
+											A2(
+												elm$core$Maybe$withDefault,
+												0,
+												elm$core$String$toInt(val.item.id)),
+											A2(author$project$State$getItemAmountMappings, val.item.id, model),
+											A2(author$project$State$getItemPriceMappings, val.item.id, model).perUnit,
+											A2(author$project$State$getItemPriceMappings, val.item.id, model).total))
 									]),
 								_List_fromArray(
 									[
@@ -7542,6 +7804,7 @@ var author$project$Page$Buy$renderItems = F2(
 							_List_Nil,
 							_List_fromArray(
 								[
+									A2(elm$html$Html$th, _List_Nil, _List_Nil),
 									A2(
 									elm$html$Html$th,
 									_List_Nil,

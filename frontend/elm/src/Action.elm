@@ -1,7 +1,7 @@
 module Action exposing (Msg(..))
 
 import Graphql.Http
-import State exposing (Item, ItemSupply, Price, Route)
+import State exposing (Item, ItemSupply, Price, Receipt, Route)
 
 
 type Msg
@@ -12,6 +12,8 @@ type Msg
     | GotItemSupplyResponse (Result (Graphql.Http.Error ()) (Maybe (List (Maybe ItemSupply))))
     | EnterQuantity String String
     | GotItemPriceResponse String (Result (Graphql.Http.Error ()) (Maybe Price))
+    | BuyItem String Int Int Float Float
+    | GotBuyItemResponse (Result (Graphql.Http.Error ()) (Maybe Receipt))
 
 
 
