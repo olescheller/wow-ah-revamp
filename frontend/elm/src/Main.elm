@@ -106,19 +106,22 @@ update msg model =
             ( model, makeRequest (itemSupplyQuery searchValue) GotItemSupplyResponse )
 
 
+getActiveClass : Route -> Route -> String
+getActiveClass activeRoute route =
+    if activeRoute == route then
+        "item yellow active"
+
+    else
+        "item  yellow"
+
+
 renderNav : State -> Html.Html Msg
 renderNav model =
-    Html.nav [ class "#37474f blue-grey darken-3" ]
-        [ Html.div [ class "nav-wrapper" ]
-            [ Html.a [ class "brand-logo" ] [ Html.text "WOW-AH-revamp" ]
-            , Html.ul [ class "right hide-on-med-and-down", id "nav-mobile" ]
-                [ Html.li []
-                    [ Html.a [ onClick (SetCurrentRoute BUY) ] [ Html.text "Buy" ]
-                    ]
-                , Html.li []
-                    [ Html.a [ onClick (SetCurrentRoute SELL) ] [ Html.text "Sell" ]
-                    ]
-                ]
+    Html.div []
+        [ Html.div [ class "ui inverted left floated header" ] [ Html.text "WOW-AH-revamp" ]
+        , Html.div [ class "ui inverted right floated secondary pointing menu" ]
+            [ Html.a [ class (getActiveClass model.ui.route BUY), onClick (SetCurrentRoute BUY) ] [ Html.text "Buy" ]
+            , Html.a [ class (getActiveClass model.ui.route SELL), onClick (SetCurrentRoute SELL) ] [ Html.text "Sell" ]
             ]
         ]
 
@@ -170,8 +173,9 @@ renderPage model =
 
 view : State -> Html.Html Msg
 view model =
-    Html.div []
+    Html.div [ class "ui inverted segment" ]
         [ renderNav model
+        , Html.div [ class "ui clearing divider" ] []
         , renderPage model
         ]
 

@@ -7141,6 +7141,10 @@ var author$project$App$update = F2(
 var author$project$Action$SetCurrentRoute = function (a) {
 	return {$: 'SetCurrentRoute', a: a};
 };
+var author$project$App$getActiveClass = F2(
+	function (activeRoute, route) {
+		return _Utils_eq(activeRoute, route) ? 'item yellow active' : 'item  yellow';
+	});
 var author$project$State$BUY = {$: 'BUY'};
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
@@ -7156,11 +7160,8 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 };
 var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$div = _VirtualDom_node('div');
-var elm$html$Html$li = _VirtualDom_node('li');
-var elm$html$Html$nav = _VirtualDom_node('nav');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$html$Html$ul = _VirtualDom_node('ul');
 var elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
@@ -7169,7 +7170,6 @@ var elm$html$Html$Attributes$stringProperty = F2(
 			elm$json$Json$Encode$string(string));
 	});
 var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
-var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -7189,18 +7189,25 @@ var elm$html$Html$Events$onClick = function (msg) {
 };
 var author$project$App$renderNav = function (model) {
 	return A2(
-		elm$html$Html$nav,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('#37474f blue-grey darken-3')
-			]),
+		elm$html$Html$div,
+		_List_Nil,
 		_List_fromArray(
 			[
 				A2(
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('nav-wrapper')
+						elm$html$Html$Attributes$class('ui inverted left floated header')
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('WOW-AH-revamp')
+					])),
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('ui inverted right floated secondary pointing menu')
 					]),
 				_List_fromArray(
 					[
@@ -7208,55 +7215,27 @@ var author$project$App$renderNav = function (model) {
 						elm$html$Html$a,
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$class('brand-logo')
+								elm$html$Html$Attributes$class(
+								A2(author$project$App$getActiveClass, model.ui.route, author$project$State$BUY)),
+								elm$html$Html$Events$onClick(
+								author$project$Action$SetCurrentRoute(author$project$State$BUY))
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('WOW-AH-revamp')
+								elm$html$Html$text('Buy')
 							])),
 						A2(
-						elm$html$Html$ul,
+						elm$html$Html$a,
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$class('right hide-on-med-and-down'),
-								elm$html$Html$Attributes$id('nav-mobile')
+								elm$html$Html$Attributes$class(
+								A2(author$project$App$getActiveClass, model.ui.route, author$project$State$SELL)),
+								elm$html$Html$Events$onClick(
+								author$project$Action$SetCurrentRoute(author$project$State$SELL))
 							]),
 						_List_fromArray(
 							[
-								A2(
-								elm$html$Html$li,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2(
-										elm$html$Html$a,
-										_List_fromArray(
-											[
-												elm$html$Html$Events$onClick(
-												author$project$Action$SetCurrentRoute(author$project$State$BUY))
-											]),
-										_List_fromArray(
-											[
-												elm$html$Html$text('Buy')
-											]))
-									])),
-								A2(
-								elm$html$Html$li,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2(
-										elm$html$Html$a,
-										_List_fromArray(
-											[
-												elm$html$Html$Events$onClick(
-												author$project$Action$SetCurrentRoute(author$project$State$SELL))
-											]),
-										_List_fromArray(
-											[
-												elm$html$Html$text('Sell')
-											]))
-									]))
+								elm$html$Html$text('Sell')
 							]))
 					]))
 			]));
@@ -7539,10 +7518,20 @@ var author$project$App$renderPage = function (model) {
 var author$project$App$view = function (model) {
 	return A2(
 		elm$html$Html$div,
-		_List_Nil,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('ui inverted segment')
+			]),
 		_List_fromArray(
 			[
 				author$project$App$renderNav(model),
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('ui clearing divider')
+					]),
+				_List_Nil),
 				author$project$App$renderPage(model)
 			]));
 };
