@@ -1,4 +1,4 @@
-module Mutations exposing (buyItems, buyMutation, makeMutation)
+module Mutations exposing (buyMutation, makeMutation, receipt)
 
 import Gqllib.Mutation as Mutation exposing (BuyItemsOptionalArguments, BuyItemsRequiredArguments)
 import Gqllib.Object
@@ -22,11 +22,11 @@ makeMutation mutation message =
 
 buyMutation : String -> Int -> Int -> Float -> Float -> SelectionSet (Maybe Receipt) RootMutation
 buyMutation userName itemId amount total perUnit =
-    Mutation.buyItems (\oi -> BuyItemsOptionalArguments (Present itemId)) (BuyItemsRequiredArguments userName amount total perUnit) buyItems
+    Mutation.buyItems (\oi -> BuyItemsOptionalArguments (Present itemId)) (BuyItemsRequiredArguments userName amount total perUnit) receipt
 
 
-buyItems : SelectionSet Receipt Gqllib.Object.Receipt
-buyItems =
+receipt : SelectionSet Receipt Gqllib.Object.Receipt
+receipt =
     SelectionSet.map7 Receipt
         Receipt.buyer
         (Receipt.item <| item)

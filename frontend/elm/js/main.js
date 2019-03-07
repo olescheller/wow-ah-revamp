@@ -5708,7 +5708,7 @@ var dillonkearns$elm_graphql$Graphql$SelectionSet$map7 = F8(
 					[selectionFields1, selectionFields2, selectionFields3, selectionFields4, selectionFields5, selectionFields6, selectionFields7])),
 			A8(elm$json$Json$Decode$map7, combine, selectionDecoder1, selectionDecoder2, selectionDecoder3, selectionDecoder4, selectionDecoder5, selectionDecoder6, selectionDecoder7));
 	});
-var author$project$Mutations$buyItems = A8(
+var author$project$Mutations$receipt = A8(
 	dillonkearns$elm_graphql$Graphql$SelectionSet$map7,
 	author$project$State$Receipt,
 	author$project$Gqllib$Object$Receipt$buyer,
@@ -5730,7 +5730,7 @@ var author$project$Mutations$buyMutation = F5(
 					dillonkearns$elm_graphql$Graphql$OptionalArgument$Present(itemId));
 			},
 			A4(author$project$Gqllib$Mutation$BuyItemsRequiredArguments, userName, amount, total, perUnit),
-			author$project$Mutations$buyItems);
+			author$project$Mutations$receipt);
 	});
 var dillonkearns$elm_graphql$Graphql$Http$GraphqlError = F2(
 	function (a, b) {

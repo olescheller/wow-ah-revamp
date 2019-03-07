@@ -1,17 +1,20 @@
-module App exposing (initialModel, main, update, view)
+port module Main exposing (createSubscriptions, initialModel, main, update, view)
 
 import Action exposing (Msg(..))
 import Browser
+import Graphql.Document
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events as Evt exposing (keyCode, on, onClick, onInput)
 import Json.Decode as Json
+import Json.Encode as E
 import Maybe exposing (..)
 import Mutations exposing (buyMutation, makeMutation)
 import Page.Buy as Buy exposing (..)
 import Queries exposing (itemPriceQuery, itemQuery, itemSupplyQuery, makeRequest)
 import State exposing (DataState, FakeItem, Item, ItemSupply, Price, Route(..), State, UiState)
 import String exposing (..)
+import Subscriptions exposing (subscriptionDocument)
 import Tuple exposing (first)
 
 
@@ -52,8 +55,11 @@ initialModel a =
     ( { ui = initialUiState
       , data = initialDataState
       }
-    , Cmd.none
+    , createSubscriptions (E.string <| (subscriptionDocument 25 |> Graphql.Document.serializeSubscription))
     )
+
+
+port createSubscriptions : E.Value -> Cmd msg
 
 
 update : Msg -> State -> ( State, Cmd Msg )
