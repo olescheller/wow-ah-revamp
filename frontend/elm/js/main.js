@@ -4648,7 +4648,6 @@ var author$project$App$initialItem = {
 	id: '0',
 	name: 'default'
 };
-var elm$core$Maybe$Nothing = {$: 'Nothing'};
 var elm$core$Basics$EQ = {$: 'EQ'};
 var elm$core$Basics$LT = {$: 'LT'};
 var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
@@ -4729,10 +4728,12 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
+var author$project$App$initialItemPriceMappings = _List_Nil;
+var elm$core$Maybe$Nothing = {$: 'Nothing'};
 var author$project$App$initialItemSupplies = elm$core$Maybe$Just(
 	_List_fromArray(
 		[elm$core$Maybe$Nothing]));
-var author$project$App$initialDataState = {item: author$project$App$initialItem, itemSupplies: author$project$App$initialItemSupplies, searchValue: ''};
+var author$project$App$initialDataState = {item: author$project$App$initialItem, itemPriceMappings: author$project$App$initialItemPriceMappings, itemSupplies: author$project$App$initialItemSupplies, searchValue: ''};
 var author$project$State$SELL = {$: 'SELL'};
 var author$project$App$initialUiState = {route: author$project$State$SELL};
 var elm$core$Basics$False = {$: 'False'};
@@ -5138,6 +5139,10 @@ var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
 var author$project$App$subscriptions = function (_n0) {
 	return elm$core$Platform$Sub$none;
 };
+var author$project$Action$GotItemPriceResponse = F2(
+	function (a, b) {
+		return {$: 'GotItemPriceResponse', a: a, b: b};
+	});
 var author$project$Action$GotItemSupplyResponse = function (a) {
 	return {$: 'GotItemSupplyResponse', a: a};
 };
@@ -5476,15 +5481,19 @@ var dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForComposi
 var dillonkearns$elm_graphql$Graphql$Internal$Encode$Json = function (a) {
 	return {$: 'Json', a: a};
 };
-var elm$json$Json$Encode$string = _Json_wrap;
-var dillonkearns$elm_graphql$Graphql$Internal$Encode$string = function (value) {
+var elm$json$Json$Encode$float = _Json_wrap;
+var dillonkearns$elm_graphql$Graphql$Internal$Encode$float = function (value) {
 	return dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
-		elm$json$Json$Encode$string(value));
+		elm$json$Json$Encode$float(value));
+};
+var elm$json$Json$Encode$int = _Json_wrap;
+var dillonkearns$elm_graphql$Graphql$Internal$Encode$int = function (value) {
+	return dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
+		elm$json$Json$Encode$int(value));
 };
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
-var elm$json$Json$Decode$list = _Json_decodeList;
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$null = _Json_decodeNull;
 var elm$json$Json$Decode$oneOf = _Json_oneOf;
@@ -5496,23 +5505,18 @@ var elm$json$Json$Decode$nullable = function (decoder) {
 				A2(elm$json$Json$Decode$map, elm$core$Maybe$Just, decoder)
 			]));
 };
-var author$project$Gqllib$Query$items_supply = F2(
+var author$project$Gqllib$Query$items_price = F2(
 	function (requiredArgs, object_) {
 		return A4(
 			dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
-			'items_supply',
+			'items_price',
 			_List_fromArray(
 				[
-					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'partialItemName', requiredArgs.partialItemName, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'itemId', requiredArgs.itemId, dillonkearns$elm_graphql$Graphql$Internal$Encode$float),
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'amount', requiredArgs.amount, dillonkearns$elm_graphql$Graphql$Internal$Encode$int)
 				]),
 			object_,
-			A2(
-				elm$core$Basics$composeR,
-				elm$core$Basics$identity,
-				A2(
-					elm$core$Basics$composeR,
-					elm$json$Json$Decode$nullable,
-					A2(elm$core$Basics$composeR, elm$json$Json$Decode$list, elm$json$Json$Decode$nullable))));
+			A2(elm$core$Basics$composeR, elm$core$Basics$identity, elm$json$Json$Decode$nullable));
 	});
 var dillonkearns$elm_graphql$Graphql$RawField$Leaf = F2(
 	function (a, b) {
@@ -5538,6 +5542,56 @@ var dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField =
 				decoder));
 	});
 var elm$json$Json$Decode$float = _Json_decodeFloat;
+var author$project$Gqllib$Object$Price$perUnit = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'perUnit', _List_Nil, elm$json$Json$Decode$float);
+var author$project$Gqllib$Object$Price$total = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'total', _List_Nil, elm$json$Json$Decode$float);
+var author$project$State$Price = F2(
+	function (total, perUnit) {
+		return {perUnit: perUnit, total: total};
+	});
+var elm$json$Json$Decode$map2 = _Json_map2;
+var dillonkearns$elm_graphql$Graphql$SelectionSet$map2 = F3(
+	function (combine, _n0, _n1) {
+		var selectionFields1 = _n0.a;
+		var selectionDecoder1 = _n0.b;
+		var selectionFields2 = _n1.a;
+		var selectionDecoder2 = _n1.b;
+		return A2(
+			dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
+			_Utils_ap(selectionFields1, selectionFields2),
+			A3(elm$json$Json$Decode$map2, combine, selectionDecoder1, selectionDecoder2));
+	});
+var author$project$Queries$itemPrice = A3(dillonkearns$elm_graphql$Graphql$SelectionSet$map2, author$project$State$Price, author$project$Gqllib$Object$Price$perUnit, author$project$Gqllib$Object$Price$total);
+var author$project$Queries$itemPriceQuery = F2(
+	function (id, amount) {
+		return A2(
+			author$project$Gqllib$Query$items_price,
+			{amount: amount, itemId: id},
+			author$project$Queries$itemPrice);
+	});
+var elm$json$Json$Encode$string = _Json_wrap;
+var dillonkearns$elm_graphql$Graphql$Internal$Encode$string = function (value) {
+	return dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
+		elm$json$Json$Encode$string(value));
+};
+var elm$json$Json$Decode$list = _Json_decodeList;
+var author$project$Gqllib$Query$items_supply = F2(
+	function (requiredArgs, object_) {
+		return A4(
+			dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
+			'items_supply',
+			_List_fromArray(
+				[
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'partialItemName', requiredArgs.partialItemName, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
+				]),
+			object_,
+			A2(
+				elm$core$Basics$composeR,
+				elm$core$Basics$identity,
+				A2(
+					elm$core$Basics$composeR,
+					elm$json$Json$Decode$nullable,
+					A2(elm$core$Basics$composeR, elm$json$Json$Decode$list, elm$json$Json$Decode$nullable))));
+	});
 var author$project$Gqllib$Object$ItemSupply$id = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'id', _List_Nil, elm$json$Json$Decode$float);
 var author$project$Gqllib$Object$ItemSupply$item = function (object_) {
 	return A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField, 'item', _List_Nil, object_, elm$core$Basics$identity);
@@ -6612,7 +6666,6 @@ var dillonkearns$elm_graphql$Graphql$Http$GraphqlError$Location = F2(
 		return {column: column, line: line};
 	});
 var elm$json$Json$Decode$int = _Json_decodeInt;
-var elm$json$Json$Decode$map2 = _Json_map2;
 var dillonkearns$elm_graphql$Graphql$Http$GraphqlError$locationDecoder = A3(
 	elm$json$Json$Decode$map2,
 	dillonkearns$elm_graphql$Graphql$Http$GraphqlError$Location,
@@ -7069,6 +7122,18 @@ var author$project$Queries$makeRequest = F2(
 			A2(elm$core$Basics$composeR, dillonkearns$elm_graphql$Graphql$Http$discardParsedErrorData, message),
 			A2(dillonkearns$elm_graphql$Graphql$Http$queryRequest, 'http://localhost:4000/', query));
 	});
+var elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var elm$core$String$toFloat = _String_toFloat;
 var author$project$App$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -7128,7 +7193,7 @@ var author$project$App$update = F2(
 						model,
 						{data: newData}),
 					elm$core$Platform$Cmd$none);
-			default:
+			case 'SearchItemSupplies':
 				var searchValue = model.data.searchValue;
 				return _Utils_Tuple2(
 					model,
@@ -7136,6 +7201,58 @@ var author$project$App$update = F2(
 						author$project$Queries$makeRequest,
 						author$project$Queries$itemSupplyQuery(searchValue),
 						author$project$Action$GotItemSupplyResponse));
+			case 'EnterQuantity':
+				var itemId = msg.a;
+				var quantity = msg.b;
+				return _Utils_Tuple2(
+					model,
+					A2(
+						author$project$Queries$makeRequest,
+						A2(
+							author$project$Queries$itemPriceQuery,
+							A2(
+								elm$core$Maybe$withDefault,
+								0,
+								elm$core$String$toFloat(itemId)),
+							A2(
+								elm$core$Maybe$withDefault,
+								0,
+								elm$core$String$toInt(quantity))),
+						author$project$Action$GotItemPriceResponse(itemId)));
+			default:
+				var itemId = msg.a;
+				var response = msg.b;
+				if (response.$ === 'Ok') {
+					var val = response.a;
+					if (val.$ === 'Just') {
+						var value = val.a;
+						var oldData = model.data;
+						var oldItemPriceMappings = oldData.itemPriceMappings;
+						var itemPriceMapping = {itemId: itemId, price: value};
+						var newItemPriceMappings = A2(
+							elm$core$List$cons,
+							itemPriceMapping,
+							A2(
+								elm$core$List$filter,
+								function (i) {
+									return !_Utils_eq(i.itemId, itemId);
+								},
+								oldItemPriceMappings));
+						var newData = _Utils_update(
+							oldData,
+							{itemPriceMappings: newItemPriceMappings});
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{data: newData}),
+							elm$core$Platform$Cmd$none);
+					} else {
+						return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+					}
+				} else {
+					var value = response.a;
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var author$project$Action$SetCurrentRoute = function (a) {
@@ -7255,159 +7372,40 @@ var author$project$App$onEnter = function (msg) {
 		'keydown',
 		A2(elm$json$Json$Decode$andThen, isEnter, elm$html$Html$Events$keyCode));
 };
+var author$project$Action$EnterQuantity = F2(
+	function (a, b) {
+		return {$: 'EnterQuantity', a: a, b: b};
+	});
+var elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return elm$core$Maybe$Just(x);
+	} else {
+		return elm$core$Maybe$Nothing;
+	}
+};
+var author$project$State$getItemPriceMappings = F2(
+	function (itemId, model) {
+		return A2(
+			elm$core$Maybe$withDefault,
+			{
+				itemId: '0',
+				price: {perUnit: 0, total: 0}
+			},
+			elm$core$List$head(
+				A2(
+					elm$core$List$filter,
+					function (item) {
+						return _Utils_eq(item.itemId, itemId);
+					},
+					model.data.itemPriceMappings))).price;
+	});
 var elm$core$String$fromFloat = _String_fromNumber;
 var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$input = _VirtualDom_node('input');
 var elm$html$Html$td = _VirtualDom_node('td');
 var elm$html$Html$tr = _VirtualDom_node('tr');
-var author$project$Page$Buy$renderItem = function (supply) {
-	if (supply.$ === 'Nothing') {
-		return A2(elm$html$Html$tr, _List_Nil, _List_Nil);
-	} else {
-		var val = supply.a;
-		return A2(
-			elm$html$Html$tr,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$td,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text(val.item.name)
-						])),
-					A2(
-					elm$html$Html$td,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text(
-							elm$core$String$fromFloat(val.quantity))
-						])),
-					A2(
-					elm$html$Html$td,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text(
-							elm$core$String$fromFloat(val.min_price))
-						])),
-					A2(
-					elm$html$Html$td,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(elm$html$Html$input, _List_Nil, _List_Nil)
-						])),
-					A2(
-					elm$html$Html$td,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text('3000')
-						])),
-					A2(
-					elm$html$Html$td,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$button,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$class('col s2 waves-effect waves-light btn #ffd600 yellow accent-4 black-text text-darken-2')
-								]),
-							_List_fromArray(
-								[
-									elm$html$Html$text('Buy')
-								]))
-						]))
-				]));
-	}
-};
-var elm$html$Html$table = _VirtualDom_node('table');
-var elm$html$Html$tbody = _VirtualDom_node('tbody');
-var elm$html$Html$th = _VirtualDom_node('th');
-var elm$html$Html$thead = _VirtualDom_node('thead');
-var author$project$Page$Buy$renderItems = function (items) {
-	var supplyItems = A2(elm$core$List$map, author$project$Page$Buy$renderItem, items);
-	return A2(
-		elm$html$Html$table,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('stripped')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				elm$html$Html$thead,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$tr,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$th,
-								_List_Nil,
-								_List_fromArray(
-									[
-										elm$html$Html$text('Name')
-									])),
-								A2(
-								elm$html$Html$th,
-								_List_Nil,
-								_List_fromArray(
-									[
-										elm$html$Html$text('Quantity')
-									])),
-								A2(
-								elm$html$Html$th,
-								_List_Nil,
-								_List_fromArray(
-									[
-										elm$html$Html$text('Min. Price')
-									])),
-								A2(
-								elm$html$Html$th,
-								_List_Nil,
-								_List_fromArray(
-									[
-										elm$html$Html$text('Buy Quantity')
-									])),
-								A2(
-								elm$html$Html$th,
-								_List_Nil,
-								_List_fromArray(
-									[
-										elm$html$Html$text('Price total/Price per Unit')
-									])),
-								A2(elm$html$Html$th, _List_Nil, _List_Nil)
-							]))
-					])),
-				A2(elm$html$Html$tbody, _List_Nil, supplyItems)
-			]));
-};
-var author$project$Page$Buy$buyList = function (items) {
-	return A2(
-		elm$html$Html$div,
-		_List_Nil,
-		_List_fromArray(
-			[
-				author$project$Page$Buy$renderItems(
-				A2(
-					elm$core$Maybe$withDefault,
-					_List_fromArray(
-						[elm$core$Maybe$Nothing]),
-					items))
-			]));
-};
-var elm$html$Html$h1 = _VirtualDom_node('h1');
-var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
-var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
 var elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
@@ -7439,6 +7437,172 @@ var elm$html$Html$Events$onInput = function (tagger) {
 			elm$html$Html$Events$alwaysStop,
 			A2(elm$json$Json$Decode$map, tagger, elm$html$Html$Events$targetValue)));
 };
+var author$project$Page$Buy$renderItem = F2(
+	function (model, supply) {
+		if (supply.$ === 'Nothing') {
+			return A2(elm$html$Html$tr, _List_Nil, _List_Nil);
+		} else {
+			var val = supply.a;
+			return A2(
+				elm$html$Html$tr,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$td,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text(val.item.name)
+							])),
+						A2(
+						elm$html$Html$td,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text(
+								elm$core$String$fromFloat(val.quantity))
+							])),
+						A2(
+						elm$html$Html$td,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text(
+								elm$core$String$fromFloat(val.min_price))
+							])),
+						A2(
+						elm$html$Html$td,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$input,
+								_List_fromArray(
+									[
+										elm$html$Html$Events$onInput(
+										author$project$Action$EnterQuantity(val.item.id))
+									]),
+								_List_Nil)
+							])),
+						A2(
+						elm$html$Html$td,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text(
+								elm$core$String$fromFloat(
+									A2(author$project$State$getItemPriceMappings, val.item.id, model).total) + (', ' + elm$core$String$fromFloat(
+									A2(author$project$State$getItemPriceMappings, val.item.id, model).perUnit)))
+							])),
+						A2(
+						elm$html$Html$td,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$button,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('col s2 waves-effect waves-light btn #ffd600 yellow accent-4 black-text text-darken-2')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('Buy')
+									]))
+							]))
+					]));
+		}
+	});
+var elm$html$Html$table = _VirtualDom_node('table');
+var elm$html$Html$tbody = _VirtualDom_node('tbody');
+var elm$html$Html$th = _VirtualDom_node('th');
+var elm$html$Html$thead = _VirtualDom_node('thead');
+var author$project$Page$Buy$renderItems = F2(
+	function (model, items) {
+		var supplyItems = A2(
+			elm$core$List$map,
+			author$project$Page$Buy$renderItem(model),
+			items);
+		return A2(
+			elm$html$Html$table,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('stripped')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$thead,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$tr,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$th,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text('Name')
+										])),
+									A2(
+									elm$html$Html$th,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text('Quantity')
+										])),
+									A2(
+									elm$html$Html$th,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text('Min. Price')
+										])),
+									A2(
+									elm$html$Html$th,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text('Buy Quantity')
+										])),
+									A2(
+									elm$html$Html$th,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text('Price total/Price per Unit')
+										])),
+									A2(elm$html$Html$th, _List_Nil, _List_Nil)
+								]))
+						])),
+					A2(elm$html$Html$tbody, _List_Nil, supplyItems)
+				]));
+	});
+var author$project$Page$Buy$buyList = F2(
+	function (model, items) {
+		return A2(
+			elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					author$project$Page$Buy$renderItems,
+					model,
+					A2(
+						elm$core$Maybe$withDefault,
+						_List_fromArray(
+							[elm$core$Maybe$Nothing]),
+						items))
+				]));
+	});
+var elm$html$Html$h1 = _VirtualDom_node('h1');
+var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
+var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
 var author$project$App$renderPage = function (model) {
 	var _n0 = model.ui.route;
 	if (_n0.$ === 'SELL') {
@@ -7509,7 +7673,7 @@ var author$project$App$renderPage = function (model) {
 							_List_Nil,
 							_List_fromArray(
 								[
-									author$project$Page$Buy$buyList(model.data.itemSupplies)
+									A2(author$project$Page$Buy$buyList, model, model.data.itemSupplies)
 								]))
 						]))
 				]));

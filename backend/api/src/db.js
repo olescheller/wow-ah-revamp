@@ -343,6 +343,7 @@ function getItemSuppliesByPartialNameOPTIMIZED(converter, db, partialItemName) {
 }
 
 function getItemsPrice(db, itemId, amount) {
+    console.log({itemId, amount})
     return new Promise((resolve, reject) => {
         const SellOrders = db.collection('sellorders');
         SellOrders.find({item_id: itemId}).sort({price: 1}).toArray((err, sellOrders) => {

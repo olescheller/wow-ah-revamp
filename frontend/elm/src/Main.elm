@@ -8,9 +8,10 @@ import Html.Events as Evt exposing (keyCode, on, onClick, onInput)
 import Json.Decode as Json
 import Maybe exposing (..)
 import Page.Buy as Buy exposing (..)
-import Queries exposing (itemQuery, itemSupplyQuery, makeRequest)
-import State exposing (DataState, FakeItem, Item, ItemSupply, Route(..), State, UiState)
+import Queries exposing (itemPriceQuery, itemQuery, itemSupplyQuery, makeRequest)
+import State exposing (DataState, FakeItem, Item, ItemSupply, Price, Route(..), State, UiState)
 import String exposing (..)
+import Tuple exposing (first)
 
 
 fakeItem : String -> Int -> FakeItem
@@ -31,6 +32,10 @@ initialItem =
     }
 
 
+initialItemPriceMappings =
+    []
+
+
 initialItemSupplies =
     Maybe.Just [ Nothing ]
 
@@ -40,6 +45,7 @@ initialDataState =
     { item = initialItem
     , itemSupplies = initialItemSupplies
     , searchValue = ""
+    , itemPriceMappings = initialItemPriceMappings
     }
 
 
@@ -105,6 +111,39 @@ update msg model =
             in
             ( model, makeRequest (itemSupplyQuery searchValue) GotItemSupplyResponse )
 
+        EnterQuantity itemId quantity ->
+            ( model, makeRequest (itemPriceQuery (withDefault 0 (String.toFloat itemId)) (withDefault 0 (String.toInt quantity))) (GotItemPriceResponse itemId) )
+
+        GotItemPriceResponse itemId response ->
+            case response of
+                Ok val ->
+                    case val of
+                        Just value ->
+                            let
+                                oldData =
+                                    model.data
+
+                                oldItemPriceMappings =
+                                    oldData.itemPriceMappings
+
+                                --List ItemPriceMapping
+                                itemPriceMapping =
+                                    { itemId = itemId, price = value }
+
+                                newItemPriceMappings =
+                                    itemPriceMapping :: List.filter (\i -> i.itemId /= itemId) oldItemPriceMappings
+
+                                newData =
+                                    { oldData | itemPriceMappings = newItemPriceMappings }
+                            in
+                            ( { model | data = newData }, Cmd.none )
+
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                Err value ->
+                    ( model, Cmd.none )
+
 
 getActiveClass : Route -> Route -> String
 getActiveClass activeRoute route =
@@ -165,7 +204,7 @@ renderPage model =
                             [ Html.text "Search" ]
                         ]
                     , Html.div []
-                        [ Buy.buyList model.data.itemSupplies
+                        [ Buy.buyList model model.data.itemSupplies
                         ]
                     ]
                 ]

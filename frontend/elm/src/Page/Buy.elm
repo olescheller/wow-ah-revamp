@@ -1,16 +1,17 @@
 module Page.Buy exposing (buyList)
 
+import Action exposing (Msg(..))
 import Color exposing (Color)
 import Html
 import Html.Attributes as Attr exposing (..)
-import Html.Events as Evt
+import Html.Events as Evt exposing (keyCode, on, onClick, onInput)
 import List exposing (..)
 import Maybe exposing (Maybe(..))
 import State exposing (..)
 
 
-renderItem : Maybe ItemSupply -> Html.Html msg
-renderItem supply =
+renderItem : State -> Maybe ItemSupply -> Html.Html Msg
+renderItem model supply =
     case supply of
         Nothing ->
             Html.tr [] []
@@ -20,17 +21,17 @@ renderItem supply =
                 [ Html.td [] [ Html.text <| val.item.name ]
                 , Html.td [] [ Html.text <| String.fromFloat val.quantity ]
                 , Html.td [] [ Html.text <| String.fromFloat val.min_price ]
-                , Html.td [] [ Html.input [] [] ]
-                , Html.td [] [ Html.text "3000" ]
+                , Html.td [] [ Html.input [ onInput (EnterQuantity val.item.id) ] [] ]
+                , Html.td [] [ Html.text (String.fromFloat (getItemPriceMappings val.item.id model).total ++ ", " ++ String.fromFloat (getItemPriceMappings val.item.id model).perUnit) ]
                 , Html.td [] [ Html.button [ class "col s2 waves-effect waves-light btn #ffd600 yellow accent-4 black-text text-darken-2" ] [ Html.text "Buy" ] ]
                 ]
 
 
-renderItems : List (Maybe ItemSupply) -> Html.Html msg
-renderItems items =
+renderItems : State -> List (Maybe ItemSupply) -> Html.Html Msg
+renderItems model items =
     let
         supplyItems =
-            List.map renderItem items
+            List.map (renderItem model) items
     in
     Html.table [ class "stripped" ]
         [ Html.thead []
@@ -48,8 +49,8 @@ renderItems items =
         ]
 
 
-buyList : Maybe (List (Maybe ItemSupply)) -> Html.Html msg
-buyList items =
+buyList : State -> Maybe (List (Maybe ItemSupply)) -> Html.Html Msg
+buyList model items =
     Html.div []
-        [ renderItems (Maybe.withDefault [ Nothing ] items)
+        [ renderItems model (Maybe.withDefault [ Nothing ] items)
         ]
