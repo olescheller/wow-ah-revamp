@@ -1,4 +1,4 @@
-module Queries exposing (item, itemPriceQuery, itemQuery, itemSupply, itemSupplyQuery, makeRequest, userQuery)
+module Queries exposing (item, itemPriceQuery, itemQuery, itemSupply, itemSupplyQuery, makeRequest, randomItemsQuery, userQuery)
 
 -- GRAPHQL
 
