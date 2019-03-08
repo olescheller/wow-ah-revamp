@@ -1,4 +1,4 @@
-module Page.Buy exposing (..)
+module Page.Buy exposing (buyList, buyPage, renderItem, renderItems)
 
 import Action exposing (Msg(..))
 import Html
@@ -22,7 +22,7 @@ renderItem model supply =
                 , Html.td [] [ Html.text <| val.item.name ]
                 , Html.td [] [ Html.text <| String.fromFloat val.quantity ]
                 , Html.td [] [ Html.text <| String.fromFloat val.min_price ]
-                , Html.td [] [ Html.input [ onInput (EnterQuantity val.item.id) ] [] ]
+                , Html.td [] [ Html.input [ onInput (EnterQuantity val.item.id), value (getItemAmountMappings val.item.id model) ] [] ]
                 , Html.td [] [ Html.text (String.fromFloat (getItemPriceMappings val.item.id model).total ++ ", " ++ String.fromFloat (getItemPriceMappings val.item.id model).perUnit) ]
                 , Html.td []
                     [ Html.button
@@ -30,7 +30,7 @@ renderItem model supply =
                         , onClick
                             (BuyItem "Elandura-Silvermoon"
                                 (withDefault 0 (String.toInt val.item.id))
-                                (getItemAmountMappings val.item.id model)
+                                (withDefault 0 (String.toInt (getItemAmountMappings val.item.id model)))
                                 (getItemPriceMappings val.item.id model).perUnit
                                 (getItemPriceMappings val.item.id model).total
                             )
@@ -69,28 +69,29 @@ buyList model items =
         [ renderItems model (Maybe.withDefault [ Nothing ] items)
         ]
 
+
 buyPage : State -> Html.Html Msg
 buyPage model =
     Html.div [ class "container" ]
-                    [ Html.div [ class "card-panel" ]
-                        [ Html.h1 [] [ Html.text "Item supplies" ]
-                        , Html.div [ class "row" ]
-                            [ Html.input
-                                [ class "col s10"
-                                , placeholder "item name"
-                                , value model.data.searchValue
-                                , onInput EnterSearchValue
-                                , onEnter SearchItemSupplies
-                                ]
-                                []
-                            , Html.button
-                                [ class "col s2 waves-effect waves-light btn #ffd600 yellow accent-4 black-text text-darken-2"
-                                , onClick SearchItemSupplies
-                                ]
-                                [ Html.text "Search" ]
-                            ]
-                        , Html.div []
-                            [ buyList model model.data.itemSupplies
-                            ]
-                        ]
+        [ Html.div [ class "card-panel" ]
+            [ Html.h1 [] [ Html.text "Item supplies" ]
+            , Html.div [ class "row" ]
+                [ Html.input
+                    [ class "col s10"
+                    , placeholder "item name"
+                    , value model.data.searchValue
+                    , onInput EnterSearchValue
+                    , onEnter SearchItemSupplies
                     ]
+                    []
+                , Html.button
+                    [ class "col s2 waves-effect waves-light btn #ffd600 yellow accent-4 black-text text-darken-2"
+                    , onClick SearchItemSupplies
+                    ]
+                    [ Html.text "Search" ]
+                ]
+            , Html.div []
+                [ buyList model model.data.itemSupplies
+                ]
+            ]
+        ]
