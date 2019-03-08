@@ -1,6 +1,6 @@
 module Mutations exposing (buyMutation, makeMutation, receipt)
 
-import Gqllib.Mutation as Mutation exposing (BuyItemsOptionalArguments, BuyItemsRequiredArguments)
+import Gqllib.Mutation as Mutation exposing (BuyItemsOptionalArguments, BuyItemsRequiredArguments, RemoveSellOrderRequiredArguments)
 import Gqllib.Object
 import Gqllib.Object.Receipt as Receipt
 import Graphql.Http
@@ -35,3 +35,8 @@ receipt =
         Receipt.price
         Receipt.min_price
         Receipt.money
+
+
+deleteSellOrderMutation : Int -> String -> String -> SelectionSet Bool RootMutation
+deleteSellOrderMutation itemId seller_name seller_realm =
+    Mutation.removeSellOrder (RemoveSellOrderRequiredArguments itemId seller_name seller_realm)

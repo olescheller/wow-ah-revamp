@@ -1,4 +1,4 @@
-module State exposing (DataState, FakeItem, InventorySlot, Item, ItemAmountMapping, ItemPriceMapping, ItemSupply, Price, Receipt, Route(..), State, UiState, User, getItemAmountMappings, getItemPriceMappings)
+module State exposing (DataState, FakeItem, InventorySlot, Item, ItemAmountMapping, ItemPriceMapping, ItemSupply, Price, Receipt, Route(..), SellOrder, State, UiState, User, getItemAmountMappings, getItemPriceMappings)
 
 import Maybe exposing (withDefault)
 
@@ -83,7 +83,7 @@ type alias DataState =
     , searchValue : String
     , itemPriceMappings : List ItemPriceMapping
     , itemAmountMappings : List ItemAmountMapping
-    , userInventory: List (Maybe InventorySlot)
+    , userInventory : List (Maybe InventorySlot)
     , user : User
     }
 
@@ -92,6 +92,7 @@ type alias State =
     { ui : UiState
     , data : DataState
     , detailItem : String
+    , sellOrders : List (Maybe SellOrder)
     }
 
 
@@ -101,5 +102,16 @@ type alias State =
 
 type alias InventorySlot =
     { item : Item
+    , quantity : Int
+    }
+
+
+
+-- Sellorder
+
+
+type alias SellOrder =
+    { item : Item
+    , price : Float
     , quantity : Int
     }

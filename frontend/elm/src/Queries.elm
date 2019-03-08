@@ -1,4 +1,4 @@
-module Queries exposing (item, itemPriceQuery, itemQuery, itemSupply, itemSupplyQuery, makeRequest, randomItemsQuery, userQuery)
+module Queries exposing (item, itemPrice, itemPriceQuery, itemQuery, itemSupply, itemSupplyQuery, makeRequest, randomItem, randomItemsQuery, sellOrderQuery, user, userQuery)
 
 -- GRAPHQL
 
@@ -8,6 +8,7 @@ import Gqllib.Object.InventoryItem as InventoryItem
 import Gqllib.Object.Item as Item
 import Gqllib.Object.ItemSupply as ItemSupply
 import Gqllib.Object.Price as Price
+import Gqllib.Object.SellOrder as SellOrder
 import Gqllib.Object.User as User
 import Gqllib.Query as Query
 import Graphql.Http
@@ -16,7 +17,7 @@ import Graphql.SelectionSet as SelectionSet exposing (SelectionSet, hardcoded, w
 import Html exposing (Html)
 import Json.Decode exposing (..)
 import Maybe exposing (Maybe, withDefault)
-import State exposing (InventorySlot, Item, ItemSupply, Price, Route, User)
+import State exposing (InventorySlot, Item, ItemSupply, Price, Route, SellOrder, User)
 
 
 makeRequest query message =
@@ -89,3 +90,15 @@ user =
     SelectionSet.map2 User
         User.name
         User.money
+
+
+sellOrderQuery : String -> String -> SelectionSet (Maybe (List (Maybe SellOrder))) RootQuery
+sellOrderQuery userName realmName =
+    Query.sell_order { userName = userName, realmName = realmName } sellOrder
+
+
+sellOrder =
+    SelectionSet.map3 SellOrder
+        (SellOrder.item <| item)
+        SellOrder.price
+        SellOrder.quantity

@@ -11,7 +11,8 @@ import Maybe exposing (..)
 import Mutations exposing (buyMutation, makeMutation)
 import Page.Buy as Buy exposing (..)
 import Page.Sell exposing (displayInventory)
-import Queries exposing (itemPriceQuery, itemQuery, itemSupplyQuery, makeRequest, randomItemsQuery, userQuery)
+import Page.SellOrders exposing (sellOrderList)
+import Queries exposing (itemPriceQuery, itemQuery, itemSupplyQuery, makeRequest, randomItemsQuery, sellOrderQuery, userQuery)
 import State exposing (DataState, FakeItem, Item, ItemSupply, Price, Route(..), State, UiState)
 import String exposing (..)
 
@@ -55,6 +56,7 @@ initialModel _ =
     ( { ui = initialUiState
       , data = initialDataState
       , detailItem = ""
+      , sellOrders = []
       }
     , makeRequest (userQuery "Elandura" "Silvermoon") FetchUser
     )
@@ -67,7 +69,7 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
         SetItemDetail itemId ->
-            ( {model | detailItem = itemId}, Cmd.none)
+            ( { model | detailItem = itemId }, Cmd.none )
 
         GetInitialInventory response ->
             case response of
@@ -78,8 +80,27 @@ update msg model =
 
                         newData =
                             { oldData | userInventory = value }
+
+                        splitUser =
+                            split "-" model.data.user.name
+
+                        name =
+                            case splitUser of
+                                [ a, b ] ->
+                                    a
+
+                                _ ->
+                                    ""
+
+                        realm =
+                            case splitUser of
+                                [ a, b ] ->
+                                    b
+
+                                _ ->
+                                    ""
                     in
-                    ( { model | data = newData }, Cmd.none )
+                    ( { model | data = newData }, makeRequest (sellOrderQuery name realm) GotInitialSellOrders )
 
                 Err value ->
                     ( model, Cmd.none )
@@ -237,6 +258,19 @@ update msg model =
                 Err error ->
                     ( model, Cmd.none )
 
+        GotInitialSellOrders response ->
+            case response of
+                Ok value ->
+                    case value of
+                        Just val ->
+                            ( { model | sellOrders = val }, Cmd.none )
+
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                Err error ->
+                    ( model, Cmd.none )
+
 
 getActiveClass : Route -> Route -> String
 getActiveClass activeRoute route =
@@ -264,7 +298,7 @@ renderPage : State -> Html.Html Msg
 renderPage model =
     case model.ui.route of
         SELL ->
-            Html.div [] [ displayInventory model ]
+            Html.div [] [ displayInventory model, sellOrderList model ]
 
         BUY ->
             Buy.buyPage model
