@@ -2,3 +2,4 @@
 **/node_modules
 **/elm-stuff
 db
+frontend/elm/js/main.js
