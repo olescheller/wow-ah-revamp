@@ -54,6 +54,7 @@ initialModel : () -> ( State, Cmd Msg )
 initialModel _ =
     ( { ui = initialUiState
       , data = initialDataState
+      , detailItem = ""
       }
     , makeRequest (userQuery "Elandura" "Silvermoon") FetchUser
     )
@@ -65,6 +66,9 @@ port createSubscriptions : E.Value -> Cmd msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
+        SetItemDetail itemId ->
+            ( {model | detailItem = itemId}, Cmd.none)
+
         GetInitialInventory response ->
             case response of
                 Ok value ->

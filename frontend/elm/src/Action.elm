@@ -6,6 +6,7 @@ import State exposing (InventorySlot, Item, ItemSupply, Price, Receipt, Route , 
 
 type Msg
     = SetCurrentRoute Route
+    | SetItemDetail String
     | EnterSearchValue String
     | SearchItemSupplies
     | GotItemResponse (Result (Graphql.Http.Error ()) (Maybe Item))

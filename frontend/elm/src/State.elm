@@ -91,6 +91,7 @@ type alias DataState =
 type alias State =
     { ui : UiState
     , data : DataState
+    , detailItem : String
     }
 
 
