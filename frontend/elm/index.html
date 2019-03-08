@@ -2,17 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>WOW Auction Warehouse</title>
+    <title>wow-ah-revamp</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
     <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script type="text/javascript" src="./dist/bundle.js"></script>
+    <script type="text/javascript" src="./js/main.js"></script>
 </head>
 <body>
 <div id="main">Loading App...</div>
 
 </body>
+<script>
+  const app = Elm.Main.init({
+      node: document.getElementById("main"),
+      flags: 2 });
+</script>
 </html>

@@ -2,7 +2,6 @@ port module Main exposing (createSubscriptions, initialModel, main, update, view
 
 import Action exposing (Msg(..))
 import Browser
-import Graphql.Document
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events as Evt exposing (keyCode, on, onClick, onInput)
@@ -14,8 +13,6 @@ import Page.Buy as Buy exposing (..)
 import Queries exposing (itemPriceQuery, itemQuery, itemSupplyQuery, makeRequest)
 import State exposing (DataState, FakeItem, Item, ItemSupply, Price, Route(..), State, UiState)
 import String exposing (..)
-import Subscriptions exposing (subscriptionDocument)
-import Tuple exposing (first)
 
 
 fakeItem : String -> Int -> FakeItem
@@ -50,12 +47,12 @@ initialDataState =
     }
 
 
-initialModel : Int -> ( State, Cmd Msg )
-initialModel a =
+initialModel : () -> ( State, Cmd Msg )
+initialModel _ =
     ( { ui = initialUiState
       , data = initialDataState
       }
-    , createSubscriptions (E.string <| (subscriptionDocument 25 |> Graphql.Document.serializeSubscription))
+    , Cmd.none
     )
 
 
@@ -196,17 +193,6 @@ renderNav model =
         ]
 
 
-onEnter : Msg -> Attribute Msg
-onEnter msg =
-    let
-        isEnter code =
-            if code == 13 then
-                Json.succeed msg
-
-            else
-                Json.fail "not ENTER"
-    in
-    on "keydown" (Json.andThen isEnter keyCode)
 
 
 renderPage : State -> Html.Html Msg
@@ -216,29 +202,8 @@ renderPage model =
             Html.div [] [ Html.text "home" ]
 
         BUY ->
-            Html.div [ class "container" ]
-                [ Html.div [ class "card-panel" ]
-                    [ Html.h1 [] [ Html.text "Item supplies" ]
-                    , Html.div [ class "row" ]
-                        [ Html.input
-                            [ class "col s10"
-                            , placeholder "item name"
-                            , value model.data.searchValue
-                            , onInput EnterSearchValue
-                            , onEnter SearchItemSupplies
-                            ]
-                            []
-                        , Html.button
-                            [ class "col s2 waves-effect waves-light btn #ffd600 yellow accent-4 black-text text-darken-2"
-                            , onClick SearchItemSupplies
-                            ]
-                            [ Html.text "Search" ]
-                        ]
-                    , Html.div []
-                        [ Buy.buyList model model.data.itemSupplies
-                        ]
-                    ]
-                ]
+            Buy.buyPage model
+
 
 
 view : State -> Html.Html Msg

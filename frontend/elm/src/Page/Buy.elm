@@ -1,10 +1,10 @@
-module Page.Buy exposing (buyList)
+module Page.Buy exposing (..)
 
 import Action exposing (Msg(..))
-import Color exposing (Color)
 import Html
 import Html.Attributes as Attr exposing (..)
 import Html.Events as Evt exposing (keyCode, on, onClick, onInput)
+import Lib.HtmlEvents exposing (onEnter)
 import List exposing (..)
 import Maybe exposing (Maybe(..), withDefault)
 import State exposing (..)
@@ -68,3 +68,29 @@ buyList model items =
     Html.div []
         [ renderItems model (Maybe.withDefault [ Nothing ] items)
         ]
+
+buyPage : State -> Html.Html Msg
+buyPage model =
+    Html.div [ class "container" ]
+                    [ Html.div [ class "card-panel" ]
+                        [ Html.h1 [] [ Html.text "Item supplies" ]
+                        , Html.div [ class "row" ]
+                            [ Html.input
+                                [ class "col s10"
+                                , placeholder "item name"
+                                , value model.data.searchValue
+                                , onInput EnterSearchValue
+                                , onEnter SearchItemSupplies
+                                ]
+                                []
+                            , Html.button
+                                [ class "col s2 waves-effect waves-light btn #ffd600 yellow accent-4 black-text text-darken-2"
+                                , onClick SearchItemSupplies
+                                ]
+                                [ Html.text "Search" ]
+                            ]
+                        , Html.div []
+                            [ buyList model model.data.itemSupplies
+                            ]
+                        ]
+                    ]

@@ -1,7 +1,6 @@
 import * as AbsintheSocket from "@absinthe/socket";
 import { Socket as PhoenixSocket } from "phoenix";
-import { Elm } from "./src/Main.elm";
-
+import {Elm} from './js/main'
 let notifiers = [];
 
 document.addEventListener("DOMContentLoaded", function() {
