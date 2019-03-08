@@ -115,7 +115,7 @@ update msg model =
         EnterQuantity itemId quantity ->
             let
                 itemAmountMapping =
-                    { itemId = itemId, amount = withDefault 0 (String.toInt quantity) }
+                    { itemId = itemId, amount = quantity }
 
                 oldData =
                     model.data
@@ -162,12 +162,35 @@ update msg model =
                     ( model, Cmd.none )
 
         BuyItem userName itemId amount total perUnit ->
-            ( model, makeMutation (buyMutation userName itemId amount total perUnit) GotBuyItemResponse )
+            let
+                oldData =
+                    model.data
+
+                oldItemAmountMappings =
+                    oldData.itemAmountMappings
+
+                oldItemPriceMappings =
+                    oldData.itemPriceMappings
+
+                newItemPriceMappings =
+                    List.filter (\i -> i.itemId /= String.fromInt itemId) oldItemPriceMappings
+
+                newItemAmountMappings =
+                    List.filter (\i -> i.itemId /= String.fromInt itemId) oldItemAmountMappings
+
+                newData =
+                    { oldData | itemAmountMappings = newItemAmountMappings, itemPriceMappings = newItemPriceMappings }
+            in
+            ( { model | data = newData }, makeMutation (buyMutation userName itemId amount total perUnit) GotBuyItemResponse )
 
         GotBuyItemResponse response ->
             case response of
                 Ok value ->
-                    ( model, Cmd.none )
+                    let
+                        searchValue =
+                            model.data.searchValue
+                    in
+                    ( model, makeRequest (itemSupplyQuery searchValue) GotItemSupplyResponse )
 
                 Err error ->
                     ( model, Cmd.none )
@@ -193,8 +216,6 @@ renderNav model =
         ]
 
 
-
-
 renderPage : State -> Html.Html Msg
 renderPage model =
     case model.ui.route of
@@ -203,7 +224,6 @@ renderPage model =
 
         BUY ->
             Buy.buyPage model
-
 
 
 view : State -> Html.Html Msg

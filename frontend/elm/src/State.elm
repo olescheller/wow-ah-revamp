@@ -41,9 +41,9 @@ type alias Item =
     }
 
 
-getItemAmountMappings : String -> State -> Int
+getItemAmountMappings : String -> State -> String
 getItemAmountMappings itemId model =
-    (withDefault { itemId = "0", amount = 0 } (List.head (List.filter (\item -> item.itemId == itemId) model.data.itemAmountMappings))).amount
+    (withDefault { itemId = "0", amount = "0" } (List.head (List.filter (\item -> item.itemId == itemId) model.data.itemAmountMappings))).amount
 
 
 getItemPriceMappings : String -> State -> Price
@@ -67,7 +67,7 @@ type alias ItemPriceMapping =
 
 type alias ItemAmountMapping =
     { itemId : String
-    , amount : Int
+    , amount : String
     }
 
 
