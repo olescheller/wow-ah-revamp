@@ -1,4 +1,4 @@
-module State exposing (DataState, FakeItem, Item, ItemSupply, Price, Receipt, Route(..), State, UiState, getItemAmountMappings, getItemPriceMappings)
+module State exposing (..)
 
 import Maybe exposing (withDefault)
 
@@ -88,9 +88,7 @@ type alias State =
 
 
 -- User inventory
-type InventorySlot =
-    Occupied Item ItemAmount | Free
-
-
-type alias ItemAmount
-    = Int
+type alias InventorySlot =
+    { item: Item
+    , quantity: Int
+    }

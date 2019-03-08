@@ -3,10 +3,11 @@ module Queries exposing (item, itemPriceQuery, itemQuery, itemSupply, itemSupply
 -- GRAPHQL
 
 import Action exposing (Msg(..))
-import Gqllib.Object
+import Gqllib.Object exposing (InventoryItem)
 import Gqllib.Object.Item as Item
 import Gqllib.Object.ItemSupply as ItemSupply
 import Gqllib.Object.Price as Price
+import Gqllib.Object.InventoryItem as InventoryItem
 import Gqllib.Query as Query
 import Graphql.Http
 import Graphql.Operation exposing (RootQuery)
@@ -14,8 +15,7 @@ import Graphql.SelectionSet as SelectionSet exposing (SelectionSet, hardcoded, w
 import Html exposing (Html)
 import Json.Decode exposing (..)
 import Maybe exposing (Maybe, withDefault)
-import State exposing (Item, ItemSupply, Price, Route)
-
+import State exposing (InventorySlot, Item, ItemSupply, Price, Route)
 
 makeRequest query message =
     query
@@ -63,3 +63,14 @@ itemPrice =
     SelectionSet.map2 Price
         Price.perUnit
         Price.total
+
+randomItemsQuery : SelectionSet (List (Maybe InventorySlot)) RootQuery
+randomItemsQuery =
+    Query.randomItems randomItem
+
+randomItem : SelectionSet InventorySlot Gqllib.Object.InventoryItem
+randomItem =
+    SelectionSet.map2 InventorySlot
+        (InventoryItem.item <| item)
+        InventoryItem.quantity
+
