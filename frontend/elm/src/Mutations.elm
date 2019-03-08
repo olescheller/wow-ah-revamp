@@ -1,4 +1,4 @@
-module Mutations exposing (buyMutation, makeMutation, receipt)
+module Mutations exposing (buyMutation, deleteSellOrderMutation, makeMutation, receipt)
 
 import Gqllib.Mutation as Mutation exposing (BuyItemsOptionalArguments, BuyItemsRequiredArguments, RemoveSellOrderRequiredArguments)
 import Gqllib.Object

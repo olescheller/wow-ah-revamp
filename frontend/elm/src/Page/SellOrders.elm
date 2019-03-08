@@ -1,6 +1,6 @@
 module Page.SellOrders exposing (renderItem, renderItems, sellOrderList)
 
-import Action exposing (Msg)
+import Action exposing (Msg(..))
 import Html
 import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick, onInput)
@@ -17,22 +17,15 @@ renderItem model sellOrder =
 
         Just val ->
             Html.tr []
-                [ Html.td [] [ Html.img [ src ("https://s3.eu-central-1.amazonaws.com/wow-icons/icons/" ++ withDefault "inv_misc_questionmark" val.item.icon ++ ".jpg") ] [] ]
+                [ Html.td [] [ Html.img [ class "circular", src ("https://s3.eu-central-1.amazonaws.com/wow-icons/icons/" ++ withDefault "inv_misc_questionmark" val.item.icon ++ ".jpg") ] [] ]
                 , Html.td [] [ Html.text <| val.item.name ]
                 , Html.td [] [ Html.text <| String.fromInt val.quantity ]
                 , Html.td [] [ moneyString val.price ]
                 , Html.td []
                     [ Html.button
                         [ class "col s2 waves-effect waves-light btn #ffd600 red accent-4 white-text text-darken-2"
-
-                        {- , onClick
-                           (DeleteItem "Elandura-Silvermoon"
-                               (withDefault 0 (String.toInt val.item.id))
-                               (withDefault 0 (String.toInt (getItemAmountMappings val.item.id model)))
-                               (getItemPriceMappings val.item.id model).perUnit
-                               (getItemPriceMappings val.item.id model).total
-                           )
-                        -}
+                        , onClick
+                            (DeleteSellOrder val.item.id)
                         ]
                         [ Html.text "Delete" ]
                     ]
@@ -62,6 +55,11 @@ renderItems model =
 
 sellOrderList : State -> Html.Html Msg
 sellOrderList model =
-    Html.div []
-        [ renderItems model
+    Html.div [ class "container" ]
+        [ Html.div [ class "card-panel" ]
+            [ Html.h1 [] [ Html.text "Item supplies" ]
+            , Html.div []
+                [ renderItems model
+                ]
+            ]
         ]
