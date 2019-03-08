@@ -83,7 +83,7 @@ type alias DataState =
     , searchValue : String
     , itemPriceMappings : List ItemPriceMapping
     , itemAmountMappings : List ItemAmountMapping
-    , userInventory : List InventorySlot
+    , userInventory: List (Maybe InventorySlot)
     , user : User
     }
 
