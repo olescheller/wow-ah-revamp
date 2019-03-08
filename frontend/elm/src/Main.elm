@@ -11,7 +11,7 @@ import Maybe exposing (..)
 import Mutations exposing (buyMutation, makeMutation)
 import Page.Buy as Buy exposing (..)
 import Page.Sell exposing (displayInventory)
-import Queries exposing (itemPriceQuery, itemQuery, itemSupplyQuery, makeRequest,randomItemsQuery, userQuery)
+import Queries exposing (itemPriceQuery, itemQuery, itemSupplyQuery, makeRequest, randomItemsQuery, userQuery)
 import State exposing (DataState, FakeItem, Item, ItemSupply, Price, Route(..), State, UiState)
 import String exposing (..)
 
@@ -250,9 +250,11 @@ getActiveClass activeRoute route =
 renderNav : State -> Html.Html Msg
 renderNav model =
     Html.div []
-        [ Html.div [ class "ui inverted left floated header" ] [ Html.text ("wow-ah-revamp" ++ " " ++ model.data.user.name ++ " " ++ String.fromFloat model.data.user.money) ]
+        [ Html.div [ class "ui inverted left floated header" ] [ Html.text "wow-ah-revamp" ]
         , Html.div [ class "ui inverted right floated secondary pointing menu" ]
-            [ Html.a [ class (getActiveClass model.ui.route BUY), onClick (SetCurrentRoute BUY) ] [ Html.text "Buy" ]
+            [ Html.span [ class "item" ] [ Html.text model.data.user.name ]
+            , Html.span [ class "item" ] [ moneyString model.data.user.money ]
+            , Html.a [ class (getActiveClass model.ui.route BUY), onClick (SetCurrentRoute BUY) ] [ Html.text "Buy" ]
             , Html.a [ class (getActiveClass model.ui.route SELL), onClick (SetCurrentRoute SELL) ] [ Html.text "Sell" ]
             ]
         ]
