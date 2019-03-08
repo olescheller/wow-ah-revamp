@@ -12,7 +12,7 @@ import Mutations exposing (buyMutation, makeMutation)
 import Page.Buy as Buy exposing (..)
 import Page.Sell exposing (displayInventory)
 import Page.SellOrders exposing (sellOrderList)
-import Queries exposing (itemPriceQuery, itemQuery, itemSupplyQuery, makeRequest, randomItemsQuery, sellOrderQuery, userQuery)
+import Queries exposing (itemPriceQuery, itemQuery, itemSupplyQuery, itemsSupplyQuery, makeRequest, randomItemsQuery, sellOrderQuery, userQuery)
 import State exposing (DataState, FakeItem, Item, ItemSupply, Price, Route(..), State, UiState)
 import String exposing (..)
 
@@ -55,8 +55,8 @@ initialModel : () -> ( State, Cmd Msg )
 initialModel _ =
     ( { ui = initialUiState
       , data = initialDataState
-      , detailItem = ""
       , sellOrders = []
+      , detailItem = ItemSupply -1 (Item "DummyItem" "-1" Nothing) -1 -1
       }
     , makeRequest (userQuery "Elandura" "Silvermoon") FetchUser
     )
@@ -68,8 +68,23 @@ port createSubscriptions : E.Value -> Cmd msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
-        SetItemDetail itemId ->
-            ( { model | detailItem = itemId }, Cmd.none )
+        RequestItemDetail itemName ->
+            ( model
+            , makeRequest (itemSupplyQuery itemName) SetItemDetail
+            )
+
+        SetItemDetail item ->
+            case item of
+                Ok value ->
+                    case value of
+                        Just i ->
+                            ( { model | detailItem = i }, Cmd.none )
+
+                        Nothing ->
+                            ( { model | detailItem = ItemSupply -1 (Item "DummyItem" "-1" Nothing) -1 -1 }, Cmd.none )
+
+                Err err ->
+                    ( model, Cmd.none )
 
         GetInitialInventory response ->
             case response of
@@ -153,7 +168,7 @@ update msg model =
                 searchValue =
                     model.data.searchValue
             in
-            ( model, makeRequest (itemSupplyQuery searchValue) GotItemSupplyResponse )
+            ( model, makeRequest (itemsSupplyQuery searchValue) GotItemSupplyResponse )
 
         EnterQuantity itemId quantity ->
             let
@@ -233,7 +248,7 @@ update msg model =
                         searchValue =
                             model.data.searchValue
                     in
-                    ( model, makeRequest (itemSupplyQuery searchValue) GotItemSupplyResponse )
+                    ( model, makeRequest (itemsSupplyQuery searchValue) GotItemSupplyResponse )
 
                 Err error ->
                     ( model, Cmd.none )

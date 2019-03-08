@@ -1,4 +1,4 @@
-module Queries exposing (item, itemPrice, itemPriceQuery, itemQuery, itemSupply, itemSupplyQuery, makeRequest, randomItem, randomItemsQuery, sellOrderQuery, user, userQuery)
+module Queries exposing (item, itemPriceQuery, itemQuery, itemSupply, itemSupplyQuery, makeRequest, randomItemsQuery, sellOrderQuery, userQuery)
 
 -- GRAPHQL
 
@@ -29,9 +29,14 @@ makeRequest query message =
             )
 
 
-itemQuery : SelectionSet (Maybe Item) RootQuery
-itemQuery =
-    Query.item { id = 25 } item
+itemQuery : String -> SelectionSet (Maybe Item) RootQuery
+itemQuery itemId =
+    case String.toFloat itemId of
+        Just id ->
+            Query.item { id = id } item
+
+        Nothing ->
+            Query.item { id = 0 } item
 
 
 item : SelectionSet Item Gqllib.Object.Item
@@ -42,8 +47,13 @@ item =
         Item.icon
 
 
-itemSupplyQuery : String -> SelectionSet (Maybe (List (Maybe ItemSupply))) RootQuery
-itemSupplyQuery searchValue =
+itemSupplyQuery : String -> SelectionSet (Maybe ItemSupply) RootQuery
+itemSupplyQuery itemName =
+    Query.item_supply { itemName = itemName } itemSupply
+
+
+itemsSupplyQuery : String -> SelectionSet (Maybe (List (Maybe ItemSupply))) RootQuery
+itemsSupplyQuery searchValue =
     Query.items_supply { partialItemName = searchValue } itemSupply
 
 
