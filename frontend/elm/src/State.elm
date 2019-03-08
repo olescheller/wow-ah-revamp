@@ -1,4 +1,4 @@
-module State exposing (..)
+module State exposing (DataState, FakeItem, InventorySlot, Item, ItemAmountMapping, ItemPriceMapping, ItemSupply, Price, Receipt, Route(..), State, UiState, User, getItemAmountMappings, getItemPriceMappings)
 
 import Maybe exposing (withDefault)
 
@@ -41,6 +41,12 @@ type alias Item =
     }
 
 
+type alias User =
+    { name : String
+    , money : Float
+    }
+
+
 getItemAmountMappings : String -> State -> String
 getItemAmountMappings itemId model =
     (withDefault { itemId = "0", amount = "0" } (List.head (List.filter (\item -> item.itemId == itemId) model.data.itemAmountMappings))).amount
@@ -77,7 +83,8 @@ type alias DataState =
     , searchValue : String
     , itemPriceMappings : List ItemPriceMapping
     , itemAmountMappings : List ItemAmountMapping
-    , userInventory: List InventorySlot
+    , userInventory : List InventorySlot
+    , user : User
     }
 
 
@@ -87,8 +94,11 @@ type alias State =
     }
 
 
+
 -- User inventory
+
+
 type alias InventorySlot =
-    { item: Item
-    , quantity: Int
+    { item : Item
+    , quantity : Int
     }

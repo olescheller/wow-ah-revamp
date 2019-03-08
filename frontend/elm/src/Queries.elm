@@ -1,13 +1,14 @@
-module Queries exposing (item, itemPriceQuery, itemQuery, itemSupply, itemSupplyQuery, makeRequest)
+module Queries exposing (item, itemPriceQuery, itemQuery, itemSupply, itemSupplyQuery, makeRequest, userQuery)
 
 -- GRAPHQL
 
 import Action exposing (Msg(..))
 import Gqllib.Object exposing (InventoryItem)
+import Gqllib.Object.InventoryItem as InventoryItem
 import Gqllib.Object.Item as Item
 import Gqllib.Object.ItemSupply as ItemSupply
 import Gqllib.Object.Price as Price
-import Gqllib.Object.InventoryItem as InventoryItem
+import Gqllib.Object.User as User
 import Gqllib.Query as Query
 import Graphql.Http
 import Graphql.Operation exposing (RootQuery)
@@ -15,7 +16,8 @@ import Graphql.SelectionSet as SelectionSet exposing (SelectionSet, hardcoded, w
 import Html exposing (Html)
 import Json.Decode exposing (..)
 import Maybe exposing (Maybe, withDefault)
-import State exposing (InventorySlot, Item, ItemSupply, Price, Route)
+import State exposing (InventorySlot, Item, ItemSupply, Price, Route, User)
+
 
 makeRequest query message =
     query
@@ -64,9 +66,11 @@ itemPrice =
         Price.perUnit
         Price.total
 
+
 randomItemsQuery : SelectionSet (List (Maybe InventorySlot)) RootQuery
 randomItemsQuery =
     Query.randomItems randomItem
+
 
 randomItem : SelectionSet InventorySlot Gqllib.Object.InventoryItem
 randomItem =
@@ -74,3 +78,14 @@ randomItem =
         (InventoryItem.item <| item)
         InventoryItem.quantity
 
+
+userQuery : String -> String -> SelectionSet (Maybe User) RootQuery
+userQuery name realm =
+    Query.user { name = name, realm = realm } user
+
+
+user : SelectionSet User Gqllib.Object.User
+user =
+    SelectionSet.map2 User
+        User.name
+        User.money

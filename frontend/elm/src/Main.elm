@@ -10,7 +10,7 @@ import Json.Encode as E
 import Maybe exposing (..)
 import Mutations exposing (buyMutation, makeMutation)
 import Page.Buy as Buy exposing (..)
-import Queries exposing (itemPriceQuery, itemQuery, itemSupplyQuery, makeRequest)
+import Queries exposing (itemPriceQuery, itemQuery, itemSupplyQuery, makeRequest, userQuery)
 import State exposing (DataState, FakeItem, Item, ItemSupply, Price, Route(..), State, UiState)
 import String exposing (..)
 
@@ -45,6 +45,7 @@ initialDataState =
     , itemPriceMappings = []
     , itemAmountMappings = []
     , userInventory = []
+    , user = { name = "", money = 0 }
     }
 
 
@@ -53,7 +54,7 @@ initialModel _ =
     ( { ui = initialUiState
       , data = initialDataState
       }
-    , Cmd.none
+    , makeRequest (userQuery "Elandura" "Silvermoon") FetchUser
     )
 
 
@@ -196,6 +197,26 @@ update msg model =
                 Err error ->
                     ( model, Cmd.none )
 
+        FetchUser response ->
+            case response of
+                Ok value ->
+                    case value of
+                        Just val ->
+                            let
+                                oldData =
+                                    model.data
+
+                                newData =
+                                    { oldData | user = val }
+                            in
+                            ( { model | data = newData }, Cmd.none )
+
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                Err error ->
+                    ( model, Cmd.none )
+
 
 getActiveClass : Route -> Route -> String
 getActiveClass activeRoute route =
@@ -209,7 +230,7 @@ getActiveClass activeRoute route =
 renderNav : State -> Html.Html Msg
 renderNav model =
     Html.div []
-        [ Html.div [ class "ui inverted left floated header" ] [ Html.text "WOW-AH-revamp" ]
+        [ Html.div [ class "ui inverted left floated header" ] [ Html.text ("WOW-AH-revamp" ++ " " ++ model.data.user.name ++ " " ++ String.fromFloat model.data.user.money) ]
         , Html.div [ class "ui inverted right floated secondary pointing menu" ]
             [ Html.a [ class (getActiveClass model.ui.route BUY), onClick (SetCurrentRoute BUY) ] [ Html.text "Buy" ]
             , Html.a [ class (getActiveClass model.ui.route SELL), onClick (SetCurrentRoute SELL) ] [ Html.text "Sell" ]
