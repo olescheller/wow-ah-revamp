@@ -1,6 +1,6 @@
 module Page.SellOrders exposing (renderItem, renderItems, sellOrderList)
 
-import Action exposing (Msg)
+import Action exposing (Msg(..))
 import Html
 import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick, onInput)
@@ -24,15 +24,8 @@ renderItem model sellOrder =
                 , Html.td []
                     [ Html.button
                         [ class "col s2 waves-effect waves-light btn #ffd600 red accent-4 white-text text-darken-2"
-
-                        {- , onClick
-                           (DeleteItem "Elandura-Silvermoon"
-                               (withDefault 0 (String.toInt val.item.id))
-                               (withDefault 0 (String.toInt (getItemAmountMappings val.item.id model)))
-                               (getItemPriceMappings val.item.id model).perUnit
-                               (getItemPriceMappings val.item.id model).total
-                           )
-                        -}
+                        , onClick
+                            (DeleteSellOrder val.item.id)
                         ]
                         [ Html.text "Delete" ]
                     ]

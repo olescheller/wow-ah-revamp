@@ -8,7 +8,7 @@ import Html.Events as Evt exposing (keyCode, on, onClick, onInput)
 import Json.Decode as Json
 import Json.Encode as E
 import Maybe exposing (..)
-import Mutations exposing (buyMutation, makeMutation)
+import Mutations exposing (buyMutation, deleteSellOrderMutation, makeMutation)
 import Page.Buy as Buy exposing (..)
 import Page.Sell exposing (displayInventory)
 import Page.SellOrders exposing (sellOrderList)
@@ -285,6 +285,52 @@ update msg model =
 
                 Err error ->
                     ( model, Cmd.none )
+
+        DeleteSellOrder itemId ->
+            let
+                splitUser =
+                    split "-" model.data.user.name
+
+                name =
+                    case splitUser of
+                        [ a, b ] ->
+                            a
+
+                        _ ->
+                            ""
+
+                realm =
+                    case splitUser of
+                        [ a, b ] ->
+                            b
+
+                        _ ->
+                            ""
+            in
+            ( model, makeMutation (deleteSellOrderMutation (withDefault 0 (String.toInt itemId)) name realm) GotDeleteSellOrderResponse )
+
+        GotDeleteSellOrderResponse response ->
+            let
+                splitUser =
+                    split "-" model.data.user.name
+
+                name =
+                    case splitUser of
+                        [ a, b ] ->
+                            a
+
+                        _ ->
+                            ""
+
+                realm =
+                    case splitUser of
+                        [ a, b ] ->
+                            b
+
+                        _ ->
+                            ""
+            in
+            ( model, makeRequest (sellOrderQuery name realm) GotInitialSellOrders )
 
 
 getActiveClass : Route -> Route -> String
