@@ -77,6 +77,7 @@ type alias DataState =
     , searchValue : String
     , itemPriceMappings : List ItemPriceMapping
     , itemAmountMappings : List ItemAmountMapping
+    , userInventory: List InventorySlot
     }
 
 
@@ -84,3 +85,12 @@ type alias State =
     { ui : UiState
     , data : DataState
     }
+
+
+-- User inventory
+type InventorySlot =
+    Occupied Item ItemAmount | Free
+
+
+type alias ItemAmount
+    = Int

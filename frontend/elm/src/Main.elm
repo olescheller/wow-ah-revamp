@@ -44,6 +44,7 @@ initialDataState =
     , searchValue = ""
     , itemPriceMappings = []
     , itemAmountMappings = []
+    , userInventory = []
     }
 
 
