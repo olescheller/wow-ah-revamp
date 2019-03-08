@@ -18,7 +18,7 @@ renderItem model supply =
 
         Just val ->
             Html.tr []
-                [ Html.td [] [ Html.img [ src ("https://s3.eu-central-1.amazonaws.com/wow-icons/icons/" ++ withDefault "inv_misc_questionmark" val.item.icon ++ ".jpg") ] [] ]
+                [ Html.td [] [ Html.img [ class "circular", src ("https://s3.eu-central-1.amazonaws.com/wow-icons/icons/" ++ withDefault "inv_misc_questionmark" val.item.icon ++ ".jpg") ] [] ]
                 , Html.td [] [ Html.text <| val.item.name ]
                 , Html.td [] [ Html.text <| String.fromFloat val.quantity ]
                 , Html.td [] [ moneyString val.min_price ]

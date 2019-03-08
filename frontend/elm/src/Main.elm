@@ -359,7 +359,11 @@ renderPage : State -> Html.Html Msg
 renderPage model =
     case model.ui.route of
         SELL ->
-            Html.div [] [ displayInventory model, sellOrderList model ]
+            Html.div []
+                [ displayInventory model
+                , Html.div [ class "ui clearing divider" ] []
+                , sellOrderList model
+                ]
 
         BUY ->
             Buy.buyPage model

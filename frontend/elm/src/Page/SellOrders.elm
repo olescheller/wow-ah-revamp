@@ -17,7 +17,7 @@ renderItem model sellOrder =
 
         Just val ->
             Html.tr []
-                [ Html.td [] [ Html.img [ src ("https://s3.eu-central-1.amazonaws.com/wow-icons/icons/" ++ withDefault "inv_misc_questionmark" val.item.icon ++ ".jpg") ] [] ]
+                [ Html.td [] [ Html.img [ class "circular", src ("https://s3.eu-central-1.amazonaws.com/wow-icons/icons/" ++ withDefault "inv_misc_questionmark" val.item.icon ++ ".jpg") ] [] ]
                 , Html.td [] [ Html.text <| val.item.name ]
                 , Html.td [] [ Html.text <| String.fromInt val.quantity ]
                 , Html.td [] [ moneyString val.price ]
@@ -55,6 +55,11 @@ renderItems model =
 
 sellOrderList : State -> Html.Html Msg
 sellOrderList model =
-    Html.div []
-        [ renderItems model
+    Html.div [ class "container" ]
+        [ Html.div [ class "card-panel" ]
+            [ Html.h1 [] [ Html.text "Item supplies" ]
+            , Html.div []
+                [ renderItems model
+                ]
+            ]
         ]
