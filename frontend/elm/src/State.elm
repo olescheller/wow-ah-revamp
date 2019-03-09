@@ -93,6 +93,7 @@ type alias State =
     , data : DataState
     , sellOrders : List (Maybe SellOrder)
     , detailItem : Maybe ItemSupply
+    , activeDetailItem : Maybe SellOrder
     }
 
 

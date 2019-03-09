@@ -21,6 +21,10 @@ type Msg
     | GotInitialSellOrders (Result (Graphql.Http.Error ()) (Maybe (List (Maybe SellOrder))))
     | DeleteSellOrder String
     | GotDeleteSellOrderResponse (Result (Graphql.Http.Error ()) Bool)
+    | SellItem
+    | EnterSellQuantity String
+    | EnterSellPrice String
+    | SoldItem (Result (Graphql.Http.Error ()) SellOrder)
 
 
 

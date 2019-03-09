@@ -2,24 +2,49 @@ port module Main exposing (createSubscriptions, initialModel, main, update, view
 
 import Action exposing (Msg(..))
 import Browser
+import Debug exposing (log)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events as Evt exposing (keyCode, on, onClick, onInput)
 import Json.Decode as Json
 import Json.Encode as E
 import Maybe exposing (..)
-import Mutations exposing (buyMutation, deleteSellOrderMutation, makeMutation)
+import Mutations exposing (buyMutation, deleteSellOrderMutation, makeMutation, sellMutation)
 import Page.Buy as Buy exposing (..)
 import Page.Sell exposing (displayInventory, displayItemDetail)
 import Page.SellOrders exposing (sellOrderList)
 import Queries exposing (itemPriceQuery, itemQuery, itemSupplyQuery, itemsSupplyQuery, makeRequest, randomItemsQuery, sellOrderQuery, userQuery)
-import State exposing (DataState, FakeItem, Item, ItemSupply, Price, Route(..), State, UiState)
+import State exposing (DataState, FakeItem, Item, ItemSupply, Price, Route(..), SellOrder, State, UiState)
 import String exposing (..)
 
 
 fakeItem : String -> Int -> FakeItem
 fakeItem n a =
     { name = n, amount = a }
+
+
+getUserNameAndRealm model =
+    let
+        splitUser =
+            split "-" model.data.user.name
+
+        name =
+            case splitUser of
+                [ a, b ] ->
+                    a
+
+                _ ->
+                    ""
+
+        realm =
+            case splitUser of
+                [ a, b ] ->
+                    b
+
+                _ ->
+                    ""
+    in
+    { name = name, realm = realm }
 
 
 initialUiState : UiState
@@ -57,6 +82,7 @@ initialModel _ =
       , data = initialDataState
       , sellOrders = []
       , detailItem = Nothing
+      , activeDetailItem = Nothing
       }
     , makeRequest (userQuery "Elandura" "Silvermoon") FetchUser
     )
@@ -332,6 +358,64 @@ update msg model =
             in
             ( model, makeRequest (sellOrderQuery name realm) GotInitialSellOrders )
 
+        SellItem ->
+            case model.activeDetailItem of
+                Just value ->
+                    let
+                        name =
+                            (getUserNameAndRealm model).name
+
+                        realm =
+                            (getUserNameAndRealm model).realm
+                    in
+                    ( model, makeMutation (sellMutation (withDefault 0 (String.toInt value.item.id)) name realm value.quantity value.price) SoldItem )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+        EnterSellQuantity quantity ->
+            case model.detailItem of
+                Just value ->
+                    let
+                        price =
+                            case model.activeDetailItem of
+                                Just val ->
+                                    val.price
+
+                                Nothing ->
+                                    0
+
+                        newActiveDetailItem =
+                            { item = value.item, quantity = withDefault 0 (String.toInt quantity), price = price }
+                    in
+                    ( { model | activeDetailItem = Just newActiveDetailItem }, Cmd.none )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+        EnterSellPrice price ->
+            case model.detailItem of
+                Just value ->
+                    let
+                        quantity =
+                            case model.activeDetailItem of
+                                Just val ->
+                                    val.quantity
+
+                                Nothing ->
+                                    0
+
+                        newActiveDetailItem =
+                            { item = value.item, quantity = quantity, price = withDefault 0 (String.toFloat price) }
+                    in
+                    ( { model | activeDetailItem = Just newActiveDetailItem }, Cmd.none )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+        SoldItem response ->
+            ( model, Cmd.none )
+
 
 getActiveClass : Route -> Route -> String
 getActiveClass activeRoute route =
@@ -361,11 +445,9 @@ renderPage model =
         SELL ->
             Html.div [ class "container" ]
                 [ Html.h1 [ class "ui inverted header" ] [ Html.text "Inventory" ]
-                , Html.div [ class "centered" ]
-                    [ Html.div [ class "ui grid" ]
-                        [ Html.div [ class "eight wide column" ] [ displayInventory model ]
-                        , Html.div [ class "eight wide column" ] [ displayItemDetail model.detailItem ]
-                        ]
+                , Html.div [ class "centered ui grid" ]
+                    [ Html.div [ class "seven wide column" ] [ displayInventory model ]
+                    , Html.div [ class "nine wide column" ] [ displayItemDetail model ]
                     ]
                 , Html.div [ class "ui clearing divider" ] []
                 , sellOrderList model

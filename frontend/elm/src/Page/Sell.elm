@@ -2,10 +2,12 @@ module Page.Sell exposing (displayInventory, displayInventorySlot, displayItem, 
 
 import Action exposing (Msg(..))
 import Html exposing (Html, a, br, div, h1, img, span, text)
-import Html.Attributes exposing (class, src)
-import Html.Events exposing (onClick, onMouseEnter)
+import Html.Attributes exposing (class, placeholder, src)
+import Html.Events exposing (onClick, onInput, onMouseEnter)
+import Lib.Button exposing (createAnimatedButton, createAnimatedButtonLight)
 import Lib.StringHelper exposing (getItemIconUrl)
 import Maybe exposing (Maybe, withDefault)
+import Page.Buy exposing (moneyString)
 import State exposing (InventorySlot, Item, ItemSupply, State)
 
 
@@ -49,9 +51,9 @@ displayItem item quantity =
         ]
 
 
-displayItemDetail : Maybe ItemSupply -> Html Msg
-displayItemDetail itemSupply =
-    case itemSupply of
+displayItemDetail : State -> Html Msg
+displayItemDetail model =
+    case model.detailItem of
         Nothing ->
             div [] []
 
@@ -62,11 +64,32 @@ displayItemDetail itemSupply =
                         [ img [ class "right floated mini ui image circular image", src (getItemIconUrl value.item) ] []
                         , div [ class "header" ]
                             [ Html.text value.item.name ]
-                        , div [ class "meta" ] [ Html.text (String.fromFloat value.min_price) ]
-                        , div [ class "description" ] []
+                        , div [ class "meta" ] [ Html.text "Add info" ]
+                        , div [ class "description" ]
+                            [ Html.text "Current min buyout:"
+                            , moneyString value.min_price
+                            ]
                         ]
                     , div [ class "extra content" ]
-                        [ Html.text "Sell"
+                        [ moneyString
+                            (let
+                                price =
+                                    case
+                                        model.activeDetailItem
+                                    of
+                                        Just val ->
+                                            val.price
+
+                                        Nothing ->
+                                            0
+                             in
+                             price
+                            )
+                        , Html.div [ class "ui action input " ]
+                            [ Html.input [ onInput EnterSellPrice, class "small", placeholder "Price in copper" ] []
+                            , Html.input [ class "tiny", placeholder "Amount" ] []
+                            , createAnimatedButtonLight "Sell" "right arrow icon" "green" SellItem
+                            ]
                         ]
                     ]
                 ]
