@@ -4,6 +4,7 @@ import Action exposing (Msg(..))
 import Html
 import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick, onInput)
+import Lib.StringHelper exposing (getItemIconUrl)
 import Maybe exposing (withDefault)
 import Page.Buy exposing (moneyString)
 import State exposing (SellOrder, State)
@@ -17,7 +18,7 @@ renderItem model sellOrder =
 
         Just val ->
             Html.tr []
-                [ Html.td [] [ Html.img [ class "circular", src ("https://s3.eu-central-1.amazonaws.com/wow-icons/icons/" ++ withDefault "inv_misc_questionmark" val.item.icon ++ ".jpg") ] [] ]
+                [ Html.td [] [ Html.img [ class "ui image circular", src (getItemIconUrl val.item) ] [] ]
                 , Html.td [] [ Html.text <| val.item.name ]
                 , Html.td [] [ Html.text <| String.fromInt val.quantity ]
                 , Html.td [] [ moneyString val.price ]

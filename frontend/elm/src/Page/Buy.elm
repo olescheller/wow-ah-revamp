@@ -5,6 +5,7 @@ import Html
 import Html.Attributes as Attr exposing (..)
 import Html.Events as Evt exposing (keyCode, on, onClick, onInput)
 import Lib.HtmlEvents exposing (onEnter)
+import Lib.StringHelper exposing (getItemIconUrl)
 import List exposing (..)
 import Maybe exposing (Maybe(..), withDefault)
 import State exposing (..)
@@ -18,7 +19,7 @@ renderItem model supply =
 
         Just val ->
             Html.tr []
-                [ Html.td [] [ Html.img [ class "circular", src ("https://s3.eu-central-1.amazonaws.com/wow-icons/icons/" ++ withDefault "inv_misc_questionmark" val.item.icon ++ ".jpg") ] [] ]
+                [ Html.td [] [ Html.img [ class "ui image circular", src (getItemIconUrl val.item) ] [] ]
                 , Html.td [] [ Html.text <| val.item.name ]
                 , Html.td [] [ Html.text <| String.fromFloat val.quantity ]
                 , Html.td [] [ moneyString val.min_price ]
