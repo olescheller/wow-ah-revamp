@@ -1,3 +1,3 @@
 export const inventorySize = 24;
 
-export const ec2_url =  "ec2-3-122-61-147.eu-central-1.compute.amazonaws.com";
+export const ec2_url =  "ec2-18-184-211-37.eu-central-1.compute.amazonaws.com";
