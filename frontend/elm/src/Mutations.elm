@@ -7,13 +7,14 @@ import Graphql.Http
 import Graphql.Operation exposing (RootMutation)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
+import Lib.Config exposing (graphQlServerUrl)
 import Queries exposing (item)
 import State exposing (Item, Receipt)
 
 
 makeMutation mutation message =
     mutation
-        |> Graphql.Http.mutationRequest "http://localhost:4000/"
+        |> Graphql.Http.mutationRequest graphQlServerUrl
         |> Graphql.Http.send
             (Graphql.Http.discardParsedErrorData
                 >> message

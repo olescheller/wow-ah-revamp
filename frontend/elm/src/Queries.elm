@@ -16,13 +16,14 @@ import Graphql.Operation exposing (RootQuery)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet, hardcoded, with)
 import Html exposing (Html)
 import Json.Decode exposing (..)
+import Lib.Config exposing (graphQlServerUrl)
 import Maybe exposing (Maybe, withDefault)
 import State exposing (InventorySlot, Item, ItemSupply, Price, Route, SellOrder, User)
 
 
 makeRequest query message =
     query
-        |> Graphql.Http.queryRequest "http://localhost:4000/"
+        |> Graphql.Http.queryRequest graphQlServerUrl
         |> Graphql.Http.send
             (Graphql.Http.discardParsedErrorData
                 >> message
