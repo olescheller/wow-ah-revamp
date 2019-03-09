@@ -4,6 +4,7 @@ import Action exposing (Msg(..))
 import Html
 import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick, onInput)
+import Lib.Button exposing (createAnimatedButton)
 import Lib.StringHelper exposing (getItemIconUrl)
 import Maybe exposing (withDefault)
 import Page.Buy exposing (moneyString)
@@ -23,13 +24,7 @@ renderItem model sellOrder =
                 , Html.td [] [ Html.text <| String.fromInt val.quantity ]
                 , Html.td [] [ moneyString val.price ]
                 , Html.td []
-                    [ Html.button
-                        [ class "col s2 waves-effect waves-light btn #ffd600 red accent-4 white-text text-darken-2"
-                        , onClick
-                            (DeleteSellOrder val.item.id)
-                        ]
-                        [ Html.text "Delete" ]
-                    ]
+                    [ createAnimatedButton "Delete" "trash icon" "red" (DeleteSellOrder val.item.id) ]
                 ]
 
 
@@ -39,7 +34,7 @@ renderItems model =
         supplyItems =
             List.map (renderItem model) model.sellOrders
     in
-    Html.table [ class "stripped" ]
+    Html.table [ class "ui inverted table" ]
         [ Html.thead []
             [ Html.tr []
                 [ Html.th [] []
@@ -56,9 +51,9 @@ renderItems model =
 
 sellOrderList : State -> Html.Html Msg
 sellOrderList model =
-    Html.div [ class "container" ]
+    Html.div []
         [ Html.div [ class "card-panel" ]
-            [ Html.h1 [] [ Html.text "Item supplies" ]
+            [ Html.h1 [ class "ui inverted header" ] [ Html.text "My sell orders" ]
             , Html.div []
                 [ renderItems model
                 ]

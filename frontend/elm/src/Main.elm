@@ -10,7 +10,7 @@ import Json.Encode as E
 import Maybe exposing (..)
 import Mutations exposing (buyMutation, deleteSellOrderMutation, makeMutation)
 import Page.Buy as Buy exposing (..)
-import Page.Sell exposing (displayInventory)
+import Page.Sell exposing (displayInventory, displayItemDetail)
 import Page.SellOrders exposing (sellOrderList)
 import Queries exposing (itemPriceQuery, itemQuery, itemSupplyQuery, itemsSupplyQuery, makeRequest, randomItemsQuery, sellOrderQuery, userQuery)
 import State exposing (DataState, FakeItem, Item, ItemSupply, Price, Route(..), State, UiState)
@@ -56,7 +56,7 @@ initialModel _ =
     ( { ui = initialUiState
       , data = initialDataState
       , sellOrders = []
-      , detailItem = ItemSupply -1 (Item "DummyItem" "-1" Nothing) -1 -1
+      , detailItem = Nothing
       }
     , makeRequest (userQuery "Elandura" "Silvermoon") FetchUser
     )
@@ -78,10 +78,10 @@ update msg model =
                 Ok value ->
                     case value of
                         Just i ->
-                            ( { model | detailItem = i }, Cmd.none )
+                            ( { model | detailItem = Just i }, Cmd.none )
 
                         Nothing ->
-                            ( { model | detailItem = ItemSupply -1 (Item "DummyItem" "-1" Nothing) -1 -1 }, Cmd.none )
+                            ( { model | detailItem = Nothing }, Cmd.none )
 
                 Err err ->
                     ( model, Cmd.none )
@@ -336,17 +336,17 @@ update msg model =
 getActiveClass : Route -> Route -> String
 getActiveClass activeRoute route =
     if activeRoute == route then
-        "item yellow active"
+        "item active"
 
     else
-        "item  yellow"
+        "item "
 
 
 renderNav : State -> Html.Html Msg
 renderNav model =
     Html.div []
         [ Html.div [ class "ui inverted left floated header" ] [ Html.text "wow-ah-revamp" ]
-        , Html.div [ class "ui inverted right floated secondary pointing menu" ]
+        , Html.div [ class "ui inverted right secondary floated menu" ]
             [ Html.span [ class "item" ] [ Html.text model.data.user.name ]
             , Html.span [ class "item" ] [ moneyString model.data.user.money ]
             , Html.a [ class (getActiveClass model.ui.route BUY), onClick (SetCurrentRoute BUY) ] [ Html.text "Buy" ]
@@ -359,19 +359,25 @@ renderPage : State -> Html.Html Msg
 renderPage model =
     case model.ui.route of
         SELL ->
-            Html.div []
-                [ displayInventory model
+            Html.div [ class "container" ]
+                [ Html.h1 [ class "ui inverted header" ] [ Html.text "Inventory" ]
+                , Html.div [ class "centered" ]
+                    [ Html.div [ class "ui grid" ]
+                        [ Html.div [ class "eight wide column" ] [ displayInventory model ]
+                        , Html.div [ class "eight wide column" ] [ displayItemDetail model.detailItem ]
+                        ]
+                    ]
                 , Html.div [ class "ui clearing divider" ] []
                 , sellOrderList model
                 ]
 
         BUY ->
-            Buy.buyPage model
+            Html.div [ class "container" ] [ Buy.buyPage model ]
 
 
 view : State -> Html.Html Msg
 view model =
-    Html.div [ class "ui inverted segment" ]
+    Html.div [ class "ui inverted segment mainContainer" ]
         [ renderNav model
         , Html.div [ class "ui clearing divider" ] []
         , renderPage model

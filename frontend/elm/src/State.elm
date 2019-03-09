@@ -92,7 +92,7 @@ type alias State =
     { ui : UiState
     , data : DataState
     , sellOrders : List (Maybe SellOrder)
-    , detailItem : ItemSupply
+    , detailItem : Maybe ItemSupply
     }
 
 

@@ -4,6 +4,7 @@ import Action exposing (Msg(..))
 import Html
 import Html.Attributes as Attr exposing (..)
 import Html.Events as Evt exposing (keyCode, on, onClick, onInput)
+import Lib.Button exposing (createAnimatedButton)
 import Lib.HtmlEvents exposing (onEnter)
 import Lib.StringHelper exposing (getItemIconUrl)
 import List exposing (..)
@@ -23,23 +24,25 @@ renderItem model supply =
                 , Html.td [] [ Html.text <| val.item.name ]
                 , Html.td [] [ Html.text <| String.fromFloat val.quantity ]
                 , Html.td [] [ moneyString val.min_price ]
-                , Html.td [] [ Html.input [ onInput (EnterQuantity val.item.id), value (getItemAmountMappings val.item.id model) ] [] ]
+                , Html.td []
+                    [ Html.div [ class "ui input" ]
+                        [ Html.input [ onInput (EnterQuantity val.item.id), value (getItemAmountMappings val.item.id model) ] []
+                        ]
+                    ]
                 , Html.td []
                     [ moneyString (getItemPriceMappings val.item.id model).total
                     , moneyString (getItemPriceMappings val.item.id model).perUnit
                     ]
                 , Html.td []
-                    [ Html.button
-                        [ class "col s2 waves-effect waves-light btn #ffd600 yellow accent-4 black-text text-darken-2"
-                        , onClick
-                            (BuyItem "Elandura-Silvermoon"
-                                (withDefault 0 (String.toInt val.item.id))
-                                (withDefault 0 (String.toInt (getItemAmountMappings val.item.id model)))
-                                (getItemPriceMappings val.item.id model).perUnit
-                                (getItemPriceMappings val.item.id model).total
-                            )
-                        ]
-                        [ Html.text "Buy" ]
+                    [ createAnimatedButton "Buy"
+                        "shop icon"
+                        "yellow"
+                        (BuyItem "Elandura-Silvermoon"
+                            (withDefault 0 (String.toInt val.item.id))
+                            (withDefault 0 (String.toInt (getItemAmountMappings val.item.id model)))
+                            (getItemPriceMappings val.item.id model).perUnit
+                            (getItemPriceMappings val.item.id model).total
+                        )
                     ]
                 ]
 
@@ -50,7 +53,7 @@ renderItems model items =
         supplyItems =
             List.map (renderItem model) items
     in
-    Html.table [ class "stripped" ]
+    Html.table [ class "ui inverted table" ]
         [ Html.thead []
             [ Html.tr []
                 [ Html.th [] []
@@ -76,23 +79,24 @@ buyList model items =
 
 buyPage : State -> Html.Html Msg
 buyPage model =
-    Html.div [ class "container" ]
+    Html.div []
         [ Html.div [ class "card-panel" ]
-            [ Html.h1 [] [ Html.text "Item supplies" ]
-            , Html.div [ class "row" ]
-                [ Html.input
-                    [ class "col s10"
-                    , placeholder "item name"
-                    , value model.data.searchValue
-                    , onInput EnterSearchValue
-                    , onEnter SearchItemSupplies
+            [ Html.div [ class " marginbot centered" ]
+                [ Html.div [ class "ui action input inverted massive" ]
+                    [ Html.input
+                        [ class ""
+                        , placeholder "Search by item name..."
+                        , value model.data.searchValue
+                        , onInput EnterSearchValue
+                        , onEnter SearchItemSupplies
+                        ]
+                        []
+                    , Html.button
+                        [ class "ui icon button"
+                        , onClick SearchItemSupplies
+                        ]
+                        [ Html.i [ class "search icon" ] [] ]
                     ]
-                    []
-                , Html.button
-                    [ class "col s2 waves-effect waves-light btn #ffd600 yellow accent-4 black-text text-darken-2"
-                    , onClick SearchItemSupplies
-                    ]
-                    [ Html.text "Search" ]
                 ]
             , Html.div []
                 [ buyList model model.data.itemSupplies
