@@ -41,6 +41,7 @@
   ],
   "devDependencies": {
     "@babel/preset-env": "^7.3.1",
+    "@redux-saga/testing-utils": "^1.0.2",
     "expect": "^24.1.0"
   }
 }

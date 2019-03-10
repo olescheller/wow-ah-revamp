@@ -71,7 +71,9 @@ export function* updateUserMoney(action) {
     const {userName , realmName} = action.payload;
     try{
         const data = yield call(getUserMoney, userName, realmName);
-        yield put(fetchUserMoneySucceededAction(data))
+        if (data) {
+            yield put(fetchUserMoneySucceededAction(data))
+        }
     } catch (e) {
 
     }
