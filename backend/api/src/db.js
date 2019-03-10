@@ -218,6 +218,7 @@ function getItemSupplyByName(db, itemName) {
                 }, 0);
                 const prices = sellOrders.map(s => s.price);
                 const min_price = Math.min(...prices);
+                console.log(item)
                 resolve({
                     id: item.id,
                     item: item,

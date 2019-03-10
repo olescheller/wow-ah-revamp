@@ -46,7 +46,7 @@ displayInventorySlot inventorySlot =
 
 displayItem : Item -> Int -> Html Msg
 displayItem item quantity =
-    div [ class "inventoryItem link", onClick (RequestItemDetail item.name) ]
+    div [ class "inventoryItem link", onClick (RequestItemDetail item) ]
         [ div [ class "ui tiny image circular" ] [ img [ src <| getItemIconUrl item ] [] ]
         ]
 

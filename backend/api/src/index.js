@@ -139,6 +139,7 @@ type User {
                 return await getItemClassById(db, id)
             },
             item_supply: async (_, {itemName}) => {
+                console.log({itemName})
                 return await getItemSupplyByName(db, itemName);
             },
             items_supply: async (_, {partialItemName}) => {

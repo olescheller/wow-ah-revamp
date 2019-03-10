@@ -94,20 +94,20 @@ port createSubscriptions : E.Value -> Cmd msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
-        RequestItemDetail itemName ->
+        RequestItemDetail item ->
             ( model
-            , makeRequest (itemSupplyQuery itemName) SetItemDetail
+            , makeRequest (itemSupplyQuery item.name) (SetItemDetail item)
             )
 
-        SetItemDetail item ->
-            case item of
+        SetItemDetail item itemSupply ->
+            case itemSupply of
                 Ok value ->
                     case value of
                         Just i ->
                             ( { model | detailItem = Just i }, Cmd.none )
 
                         Nothing ->
-                            ( { model | detailItem = Nothing }, Cmd.none )
+                            ( { model | detailItem = Just (ItemSupply -1 item 0 0) }, Cmd.none )
 
                 Err err ->
                     ( model, Cmd.none )
