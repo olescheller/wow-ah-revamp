@@ -362,13 +362,25 @@ update msg model =
             case model.activeDetailItem of
                 Just value ->
                     let
+                        userInventory =
+                            model.data.userInventory
+
+                        updatedInventory =
+                            List.filter (\i -> (withDefault { item = Item "" "" (Just ""), quantity = 0 } i).item.id /= value.item.id) userInventory
+
+                        oldData =
+                            model.data
+
+                        newData =
+                            { oldData | userInventory = updatedInventory }
+
                         name =
                             (getUserNameAndRealm model).name
 
                         realm =
                             (getUserNameAndRealm model).realm
                     in
-                    ( model, makeMutation (sellMutation (withDefault 0 (String.toInt value.item.id)) name realm value.quantity value.price) SoldItem )
+                    ( { model | data = newData }, makeMutation (sellMutation (withDefault 0 (String.toInt value.item.id)) name realm value.quantity value.price) SoldItem )
 
                 Nothing ->
                     ( model, Cmd.none )
