@@ -266,11 +266,28 @@ update msg model =
         GotBuyItemResponse response ->
             case response of
                 Ok value ->
-                    let
-                        searchValue =
-                            model.data.searchValue
-                    in
-                    ( model, makeRequest (itemsSupplyQuery searchValue) GotItemSupplyResponse )
+                    case value of
+                        Just receipt ->
+                            let
+                                oldData =
+                                    model.data
+
+                                user =
+                                    model.data.user
+
+                                newUser =
+                                    { user | money = withDefault 0 receipt.money }
+
+                                newData =
+                                    { oldData | user = newUser }
+
+                                searchValue =
+                                    model.data.searchValue
+                            in
+                            ( { model | data = newData }, makeRequest (itemsSupplyQuery searchValue) GotItemSupplyResponse )
+
+                        Nothing ->
+                            ( model, Cmd.none )
 
                 Err error ->
                     ( model, Cmd.none )
