@@ -308,15 +308,30 @@ update msg model =
                 Err error ->
                     ( model, Cmd.none )
 
-        DeleteSellOrder itemId ->
+        DeleteSellOrder sellOrder ->
             let
                 name =
                     (getUserNameAndRealm model).name
 
                 realm =
                     (getUserNameAndRealm model).realm
+
+                oldData =
+                    model.data
+
+                oldInventory =
+                    oldData.userInventory
+
+                newInventoryItem =
+                    InventorySlot sellOrder.item sellOrder.quantity
+
+                newInventory =
+                    Just newInventoryItem :: oldInventory
+
+                newData =
+                    { oldData | userInventory = newInventory }
             in
-            ( model, makeMutation (deleteSellOrderMutation (withDefault 0 (String.toInt itemId)) name realm) GotDeleteSellOrderResponse )
+            ( { model | data = newData }, makeMutation (deleteSellOrderMutation (withDefault 0 (String.toInt sellOrder.item.id)) name realm) GotDeleteSellOrderResponse )
 
         GotDeleteSellOrderResponse response ->
             let

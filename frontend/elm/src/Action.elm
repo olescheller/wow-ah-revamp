@@ -19,7 +19,7 @@ type Msg
     | GetInitialInventory (Result (Graphql.Http.Error ()) (List (Maybe InventorySlot)))
     | FetchUser (Result (Graphql.Http.Error ()) (Maybe User))
     | GotInitialSellOrders (Result (Graphql.Http.Error ()) (Maybe (List (Maybe SellOrder))))
-    | DeleteSellOrder String
+    | DeleteSellOrder SellOrder
     | GotDeleteSellOrderResponse (Result (Graphql.Http.Error ()) Bool)
     | SellItem
     | EnterSellQuantity String

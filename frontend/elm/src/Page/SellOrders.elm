@@ -24,7 +24,7 @@ renderItem model sellOrder =
                 , Html.td [] [ Html.text <| String.fromInt val.quantity ]
                 , Html.td [] [ moneyString val.price ]
                 , Html.td []
-                    [ createAnimatedButton "Delete" "trash icon" "red" (DeleteSellOrder val.item.id) ]
+                    [ createAnimatedButton "Delete" "trash icon" "red" (DeleteSellOrder val) ]
                 ]
 
 
