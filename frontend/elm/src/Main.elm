@@ -411,7 +411,14 @@ update msg model =
                     ( model, Cmd.none )
 
         SoldItem response ->
-            ( model, Cmd.none )
+            let
+                name =
+                    (getUserNameAndRealm model).name
+
+                realm =
+                    (getUserNameAndRealm model).realm
+            in
+            ( model, makeRequest (sellOrderQuery name realm) GotInitialSellOrders )
 
 
 getActiveClass : Route -> Route -> String
