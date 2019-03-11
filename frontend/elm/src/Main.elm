@@ -14,7 +14,7 @@ import Page.Buy as Buy exposing (..)
 import Page.Sell exposing (displayInventory, displayItemDetail)
 import Page.SellOrders exposing (sellOrderList)
 import Queries exposing (itemPriceQuery, itemQuery, itemSupplyQuery, itemsSupplyQuery, makeRequest, randomItemsQuery, sellOrderQuery, userQuery)
-import State exposing (DataState, FakeItem, Item, ItemSupply, Price, Route(..), SellOrder, State, UiState)
+import State exposing (DataState, FakeItem, InventorySlot, Item, ItemSupply, Price, Route(..), SellOrder, State, UiState)
 import String exposing (..)
 
 
@@ -122,24 +122,11 @@ update msg model =
                         newData =
                             { oldData | userInventory = value }
 
-                        splitUser =
-                            split "-" model.data.user.name
-
                         name =
-                            case splitUser of
-                                [ a, b ] ->
-                                    a
-
-                                _ ->
-                                    ""
+                            (getUserNameAndRealm model).name
 
                         realm =
-                            case splitUser of
-                                [ a, b ] ->
-                                    b
-
-                                _ ->
-                                    ""
+                            (getUserNameAndRealm model).realm
                     in
                     ( { model | data = newData }, makeRequest (sellOrderQuery name realm) GotInitialSellOrders )
 
@@ -245,7 +232,7 @@ update msg model =
                 Err value ->
                     ( model, Cmd.none )
 
-        BuyItem userName itemId amount total perUnit ->
+        BuyItem userName item amount total perUnit ->
             let
                 oldData =
                     model.data
@@ -256,16 +243,25 @@ update msg model =
                 oldItemPriceMappings =
                     oldData.itemPriceMappings
 
+                oldInventory =
+                    oldData.userInventory
+
+                newInventoryItem =
+                    InventorySlot item amount
+
+                newInventory =
+                    Just newInventoryItem :: oldInventory
+
                 newItemPriceMappings =
-                    List.filter (\i -> i.itemId /= String.fromInt itemId) oldItemPriceMappings
+                    List.filter (\i -> i.itemId /= item.id) oldItemPriceMappings
 
                 newItemAmountMappings =
-                    List.filter (\i -> i.itemId /= String.fromInt itemId) oldItemAmountMappings
+                    List.filter (\i -> i.itemId /= item.id) oldItemAmountMappings
 
                 newData =
-                    { oldData | itemAmountMappings = newItemAmountMappings, itemPriceMappings = newItemPriceMappings }
+                    { oldData | itemAmountMappings = newItemAmountMappings, itemPriceMappings = newItemPriceMappings, userInventory = newInventory }
             in
-            ( { model | data = newData }, makeMutation (buyMutation userName itemId amount total perUnit) GotBuyItemResponse )
+            ( { model | data = newData }, makeMutation (buyMutation userName (withDefault 0 (String.toInt item.id)) amount total perUnit) GotBuyItemResponse )
 
         GotBuyItemResponse response ->
             case response of
@@ -314,47 +310,21 @@ update msg model =
 
         DeleteSellOrder itemId ->
             let
-                splitUser =
-                    split "-" model.data.user.name
-
                 name =
-                    case splitUser of
-                        [ a, b ] ->
-                            a
-
-                        _ ->
-                            ""
+                    (getUserNameAndRealm model).name
 
                 realm =
-                    case splitUser of
-                        [ a, b ] ->
-                            b
-
-                        _ ->
-                            ""
+                    (getUserNameAndRealm model).realm
             in
             ( model, makeMutation (deleteSellOrderMutation (withDefault 0 (String.toInt itemId)) name realm) GotDeleteSellOrderResponse )
 
         GotDeleteSellOrderResponse response ->
             let
-                splitUser =
-                    split "-" model.data.user.name
-
                 name =
-                    case splitUser of
-                        [ a, b ] ->
-                            a
-
-                        _ ->
-                            ""
+                    (getUserNameAndRealm model).name
 
                 realm =
-                    case splitUser of
-                        [ a, b ] ->
-                            b
-
-                        _ ->
-                            ""
+                    (getUserNameAndRealm model).realm
             in
             ( model, makeRequest (sellOrderQuery name realm) GotInitialSellOrders )
 

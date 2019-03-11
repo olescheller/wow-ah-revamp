@@ -14,7 +14,7 @@ type Msg
     | GotItemSupplyResponse (Result (Graphql.Http.Error ()) (Maybe (List (Maybe ItemSupply))))
     | EnterQuantity String String
     | GotItemPriceResponse String (Result (Graphql.Http.Error ()) (Maybe Price))
-    | BuyItem String Int Int Float Float
+    | BuyItem String Item Int Float Float
     | GotBuyItemResponse (Result (Graphql.Http.Error ()) (Maybe Receipt))
     | GetInitialInventory (Result (Graphql.Http.Error ()) (List (Maybe InventorySlot)))
     | FetchUser (Result (Graphql.Http.Error ()) (Maybe User))

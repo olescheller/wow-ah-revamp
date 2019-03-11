@@ -38,7 +38,7 @@ renderItem model supply =
                         "shop icon"
                         "yellow"
                         (BuyItem "Elandura-Silvermoon"
-                            (withDefault 0 (String.toInt val.item.id))
+                            val.item
                             (withDefault 0 (String.toInt (getItemAmountMappings val.item.id model)))
                             (getItemPriceMappings val.item.id model).perUnit
                             (getItemPriceMappings val.item.id model).total
