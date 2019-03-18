@@ -23,5 +23,9 @@ The backend runs on port 4000
 The frontend runs on port 3000
 
 ## Run Elm Frontend
-1. Execute the start script [start.sh](https://github.com/oscheller1/wow-ah-revamp/blob/master/frontend/elm/start.sh) to run the Elm Frontend on port 8080
+1. Install the elm packages inside the elm root directory via
+```bash
+  elm install
+```
+2. Execute the start script [start.sh](https://github.com/oscheller1/wow-ah-revamp/blob/master/frontend/elm/start.sh) to run the Elm Frontend on port 8080
 
